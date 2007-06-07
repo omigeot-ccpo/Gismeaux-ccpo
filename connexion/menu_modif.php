@@ -1,4 +1,37 @@
-<?php require_once('connexion.php');
+<?php
+/*Copyright Ville de Meaux 2004-2007
+contributeur: jean-luc Dechamp - robert Leguay 
+sig@meaux.fr
+
+ Ce logiciel est un programme informatique fournissant une interface cartographique WEB communale. 
+ 
+ Ce logiciel est régi par la licence CeCILL-C soumise au droit français et
+ respectant les principes de diffusion des logiciels libres. Vous pouvez
+utiliser, modifier et/ou redistribuer ce programme sous les conditions
+de la licence CeCILL-C telle que diffusée par le CEA, le CNRS et l'INRIA 
+sur le site "http://www.cecill.info".
+
+En contrepartie de l'accessibilité au code source et des droits de copie,
+de modification et de redistribution accordés par cette licence, il n'est
+offert aux utilisateurs qu'une garantie limitée.  Pour les mêmes raisons,
+seule une responsabilité restreinte pèse sur l'auteur du programme,  le
+titulaire des droits patrimoniaux et les concédants successifs.
+
+A cet égard  l'attention de l'utilisateur est attirée sur les risques
+associés au chargement,  à l'utilisation,  à la modification et/ou au
+développement et à la reproduction du logiciel par l'utilisateur étant 
+donné sa spécificité de logiciel libre, qui peut le rendre complexe à 
+manipuler et qui le réserve donc à des développeurs et des professionnels
+avertis possédant  des  connaissances  informatiques approfondies.  Les
+utilisateurs sont donc invités à charger  et  tester  l'adéquation  du
+logiciel à leurs besoins dans des conditions permettant d'assurer la
+sécurité de leurs systèmes et ou de leurs données et, plus généralement, 
+à l'utiliser et l'exploiter dans les mêmes conditions de sécurité. 
+
+Le fait que vous puissiez accéder à cet en-tête signifie que vous avez 
+pris connaissance de la licence CeCILL-C, et que vous en avez accepté les termes.*/
+
+require_once('connexion.php');
 if ($supdoss != ""){
 	$quer="select b.id from testmenu as a left join testmenu as b on a.id=b.id_pere where a.id=$supdoss";
 	$rec=mysql_query($quer);
@@ -204,14 +237,14 @@ MM_reloadPage(true);
 <div id="l5" style="position:absolute; left:131px; top:37px; width:259px; height:427px; z-index:1; visibility:hidden">
   Sous menu<br>
     Libelle : <input name="libsd" type="text"><br>
-	Page � r�ferencer : <input name="pgsd" type="text">&nbsp;<input name="val2" type="button" onClick="this.form.submit()" value="Ajouter">
+	Page �r�erencer : <input name="pgsd" type="text">&nbsp;<input name="val2" type="button" onClick="this.form.submit()" value="Ajouter">
 </div>
 <div id="l4" style="position:absolute; left:300px; top:107px; width:259px; height:427px; z-index:1; visibility:hidden">
 </div>
 <div id="l6" style="position:absolute; left:300px; top:107px; width:259px; height:427px; z-index:1; visibility:hidden">
   Sous sous menu<br>
     Libelle : <input name="libar" type="text"><br>
-	Page � r�ferencer : <input name="pgar" type="text">&nbsp;<input name="val2" type="button" onClick="this.form.submit()" value="Ajouter">
+	Page �r�erencer : <input name="pgar" type="text">&nbsp;<input name="val2" type="button" onClick="this.form.submit()" value="Ajouter">
 </div>
 </form>
 </body>
