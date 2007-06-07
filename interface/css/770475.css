@@ -1,0 +1,14 @@
+.defaut {font-family:Arial;font-size:8px;opacity:1;fill:white;fill-opacity:1;fill-rule:evenodd;stroke:rgb(0,0,0);stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1}
+
+.boutonvierge {opacity:1;fill:rgb(217,249,239);fill-opacity:1;fill-rule:nonzero;stroke:rgb(0,0,0);stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1}
+
+
+.coulfonce {stop-color:rgb(0,0,0);}/*vert fonce*/
+.coulclair {stop-color:rgb(217,249,239);}/*vert clair*/
+.coulblanc {stop-color:white}
+.coulselzoom {stop-color:red} 
+
+
+.fillfonce {fill:rgb(0,0,0)}
+.fillclair {fill:rgb(217,249,239);}/*vert clair*/
+text {stroke:none;}
