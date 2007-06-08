@@ -1,0 +1,72 @@
+BODY {
+  PADDING-RIGHT: 0px;
+  PADDING-LEFT: 10px;
+  BACKGROUND: #fff;
+  PADDING-BOTTOM: 0px;
+  MARGIN: 0px;
+  FONT: small/1.5em Georgia,Serif;
+  COLOR: #000;
+  PADDING-TOP: 10px;
+  voice-family: inherit
+}
+UNKNOWN {
+	FONT-SIZE: small
+}
+#pg_desc {
+   visibility:visible;
+   position: relative;
+   height : 100%;
+}
+#pg_desc span {
+	font-size: 10px;
+}
+#pg_desc DIV {
+   visibility:hidden;
+   position: absolute;
+   top : -10px;
+   left: 15px;
+   width : 100%;
+}
+#header {
+  FONT-SIZE: 93%;
+  BACKGROUND: url(./bouton_default/bg.gif) #dae0d2 repeat-x 50% bottom;
+  position : relative;
+  FLOAT: left;
+  WIDTH: 100%;
+  LINE-HEIGHT: normal
+}
+#header UL {
+  PADDING-RIGHT: 10px;
+  PADDING-LEFT: 10px;
+  PADDING-BOTTOM: 0px;
+  MARGIN: 0px;
+  PADDING-TOP: 10px;
+  LIST-STYLE-TYPE: none
+}
+#header LI {
+  PADDING-RIGHT: 0px;
+  PADDING-LEFT: 9px;
+  BACKGROUND: url(./bouton_default/left.gif) no-repeat left top;
+  FLOAT: left;
+  PADDING-BOTTOM: 0px;
+  MARGIN: 0px;
+  PADDING-TOP: 0px
+}
+#header A {
+  PADDING-RIGHT: 15px;
+  DISPLAY: block;
+  PADDING-LEFT: 6px;
+  FONT-WEIGHT: bold;
+  BACKGROUND: url(./bouton_default/right.gif) no-repeat right top;
+  FLOAT: left;
+  PADDING-BOTTOM: 4px;
+  COLOR: #765;
+  PADDING-TOP: 5px;
+  TEXT-DECORATION: none
+}
+#header A {
+	FLOAT: none
+}
+#header A:hover {
+	COLOR: #333 !important
+}

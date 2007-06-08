@@ -1,0 +1,63 @@
+body {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	background-image: none;
+	background-repeat: no-repeat;
+	
+	color: #000000;
+	font-weight: bold;
+}
+table {
+	background-color: #BED4F6;
+	font-family: "Times New Roman", Times, serif;
+	font-size: 12px;
+}
+.tabl1 {
+	
+}
+.tr1 {
+	
+}
+.td1 {
+	
+}
+.tt1 {
+	font-family: "Times New Roman", Times, serif;
+	font-size: 11mm;
+	font-weight: bolder;
+	background-color: #E9AA4B;
+
+}
+.tt2 {
+	font-family: "Times New Roman", Times, serif;
+	font-size: 9mm;
+	font-weight: bold;
+	background-color: #EDBA6D;
+}
+tr {
+	
+}
+td {
+	
+	font-size: 11px;
+	font-family: "Times New Roman", Times, serif;
+}
+.tt3 {
+	font-family: "Times New Roman", Times, serif;
+	font-size: 8mm;
+	background-color: #BED4F6;
+
+}
+.tt4 {
+	font-family: "Times New Roman", Times, serif;
+	font-size: 12px;
+	background-color: #EDBA6D;
+	font-weight: bold;
+
+}
+.soustotal {
+	background-color: #EEB77F;
+}
+.total {
+	background-color: #EFC78A;
+}
