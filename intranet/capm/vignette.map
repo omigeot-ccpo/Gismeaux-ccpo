@@ -1,6 +1,6 @@
 #ENTETE#
 MAP
-NAME tt
+NAME vignette
 STATUS on
 SIZE 302 254
 UNITS meters
@@ -16,8 +16,6 @@ WEB
 	IMAGEPATH "/home/sig/intranet/interface/communes/"
 	IMAGEURL "/tmp/"
 END
-
-
 LAYER
 	CONNECTIONTYPE postgis
 	NAME "commune" group "commune"
