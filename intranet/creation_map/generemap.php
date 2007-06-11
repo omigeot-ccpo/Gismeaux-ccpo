@@ -5,44 +5,44 @@ sig@meaux.fr
 
 Ce logiciel est un programme informatique fournissant une interface cartographique WEB communale. 
 
-Ce logiciel est r�i par la licence CeCILL-C soumise au droit fran�is et
+Ce logiciel est régi par la licence CeCILL-C soumise au droit français et
 respectant les principes de diffusion des logiciels libres. Vous pouvez
 utiliser, modifier et/ou redistribuer ce programme sous les conditions
-de la licence CeCILL-C telle que diffus� par le CEA, le CNRS et l'INRIA 
+de la licence CeCILL-C telle que diffusée par le CEA, le CNRS et l'INRIA 
 sur le site "http://www.cecill.info".
 
-En contrepartie de l'accessibilit�au code source et des droits de copie,
-de modification et de redistribution accord� par cette licence, il n'est
-offert aux utilisateurs qu'une garantie limit�.  Pour les m�es raisons,
-seule une responsabilit�restreinte p�e sur l'auteur du programme,  le
-titulaire des droits patrimoniaux et les conc�ants successifs.
+En contrepartie de l'accessibilité au code source et des droits de copie,
+de modification et de redistribution accordés par cette licence, il n'est
+offert aux utilisateurs qu'une garantie limitée.  Pour les mêmes raisons,
+seule une responsabilité restreinte pèse sur l'auteur du programme,  le
+titulaire des droits patrimoniaux et les concédants successifs.
 
-A cet �ard  l'attention de l'utilisateur est attir� sur les risques
-associ� au chargement,  �l'utilisation,  �la modification et/ou au
-d�eloppement et �la reproduction du logiciel par l'utilisateur �ant 
-donn�sa sp�ificit�de logiciel libre, qui peut le rendre complexe �
-manipuler et qui le r�erve donc �des d�eloppeurs et des professionnels
-avertis poss�ant  des connaissances  informatiques approfondies.  Les
-utilisateurs sont donc invit� �charger  et  tester  l'ad�uation  du
-logiciel �leurs besoins dans des conditions permettant d'assurer la
-s�urit�de leurs syst�es et ou de leurs donn�s et, plus g��alement, 
-�l'utiliser et l'exploiter dans les m�es conditions de s�urit� 
+A cet égard  l'attention de l'utilisateur est attirée sur les risques
+associés au chargement,  à l'utilisation,  à la modification et/ou au
+développement et à la reproduction du logiciel par l'utilisateur étant 
+donné sa spécificité de logiciel libre, qui peut le rendre complexe à 
+manipuler et qui le réserve donc à des développeurs et des professionnels
+avertis possédant  des connaissances  informatiques approfondies.  Les
+utilisateurs sont donc invités à charger  et  tester  l'adéquation  du
+logiciel à leurs besoins dans des conditions permettant d'assurer la
+sécurité de leurs systèmes et ou de leurs données et, plus généralement, 
+à l'utiliser et l'exploiter dans les mêmes conditions de sécurité. 
 
-Le fait que vous puissiez acc�er �cet en-t�e signifie que vous avez 
-pris connaissance de la licence CeCILL-C, et que vous en avez accept�les 
+Le fait que vous puissiez accéder à cet en-tête signifie que vous avez 
+pris connaissance de la licence CeCILL-C, et que vous en avez accepté les 
 termes.*/
 include("../connexion/deb.php");
 function supp_acc($texte)
 {
-$nom=str_replace("�,"a",$texte);
-$nom=str_replace("�,"e",$nom);
-$nom=str_replace("�,"e",$nom);
-$nom=str_replace("�,"e",$nom);
-$nom=str_replace("�,"a",$nom);
-$nom=str_replace("�,"c",$nom);
-$nom=str_replace("�,"o",$nom);
-$nom=str_replace("�,"i",$nom);
-$nom=str_replace("","u",$nom);
+$nom=str_replace("à","a",$texte);
+$nom=str_replace("é","e",$nom);
+$nom=str_replace("è","e",$nom);
+$nom=str_replace("ê","e",$nom);
+$nom=str_replace("â","a",$nom);
+$nom=str_replace("ç","c",$nom);
+$nom=str_replace("ô","o",$nom);
+$nom=str_replace("î","i",$nom);
+$nom=str_replace("û","u",$nom);
 $nom=str_replace(" ","_",$nom);
 return $nom;
 }
@@ -87,9 +87,15 @@ $map.="UNITS meters \n";
 $map.="IMAGECOLOR 255 255 255 \n";
 $map.="FONTSET\"fonts/fontset.txt\" \n";
 $map.="IMAGETYPE jpeg \n";
-
+$map.="OUTPUTFORMAT \n";
+$map.="NAME jpeg \n";
+$map.="DRIVER \"GD/JPEG\" \n";
+$map.="MIMETYPE \"image/jpeg\" \n";
+$map.="IMAGEMODE RGB \n";
+$map.=" EXTENSION \"jpg\" \n";
+$map.="END \n";
 $map.="WEB \n";
-	$map.="TEMPLATE capm_svg.html \n";
+	$map.="TEMPLATE capm_svg.php \n";
 	$map.="IMAGEPATH \"/home/sig/intranet/tmp/\" \n";
 	$map.="IMAGEURL \"/tmp/\" \n";
 $map.="END \n";
@@ -282,8 +288,7 @@ $mapp="mappolygone";
 $req1="select distinct (col_theme.intitule_legende) as intitule_legende,col_theme.valeur_texte,col_theme.fill,col_theme.stroke_rgb,col_theme.symbole,col_theme.font_size,col_theme.font_familly,col_theme.opacity,col_theme.ordre from admin_svg.appthe join admin_svg.col_theme on appthe.idappthe=col_theme.idappthe join admin_svg.theme on appthe.idtheme=theme.idtheme where appthe.idapplication=".$appli." and appthe.idtheme='".$cou[$c]['idtheme']."'";
 
 	$couch=tab_result($pgx,$req1);
-	//$d="select * from admin_svg.col_sel where idtheme='".$cou[0]['idtheme']."'";
-		//$col=tab_result($pgx,$d);
+	
 	if(count($couch)>0)
 		{
 			for ($r=0;$r<count($couch);$r++)
@@ -310,7 +315,6 @@ $req1="select distinct (col_theme.intitule_legende) as intitule_legende,col_them
 			}
 			$maprecherche.="LABELITEM ".$co1[0]['appel']." \n";
 			$maprecherche.="CLASS \n";
-		//$map.="EXPRESSION ('[constructi]' eq 'Bati dur') \n";
 			$maprecherche.="COLOR 150 254 150 \n";
 			$maprecherche.="LABEL \n";
 			$maprecherche.="ANTIALIAS true \n";
@@ -451,7 +455,6 @@ $$mapp.="END \n \n";
 			}
 			$maprecherche.="LABELITEM ".$co1[0]['appel']." \n";
 			$maprecherche.="CLASS \n";
-		//$map.="EXPRESSION ('[constructi]' eq 'Bati dur') \n";
 			$maprecherche.="COLOR 150 254 150 \n";
 			$maprecherche.="LABEL \n";
 			$maprecherche.="ANTIALIAS true \n";
@@ -485,7 +488,6 @@ $$mapp.="END \n \n";
     		$mapprincipal.="FILTER \"code_insee like '%insee%%'\" \n";
 			}
 			$mapprincipal.="CLASS \n";
-		//$map.="EXPRESSION ('[constructi]' eq 'Bati dur') \n";
 			$mapprincipal.="OUTLINECOLOR ".str_replace(","," ",$cou[$c]['style_stroke'])." \n";
 			$mapprincipal.="END \n";
 			$mapprincipal.="END \n \n";
@@ -556,7 +558,6 @@ $$mapp.="END \n \n";
     $$mapp.="FILTER \"code_insee like '%insee%%'\" \n";
 	}
 	$$mapp.="CLASS \n";
-		//$map.="EXPRESSION ('[constructi]' eq 'Bati dur') \n";
 		if($cou[$c]['style_fill']!='' && $cou[$c]['style_fill']!='none' )
 		{
 		$$mapp.="COLOR ".str_replace(","," ",$cou[$c]['style_fill'])." \n";
@@ -592,6 +593,6 @@ $filename = "../capm/".supp_acc($lib_appli[0]['libelle_appli']).".map";
 $myFile = fopen($filename, "w");  
 fputs($myFile, $data);
 fclose($myFile);
-echo "Le fichier MAP de l'application ".$lib_appli[0]['libelle_appli']." a ��g���avec success.<br>";
+echo "Le fichier MAP de l'application ".$lib_appli[0]['libelle_appli']." a été généré avec success.<br>";
 echo "<a href=\"./index.php\" target=\"_parent\">Retour</a>";
-?> 
+?>

@@ -513,7 +513,7 @@ $sql_app="select supp_chr_spec(libelle_appli) as libelle_appli from admin_svg.ap
 $app=tab_result($pgx,$sql_app);
 $application=$app[0]['libelle_appli'];
 //$application=str_replace(" ","_",$application);
-$url='http://'.$serv.'/cgi-bin/mapserv?map=/home/sig/intranet/capm/'.$application.'.map&insee='.$code_insee.'&sess='.session_id().'&parce='.stripslashes($parce).'&layer=cotation&layer='.$raster.$ech.$mapsize;
+$url='http://'.$serv.'/cgi-bin/mapserv?map=/home/sig/intranet/capm/'.$application.'.map&map_imagetype=jpeg&insee='.$code_insee.'&sess='.session_id().'&parce='.stripslashes($parce).'&layer=cotation&layer='.$raster.$ech.$mapsize;
 		$contenu=file($url);
        		while (list($ligne,$cont)=each($contenu)){
 			$numligne[$ligne]=$cont;
@@ -536,7 +536,7 @@ pg_exec($pgx,$sql);
 $pdf->AddFont('font1','','font1.php');
   $pdf->AddPage();
   
-$pdf->RotatedImage('../tmp/'.$tex[0].'.png',$posiximage,$posiyimage,$larimage,$hauimage,$angle);
+$pdf->RotatedImage('../tmp/'.$tex[0].'.jpg',$posiximage,$posiyimage,$larimage,$hauimage,$angle);
 $pdf->SetFont('font1','',$sizerosa);
 $pdf->RotatedText($posixrosa,$posiyrosa,'a',$angle);
 //$pdf->SetFont('arial','',12);

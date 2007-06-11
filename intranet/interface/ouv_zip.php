@@ -77,10 +77,10 @@ $fileattente = '../tmp/'.$nom.'.ok';
 	}
        if ($filename1!="") 
 	{
-	$fp = fopen ("../tmp/".$image.".png", 'r');
-    $content1 = fread($fp, filesize("../tmp/".$image.".png"));
+	$fp = fopen ("../tmp/".$image.".jpg", 'r');
+    $content1 = fread($fp, filesize("../tmp/".$image.".jpg"));
     fclose ($fp);
-    $zip->addfile($content1,$image.".png");
+    $zip->addfile($content1,$image.".jpg");
 	}
     // production de l'archive' Zip
     $archive = $zip->file();

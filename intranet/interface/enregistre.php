@@ -63,6 +63,16 @@ $str1 .="<defs>";
 $str1 .="<marker id='debut_mesure' markerWidth='5' markerHeight='10' orient='auto' refX='0' refY='5'><path pointer-events='none' fill='none' stroke='red' d='M 5 7.5 0 5 5 2.5' /></marker><marker id='fin_mesure' markerWidth='5' markerHeight='10' orient='auto' refX='5' refY='5'><path pointer-events='none' fill='none' stroke='red' d='M 0 7.5 5 5 0 2.5' /></marker>";
 $textq="";
 	if ($raster!=''){
+	$raster=str_replace("chr(224)","à",$raster);
+$raster=str_replace("chr(233)","é",$raster);
+$raster=str_replace("chr(232)","è",$raster);
+$raster=str_replace("chr(234)","ê",$raster);
+$raster=str_replace("chr(226)","â",$raster);
+$raster=str_replace("chr(231)","ç",$raster);
+$raster=str_replace("chr(244)","ô",$raster);
+$raster=str_replace("chr(238)","î",$raster);
+$raster=str_replace("chr(251)","û",$raster);
+$raster=str_replace("chr(95)","_",$raster);
 	$rastx=explode(";",$raster);
 	$raster="";
 	for($i=0;$i<count($rastx);$i++)
@@ -86,11 +96,11 @@ $application=str_replace(" ","_",$application);
 if(substr($_SESSION['code_insee'], -3)=='000')
 	{
 				
-$url="http://".$serv."/cgi-bin/mapserv?map=/home/sig/intranet/capm/".$application.".map&insee=".substr($_SESSION['code_insee'],0,3)."&layer=".$raster."&minx=".$xm."&miny=".$ym."&maxx=".$xma."&maxy=".$yma."&mapsize=1240%201040&parce=('')";
+$url="http://".$serv."/cgi-bin/mapserv?map=/home/sig/intranet/capm/".$application.".map&map_imagetype=jpeg&insee=".substr($_SESSION['code_insee'],0,3)."&layer=".$raster."&minx=".$xm."&miny=".$ym."&maxx=".$xma."&maxy=".$yma."&mapsize=1240%201040&parce=('')";
 }
 else
 {
-$url="http://".$serv."/cgi-bin/mapserv?map=/home/sig/intranet/capm/".$application.".map&insee=".$_SESSION['code_insee']."&layer=".$raster."&minx=".$xm."&miny=".$ym."&maxx=".$xma."&maxy=".$yma."&mapsize=1240%201040&parce=('')";
+$url="http://".$serv."/cgi-bin/mapserv?map=/home/sig/intranet/capm/".$application.".map&map_imagetype=jpeg&insee=".$_SESSION['code_insee']."&layer=".$raster."&minx=".$xm."&miny=".$ym."&maxx=".$xma."&maxy=".$yma."&mapsize=1240%201040&parce=('')";
 }
 		$contenu=file($url);
        		while (list($ligne,$cont)=each($contenu)){
@@ -105,7 +115,7 @@ $url="http://".$serv."/cgi-bin/mapserv?map=/home/sig/intranet/capm/".$applicatio
 		$image=$conte1[0];
 	error_reporting ($erreur);
 		$str1 .="<pattern id=\"imag\" height=\"".$hau."\" width=\"".$lar."\" patternUnits=\"userSpaceOnUse\" inkscape:collect=\"always\" patternTransform=\"translate(".$x.",".$y.")\">";
-$str1 .="<image height='".$hau."'  width='".$lar."' sodipodi:absref='c:\\carte\\".$image.".png' xlink:href='c:\\carte\\".$image.".png' /></pattern>";
+$str1 .="<image height='".$hau."'  width='".$lar."' sodipodi:absref='c:\\carte\\".$image.".jpg' xlink:href='c:\\carte\\".$image.".jpg' /></pattern>";
 		$textq.="<g>\n";
 		$textq.="<rect y='".$y."' x='".$x."' height='".$hau."' width='".$lar."' style='fill:url(#imag);stroke:none'/>";
 		$textq.="</g>\n";
@@ -117,7 +127,7 @@ $rast=$svg;
 {
 $rast=utf8_decode($svg);
 }*/
-if($nav!="1")
+if($nav!="0")
 {
 $rast=str_replace("chr(224)","à",$svg);
 $rast=str_replace("chr(233)","é",$rast);
