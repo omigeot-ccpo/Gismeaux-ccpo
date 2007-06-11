@@ -39,11 +39,38 @@ sinon récupérer périmètre communal dans cadastre
 sinon donner coordonnées de la fenetre englobante
 
 modifier le fichier interface/config.php
+dans la variable $config_serveur_smtp insérer la valeur du serveur smtp utilisable par le serveur du sig.
 
-modifier connexions/deb.php
+modifier intranet/connexion/deb.php et test_ssl/connexion/deb.php
+en ligne 34 remplacer par vos valeurs basepg, userpg, passpg
 
 modification httpd.conf
+dans le cas d'une fc5:
+	UseCanonicalName On
+	DocumentRoot /home/sig/intranet/
+modifier la directory de l'ancien DocumentRoot
+	<Directory "/home/sig/intranet/">
+	    Options -Indexes FollowSymLinks ExecCGI
+	    AllowOverride None
+	    Order allow,deny
+	    Allow from all
+	</Directory>
+modifier le VirtualHost example
+	<VirtualHost 126.2.0.100:80>
+	    ServerName stest
+	    ServerAlias stest.meaux.priv stest.meaux
+	</VirtualHost>
 
-modifier le style par défaut.
+modification conf.d/ssl.conf
+	DocumentRoot "/home/sig/test_ssl"
+	ServerName www.pays.fr:443
+	ServerAlias pays.fr pays
+	ServerAdmin sig@localhost #si serveur smtp en local
+attention apache n'autorise qu'un seul serveur ssl
 
-insérer logo.
+modification phpPgAdmin.conf
+ajoutez à la ligne "Allow from 127.0.0.1" les adresses IP de la ou des personnes chargés d'administrés les données du sig, séparé par un espace.
+
+modifier le style par défaut intranet/interface/css/default.css et renommer en code département(2c)+code agglo(1c)+codeinsee dela commune ('000' si agglo).css
+
+insérer logo dans intranet/logo et enregistrer référence dans table admin_svg.commune.
