@@ -1,16 +1,48 @@
 <?php
+/*Copyright Ville de Meaux 2004-2007
+contributeur: jean-luc Dechamp - robert Leguay 
+sig@meaux.fr
+
+Ce logiciel est un programme informatique fournissant une interface cartographique WEB communale. 
+
+Ce logiciel est rï¿½i par la licence CeCILL-C soumise au droit franï¿½is et
+respectant les principes de diffusion des logiciels libres. Vous pouvez
+utiliser, modifier et/ou redistribuer ce programme sous les conditions
+de la licence CeCILL-C telle que diffusï¿½ par le CEA, le CNRS et l'INRIA 
+sur le site "http://www.cecill.info".
+
+En contrepartie de l'accessibilitï¿½au code source et des droits de copie,
+de modification et de redistribution accordï¿½ par cette licence, il n'est
+offert aux utilisateurs qu'une garantie limitï¿½.  Pour les mï¿½es raisons,
+seule une responsabilitï¿½restreinte pï¿½e sur l'auteur du programme,  le
+titulaire des droits patrimoniaux et les concï¿½ants successifs.
+
+A cet ï¿½ard  l'attention de l'utilisateur est attirï¿½ sur les risques
+associï¿½ au chargement,  ï¿½l'utilisation,  ï¿½la modification et/ou au
+dï¿½eloppement et ï¿½la reproduction du logiciel par l'utilisateur ï¿½ant 
+donnï¿½sa spï¿½ificitï¿½de logiciel libre, qui peut le rendre complexe ï¿½
+manipuler et qui le rï¿½erve donc ï¿½des dï¿½eloppeurs et des professionnels
+avertis possï¿½ant  des connaissances  informatiques approfondies.  Les
+utilisateurs sont donc invitï¿½ ï¿½charger  et  tester  l'adï¿½uation  du
+logiciel ï¿½leurs besoins dans des conditions permettant d'assurer la
+sï¿½uritï¿½de leurs systï¿½es et ou de leurs donnï¿½s et, plus gï¿½ï¿½alement, 
+ï¿½l'utiliser et l'exploiter dans les mï¿½es conditions de sï¿½uritï¿½ 
+
+Le fait que vous puissiez accï¿½er ï¿½cet en-tï¿½e signifie que vous avez 
+pris connaissance de la licence CeCILL-C, et que vous en avez acceptï¿½les 
+termes.*/
 include("../connexion/deb.php");
 function supp_acc($texte)
 {
-$nom=str_replace("à","a",$texte);
-$nom=str_replace("é","e",$nom);
-$nom=str_replace("è","e",$nom);
-$nom=str_replace("ê","e",$nom);
-$nom=str_replace("â","a",$nom);
-$nom=str_replace("ç","c",$nom);
-$nom=str_replace("ô","o",$nom);
-$nom=str_replace("î","i",$nom);
-$nom=str_replace("û","u",$nom);
+$nom=str_replace("ï¿½,"a",$texte);
+$nom=str_replace("ï¿½,"e",$nom);
+$nom=str_replace("ï¿½,"e",$nom);
+$nom=str_replace("ï¿½,"e",$nom);
+$nom=str_replace("ï¿½,"a",$nom);
+$nom=str_replace("ï¿½,"c",$nom);
+$nom=str_replace("ï¿½,"o",$nom);
+$nom=str_replace("ï¿½,"i",$nom);
+$nom=str_replace("","u",$nom);
 $nom=str_replace(" ","_",$nom);
 return $nom;
 }
@@ -560,6 +592,6 @@ $filename = "../capm/".supp_acc($lib_appli[0]['libelle_appli']).".map";
 $myFile = fopen($filename, "w");  
 fputs($myFile, $data);
 fclose($myFile);
-echo "Le fichier MAP de l'application ".$lib_appli[0]['libelle_appli']." a été généré avec success.<br>";
+echo "Le fichier MAP de l'application ".$lib_appli[0]['libelle_appli']." a ï¿½ï¿½gï¿½ï¿½ï¿½avec success.<br>";
 echo "<a href=\"./index.php\" target=\"_parent\">Retour</a>";
 ?> 

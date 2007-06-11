@@ -1,4 +1,36 @@
 <?php 
+/*Copyright Ville de Meaux 2004-2007
+contributeur: jean-luc Dechamp - robert Leguay 
+sig@meaux.fr
+
+Ce logiciel est un programme informatique fournissant une interface cartographique WEB communale. 
+
+Ce logiciel est rï¿½i par la licence CeCILL-C soumise au droit franï¿½is et
+respectant les principes de diffusion des logiciels libres. Vous pouvez
+utiliser, modifier et/ou redistribuer ce programme sous les conditions
+de la licence CeCILL-C telle que diffusï¿½ par le CEA, le CNRS et l'INRIA 
+sur le site "http://www.cecill.info".
+
+En contrepartie de l'accessibilitï¿½au code source et des droits de copie,
+de modification et de redistribution accordï¿½ par cette licence, il n'est
+offert aux utilisateurs qu'une garantie limitï¿½.  Pour les mï¿½es raisons,
+seule une responsabilitï¿½restreinte pï¿½e sur l'auteur du programme,  le
+titulaire des droits patrimoniaux et les concï¿½ants successifs.
+
+A cet ï¿½ard  l'attention de l'utilisateur est attirï¿½ sur les risques
+associï¿½ au chargement,  ï¿½l'utilisation,  ï¿½la modification et/ou au
+dï¿½eloppement et ï¿½la reproduction du logiciel par l'utilisateur ï¿½ant 
+donnï¿½sa spï¿½ificitï¿½de logiciel libre, qui peut le rendre complexe ï¿½
+manipuler et qui le rï¿½erve donc ï¿½des dï¿½eloppeurs et des professionnels
+avertis possï¿½ant  des connaissances  informatiques approfondies.  Les
+utilisateurs sont donc invitï¿½ ï¿½charger  et  tester  l'adï¿½uation  du
+logiciel ï¿½leurs besoins dans des conditions permettant d'assurer la
+sï¿½uritï¿½de leurs systï¿½es et ou de leurs donnï¿½s et, plus gï¿½ï¿½alement, 
+ï¿½l'utiliser et l'exploiter dans les mï¿½es conditions de sï¿½uritï¿½ 
+
+Le fait que vous puissiez accï¿½er ï¿½cet en-tï¿½e signifie que vous avez 
+pris connaissance de la licence CeCILL-C, et que vous en avez acceptï¿½les 
+termes.*/
 session_start();
 if (! $PHP_AUTH_USER || ! $PHP_AUTH_PW){
 	header("WWW-authenticate: Basic realm=\"Veuillez vous identifier\"");
@@ -95,7 +127,7 @@ true, true, true, false);"></td></tr>
 	</select></td>
 	</tr>
     <tr><td>Droit</td><td><input name="droitu" type="text"></td></tr></table>
-	<input name="ins_util" type="button" value="Insérer" onclick="document.f1.submit();">
+	<input name="ins_util" type="button" value="Insï¿½er" onclick="document.f1.submit();">
 	<input name="anu_util" type="button" value="Annuler" onclick="neo_aba()">
 </div>
 <table width="200" height="15" border="1">
