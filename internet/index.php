@@ -5,31 +5,31 @@ sig@meaux.fr
 
 Ce logiciel est un programme informatique fournissant une interface cartographique WEB communale. 
 
-Ce logiciel est rï¿½i par la licence CeCILL-C soumise au droit franï¿½is et
+Ce logiciel est régi par la licence CeCILL-C soumise au droit français et
 respectant les principes de diffusion des logiciels libres. Vous pouvez
 utiliser, modifier et/ou redistribuer ce programme sous les conditions
-de la licence CeCILL-C telle que diffusï¿½ par le CEA, le CNRS et l'INRIA 
+de la licence CeCILL-C telle que diffusée par le CEA, le CNRS et l'INRIA 
 sur le site "http://www.cecill.info".
 
-En contrepartie de l'accessibilitï¿½au code source et des droits de copie,
-de modification et de redistribution accordï¿½ par cette licence, il n'est
-offert aux utilisateurs qu'une garantie limitï¿½.  Pour les mï¿½es raisons,
-seule une responsabilitï¿½restreinte pï¿½e sur l'auteur du programme,  le
-titulaire des droits patrimoniaux et les concï¿½ants successifs.
+En contrepartie de l'accessibilité au code source et des droits de copie,
+de modification et de redistribution accordés par cette licence, il n'est
+offert aux utilisateurs qu'une garantie limitée.  Pour les mêmes raisons,
+seule une responsabilité restreinte pèse sur l'auteur du programme,  le
+titulaire des droits patrimoniaux et les concédants successifs.
 
-A cet ï¿½ard  l'attention de l'utilisateur est attirï¿½ sur les risques
-associï¿½ au chargement,  ï¿½l'utilisation,  ï¿½la modification et/ou au
-dï¿½eloppement et ï¿½la reproduction du logiciel par l'utilisateur ï¿½ant 
-donnï¿½sa spï¿½ificitï¿½de logiciel libre, qui peut le rendre complexe ï¿½
-manipuler et qui le rï¿½erve donc ï¿½des dï¿½eloppeurs et des professionnels
-avertis possï¿½ant  des connaissances  informatiques approfondies.  Les
-utilisateurs sont donc invitï¿½ ï¿½charger  et  tester  l'adï¿½uation  du
-logiciel ï¿½leurs besoins dans des conditions permettant d'assurer la
-sï¿½uritï¿½de leurs systï¿½es et ou de leurs donnï¿½s et, plus gï¿½ï¿½alement, 
-ï¿½l'utiliser et l'exploiter dans les mï¿½es conditions de sï¿½uritï¿½ 
+A cet égard  l'attention de l'utilisateur est attirée sur les risques
+associés au chargement,  à l'utilisation,  à la modification et/ou au
+développement et à la reproduction du logiciel par l'utilisateur étant 
+donné sa spécificité de logiciel libre, qui peut le rendre complexe à 
+manipuler et qui le réserve donc à des développeurs et des professionnels
+avertis possédant  des connaissances  informatiques approfondies.  Les
+utilisateurs sont donc invités à charger  et  tester  l'adéquation  du
+logiciel à leurs besoins dans des conditions permettant d'assurer la
+sécurité de leurs systèmes et ou de leurs données et, plus généralement, 
+à l'utiliser et l'exploiter dans les mêmes conditions de sécurité. 
 
-Le fait que vous puissiez accï¿½er ï¿½cet en-tï¿½e signifie que vous avez 
-pris connaissance de la licence CeCILL-C, et que vous en avez acceptï¿½les 
+Le fait que vous puissiez accéder à cet en-tête signifie que vous avez 
+pris connaissance de la licence CeCILL-C, et que vous en avez accepté les 
 termes.*/
 $code_insee='770284';
 if (eregi('MSIE', $HTTP_USER_AGENT))
@@ -54,7 +54,7 @@ $nav="2";//mozilla
 <!---@IMPORT url(./ru/styl.css);  --->
 </STYLE>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<meta name="keywords" content="SVG, Scalable Vector Graphic, SIG, GIS, Mapserver, Postgis, Postgresql, MapInfo, gï¿½graphie, gï¿½matique, carte, cartographie, map, XML">
+<meta name="keywords" content="SVG, Scalable Vector Graphic, SIG, GIS, Mapserver, Postgis, Postgresql, MapInfo, géographie, géomatique, carte, cartographie, map, XML">
 <meta name="description" content="Carte SVG - renseignement d'urbanisme.">
 <meta name="Author" content="sig-meaux">
 <meta name="Identifier-URL" content="http://www.meaux.carto.fr">
@@ -93,8 +93,8 @@ $nav="2";//mozilla
 	echo "Utilisateur d'opera<br>";
 	echo "Pour utiliser la cartographie en  svg sur ce site<br>";
 	echo "Installez le plugin abode SvgViewer 3 fourni ci-dessous<br>";
-	echo "Une fois installï¿½allez avec l'explorer windows sur C:\Program Files\Fichiers communs\Adobe\SVG Viewer 3.0\<br>";
-	echo "Sï¿½ectionnez et Copiez les 2 fichiers (NPSVG3.dll,NPSVG3.zip) dans C:\Program Files\Opera\program\plugins<br>";
+	echo "Une fois installé, allez avec l'explorer windows sur C:\Program Files\Fichiers communs\Adobe\SVG Viewer 3.0\<br>";
+	echo "Sélectionnez et Copiez les 2 fichiers (NPSVG3.dll,NPSVG3.zip) dans C:\Program Files\Opera\program\plugins<br>";
 	echo "<a href=\"http://".$HTTP_HOST."/SVGView303.exe\">le plugin abode SvgViewer 3</a>";
 	echo "</td>";
 	}
@@ -104,13 +104,13 @@ $nav="2";//mozilla
 	echo "Utilisateur de Firefox<br>";
 	echo "Pour utiliser la cartographie en  svg sur ce site<br>";
 	echo "Installez le plugin abode SvgViewer 6 fourni ci-dessous<br>";
-	echo "Une fois installï¿½allez avec l'explorer windows sur C:\Program Files\Fichiers communs\Adobe\SVG Viewer 6.0\Plugins<br>";
-	echo "Sï¿½ectionnez et Copiez les 2 fichiers (NPSVG6.dll,NPSVG6.zip) dans C:\Program Files\Mozilla Firefox\plugins<br>";
-	echo "Si les 2 fichiers (NPSVG3.dll,NPSVG3.zip) sont prï¿½ents dans C:\Program Files\Mozilla Firefox\plugins<br>";
-	echo "Supprimez les pour ï¿½iter un mauvais fonctionnement.<br>";
+	echo "Une fois installé, allez avec l'explorer windows sur C:\Program Files\Fichiers communs\Adobe\SVG Viewer 6.0\Plugins<br>";
+	echo "Sélectionnez et Copiez les 2 fichiers (NPSVG6.dll,NPSVG6.zip) dans C:\Program Files\Mozilla Firefox\plugins<br>";
+	echo "Si les 2 fichiers (NPSVG3.dll,NPSVG3.zip) sont présents dans C:\Program Files\Mozilla Firefox\plugins<br>";
+	echo "Supprimez les pour éviter un mauvais fonctionnement.<br>";
 	echo "Lancez Firefox ,puis tapez \"about:config\" dans la barre d'adresse<br>";
 	echo "Dans la case filtre,tapez \"svg\"<br>";
-	echo "Dans la colonne \"valeur\" faite un double click gauche sur \"true\" pour passer ï¿½\"false\".<br>";
+	echo "Dans la colonne \"valeur\" faite un double click gauche sur \"true\" pour passer à \"false\".<br>";
 	echo "Relancez Firefox.<br>";
 	echo "<a href=\"http://".$HTTP_HOST."/SVGView6.exe\">le plugin abode SvgViewer 6</a>";
 	echo "</td>";
