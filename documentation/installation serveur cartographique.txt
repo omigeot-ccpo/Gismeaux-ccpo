@@ -1,0 +1,155 @@
+Installation des Librairies
+
+I] Les librairies
+####################################################################################################
+#Librairie   #	Vers    #				Lien					   #
+####################################################################################################
+#PROJ	     #	4.5.0	#ftp://ftp.remotesensing.org/proj/proj-4.5.0.tar.gz			   #
+#GEOS	     #	2.2.3	#http://geos.refractions.net/geos-2.2.3.tar.bz2				   #	   
+#POSTGRESQL  #	8.2.4	#ftp://ftp.postgresql.org/pub/source/v8.2.4/postgresql-8.2.4.tar.gz"	   #
+#POSTGIS     #	1.2.1	#http://postgis.refractions.net/download/postgis-1.2.1.tar.gz		   #
+#CURL	     #	7.16.0	#http://curl.haxx.se/download/curl-7.16.0.tar.gz			   #
+#FREETYPE    #	2.3.4	#http://download.savannah.gnu.org/releases/freetype/freetype-2.3.4.tar.gz  #
+#TIFF	     #	3.8.2	#ftp://ftp.remotesensing.org/pub/libtiff/tiff-3.8.2.tar.gz		   #
+#W3C-LIBWWW  #	5.4.0	#http://www.physionet.org/physiotools/libwww/w3c-libwww-5.4.0.tar.gz	   #
+#GDAL	     #	1.3.2	#http://www.gdal.org/dl/gdal-1.3.2.tar.gz				   #
+#MAPSERVER   #	4.10.2	#http://download.osgeo.org/mapserver/mapserver-4.10.2.tar.gz		   #
+####################################################################################################
+
+Les liens ont été testées le 08/06/2007,on verra plus loin comment les récupérer par un wget.
+Il est possible de trouver une librairie plus récente,dans ce cas ,verrifiez la compatibilté avec les autres librairies et modifiez le lien dans la procedure ci-dessous,
+
+II]Installation
+
+  II.1]Installation de Proj
+
+	cd /usr/local/src/
+	wget ftp://ftp.remotesensing.org/proj/proj-4.5.0.tar.gz
+	tar xvzf proj-4.5.0.tar.gz
+	cd proj-4.5.0
+	./configure
+	make
+	make install
+
+  II.2]Installation de Geos
+
+	cd /usr/local/src/
+	wget http://geos.refractions.net/geos-2.2.3.tar.bz2
+	tar xvjf geos-2.2.3.tar.bz2
+	cd geos-2.2.3
+	./configure
+	make
+	make install
+
+  II.3]Mise à jour du fichier ld.so.conf pour acceder aux librairies de Proj et Geos
+	
+	echo /usr/local/lib >> ld.so.conf
+	ldconfig
+
+  II.4]Installation de Postgresql
+
+	cd /usr/local/src/
+	wget ftp://ftp.postgresql.org/pub/source/v8.2.4/postgresql-8.2.4.tar.gz
+	tar xvzf postgresql-8.2.4.tar.gz
+	cd postgresql-8.2.4
+	./configure --with-libs=/usr/local/lib --with-includes=/usr/local/includes --enable-multibyte --with-CXX --prefix=/usr
+	make
+	make install
+
+  II.5]Installation de Postgis
+
+	cd /usr/local/src/
+	wget http://postgis.refractions.net/download/postgis-1.2.1.tar.gz
+	tar xvzf postgis-1.2.1.tar.gz
+	cd postgis-1.2.1
+	./configure --with-geos=/usr/local/bin/geos-config --enable-autoconf --with-proj=/usr/local --with-pgsql-src=/usr/local/src/postgresql-8.2.4
+	make
+	make install
+
+  II.6]Installation de Curl
+
+	cd /usr/local/src/
+	wget http://curl.haxx.se/download/curl-7.16.0.tar.gz
+	tar xvzf curl-7.16.0.tar.gz
+	cd curl-7.16.0
+	./configure
+	make
+	make install
+
+  II.7]Installation de Freetype
+
+	cd /usr/local/src/
+	wget http://download.savannah.gnu.org/releases/freetype/freetype-2.3.4.tar.gz
+	tar xvzf freetype-2.3.4.tar.gz
+	cd freetype-2.3.4
+	./configure
+	make
+	make install
+
+  II.8]Installation de Tiff
+
+	cd /usr/local/src/
+	wget ftp://ftp.remotesensing.org/pub/libtiff/tiff-3.8.2.tar.gz
+	tar xvzf tiff-3.8.2.tar.gz
+	cd tiff-3.8.2
+	./configure
+	make
+	make install
+ 
+ II.9]Installation de W3c-libwww
+
+	cd /usr/local/src/
+	wget http://www.physionet.org/physiotools/libwww/w3c-libwww-5.4.0.tar.gz
+	tar xvzf w3c-libwww-5.4.0.tar.gz
+	cd w3c-libwww-5.4.0
+	./configure
+	make
+	make install
+
+
+  II.10]Installation de Gdal
+
+	cd /usr/local/src/
+	wget http://www.gdal.org/dl/gdal-1.3.2.tar.gz
+	tar xvzf gdal-1.3.2.tar.gz
+	cd  gdal-1.3.2
+	./configure --with-libz=/usr --with-png=/usr --with-libtiff=internal --geotiff=internal --with-jpeg=/usr --with-geos=/usr/local/bin/geos-config --with-pg=/usr/local/pgsql/bin/pg_config --with-static-proj4=/usr
+	make
+	make install
+
+  II.10]Installation de Mapserver
+
+	cd /usr/local/src/
+	wget http://download.osgeo.org/mapserver/mapserver-4.10.2.tar.gz
+	tar xvzf mapserver-4.10.2.tar.gz
+	cd mapserver-4.10.2
+	./configure --with-jpeg=/usr --with-png=/usr --with-tiff=/usr --with-gd=/usr --with-threads --with-gdal=/usr/local/bin/gdal-config --with-postgis=/usr/local/pgsql/bin/pg_config --with-freetype=/usr --with-ogr --with-wmsclient --with-wfs --with-wfsclient --with-php=/usr/lib --with-proj=/usr/local
+	make
+	make install
+
+  II.11]Copie du fichier mapserv
+
+	cd /usr/local/src/mapserver-4.10.2/
+	cp mapserv /var/www/cgi-bin/
+
+  II.12]Initialisation de la base de données.
+
+	Pour initialiser la base,il faut indiquer son repertoire de stockage.
+		exemple:/home/sig/data
+
+	si l'utilisateur sig n'existe pas,il faut le créer: adduser sig
+	
+	création du répertoire data
+	cd /home/sig/
+	mkdir data
+
+	Il faut également indiquer le nom de la base
+		exemple:meaux
+	
+	cd /usr/local/pgsql
+	su sig -c «./bin/initdb -D /home/sig/data»
+	su sig -c «./bin/pg_ctl -D /home/sig/data start»
+	su sig -c «./bin/createdb meaux»
+	su sig -c «./bin/createlang plpgsql meaux»
+	su sig -c «./bin/psql -d meaux -f /usr/local/share/postgresql/contrib/lwpostgis.sql»
+	su sig -c «./bin/psql -d meaux -f /usr/local/share/postgresql/contrib/spatial_ref_sys.sql»
