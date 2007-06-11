@@ -1,0 +1,49 @@
+L'installation décrite correspond à celle que nous utilisons, dans certains cas des adresses fixes et non relatives ont du être utilisé dans notre développement.
+
+Sur notre serveur Linux nous avons créer un utilisateur 'sig' et dans son home nous avons créé les répertoires intranet, internet et test_ssl(extranet).
+/home
+  |_>sig
+      |_>intranet
+      |_>internet
+      |_>test_ssl
+
+ Copier les fichiers dans les repertoires correspondants.ou svn:????
+
+Créer les liens symboliques.
+	Dans répertoire internet
+		logo ->intranet/logo
+		tmp -> intranet/tmp
+		interface -> intranet/interface
+		connexion -> intranet/connexion
+		fpdf -> intranet/fpdf
+		ru -> intranet/ru
+		rrrr.php -> intranet/rrrr.php
+	Dans répertoire test_ssl
+		cgi-bin -> /var/www/cgi-bin
+		interface -> intranet/interface
+		logo -> intranet/logo
+
+Créer la tâche cron de nettoyage du répertoire 'intranet/tmp' a effectué toutes les 1/2 heures (script 'clean_tmp.dd').
+
+Créer les tables comme décrit dans table.txt. Remplacer '"+pg_utilis+"' par l'utilisateur postgres.
+Dans la table commune mettre la valeur par defaut de 'idagglo' à une valeur département(2c)+agglo(1c)+000
+Dans la création du superadministrateur modifier la valeur 'idcommune' pour lui permettre d'afficher les cartes communales, mais seul l'utilisateur 'sig1' peut voir tous les utilisateurs, les autres administrateurs voient les utilisateurs de leur agglomération, pas de gestion des utilisateurs au niveau communal.
+Dans postgres dans le schema 'general' table 'testmenu' les valeurs correspondent à celle de notre site !!! à modifier dès la fin des tests.Il s'agit du menu du site internet.Une prochaine version devrait pour la partie réglement lire directement le contenu du repertoire de la commune concernée.
+
+Insertion BDTOPO
+copier les données au format shapefile dans un répertoire, puis dans une console lancer "./maj.sh repdelabdtopo bd_topo nomdelabase" qui se chargera d'insérer les données de la BDTOPO dans postgrès.
+
+créer la commune dans la table commune.
+si BDTOPO commande sql "insert into admin_svg.commune (select *,? from bd_topo.commune);"
+sinon récupérer périmètre communal dans cadastre 
+sinon donner coordonnées de la fenetre englobante
+
+modifier le fichier interface/config.php
+
+modifier connexions/deb.php
+
+modification httpd.conf
+
+modifier le style par défaut.
+
+insérer logo.
