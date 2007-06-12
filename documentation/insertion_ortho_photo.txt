@@ -1,0 +1,11 @@
+copier les *.tif et les *.tfw dans un répertoire. "par ex :/home/sig/ortho"
+
+lancer "perl trtiff2png.pl <répertoire source> <répertoire destination> <echelle 1> ... <echelle n>"
+	répertoire source où ont été copié les *.tif en suivant l'exemple "/home/sig/ortho"
+	début du nom des répertoire contenant les fichiers mis à l'echelle "par ex : tt"
+	echelle = % de l'image originale souhaitée (par ex : 100 25 8)
+le programme se charge de créer les répertoires correspondant à chaque echelle 
+
+lancer "./gdaltindex /home/sig/intranet/capm/data/rast100.shp /home/sig/ortho/tt100/*.png"
+puis "./gdaltindex /home/sig/intranet/capm/data/rast25.shp /home/sig/ortho/tt25/*.png"
+puis "./gdaltindex /home/sig/intranet/capm/data/rast8.shp /home/sig/ortho/tt8/*.png"
