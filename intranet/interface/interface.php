@@ -137,11 +137,11 @@ $lay="var controllay=new Array;";
 $j=0;
 for ($c=0;$c<count($cou);$c++)
 {
-$req1="select distinct (col_theme.intitule_legende) as intitule_legende,col_theme.fill,col_theme.symbole,col_theme.font_size,col_theme.font_familly,col_theme.opacity,col_theme.ordre from admin_svg.appthe join admin_svg.col_theme on appthe.idappthe=col_theme.idappthe join admin_svg.theme on appthe.idtheme=theme.idtheme";
+$req1="select distinct (col_theme.intitule_legende) as intitule_legende,col_theme.fill,col_theme.stroke_rgb,col_theme.symbole,col_theme.font_size,col_theme.font_familly,col_theme.opacity,col_theme.ordre from admin_svg.appthe join admin_svg.col_theme on appthe.idappthe=col_theme.idappthe join admin_svg.theme on appthe.idtheme=theme.idtheme";
 	if($cou[$c]['v_fixe']=='1' and $cou[$c]['colonn']<>'')
 	{
 	$req1.=" join ".$cou[$c]['schema'].".".$cou[$c]['tabl']." on col_theme.valeur_texte=".$cou[$c]['tabl'].".".$cou[$c]['colonn']." where 					appthe.idapplication=".$appli." and theme.libelle_them='".$cou[$c]['nom_theme']."'";
-	if(substr($_SESSION['code_insee'], -3)!='000')
+	if(substr($_SESSION['code_insee'], -3)!='000' && $cou[$c]['schema']!="bd_topo")
 	{
 	$req1.=" and ".$cou[$c]['tabl'].".code_insee like '".$_SESSION['code_insee']."'";
 	 }
@@ -191,9 +191,13 @@ $req1="select distinct (col_theme.intitule_legende) as intitule_legende,col_them
 	else
 	{
 	$leg=$cou[$c]['idappthe'].".".$cou[$c]['nom_theme'];
-		if($cou[$c]['testraster']=='' && $cou[$c]['raster']!='t')
+		if($cou[$c]['testraster']=='')
 		{
 		$typ='';
+		if($cou[$c]['zoommax']<$cou[$c]['zoommax_raster'])
+		{
+		$typ='raster';
+		}
 		if($cou[$c]['raster']=='f')
 		{
 		$zz=$cou[$c]['zoommin'];
@@ -267,10 +271,7 @@ $lay.="controllay[".$c."]=new ylayer(".$cou[$c]['zoommin'].",".$cou[$c]['zoommax
 		$y1=$y+12;
 		for ($w=0;$w<count($couch);$w++)
 		{
-			if($couch[$w]['fill']=="")
-			{
-			$couch[$w]['fill']="0,0,0";
-			}
+			
 			if($couch[$w]['symbole']!="" and ereg("[^abefghijnYZ]",$couch[$w]['symbole']))
 			{
 			$texte=fopen("./police.svg","r");
@@ -289,14 +290,26 @@ $lay.="controllay[".$c."]=new ylayer(".$cou[$c]['zoommin'].",".$cou[$c]['zoommax
 			
 		$chaine.="<g id='control".$z.codalpha($w+1)."' visibility='hidden'></g>\n";
 		$legende.="<rect id=\"coche".$z.codalpha($w+1)."\" x=\"662\" y=\"".$y1."\" width=\"8\" height=\"8\" onclick=\"extract('".$cou[$c]['idappthe'].".".$couch[$w]['intitule_legende']."','".$z.codalpha($w+1)."','','".$typ."')\"/>\n";
-    		if($couch[$w]['symbole']!="")
+    		if($couch[$w]['stroke_rgb']!="" && ($couch[$w]['fill']==""||$couch[$w]['fill']=="none"))
 			{
-			$legende.="<text id=\"coul".$z.codalpha($w+1)."\" x=\"672\" y=\"".($y1+8)."\" font-size=\"12\" stroke=\"none\" font-family=\"fontsvg\" fill=\"rgb(".$couch[$w]['fill'].")\">".$couch[$w]['symbole']."</text>\n";
+			$coucoul=$couch[$w]['stroke_rgb'];
+			}
+			else
+			{
+			$coucoul=$couch[$w]['fill'];
+			}
+			if($coucoul=="")
+			{
+			$couch[$w]['fill']="0,0,0";
+			}
+			if($couch[$w]['symbole']!="")
+			{
+			$legende.="<text id=\"coul".$z.codalpha($w+1)."\" x=\"672\" y=\"".($y1+8)."\" font-size=\"12\" stroke=\"none\" font-family=\"fontsvg\" fill=\"rgb(".$coucoul.")\">".$couch[$w]['symbole']."</text>\n";
 			}
 			else
 			{
 			
-			$legende.="<rect id=\"coul".$z.codalpha($w+1)."\" x=\"674\" y=\"".$y1."\" width=\"8\" height=\"8\" fill=\"rgb(".$couch[$w]['fill'].")\"/>\n";
+			$legende.="<rect id=\"coul".$z.codalpha($w+1)."\" x=\"674\" y=\"".$y1."\" width=\"8\" height=\"8\" fill=\"rgb(".$coucoul.")\"/>\n";
 			}
 			$y1=$y1+12;
     		
@@ -477,6 +490,7 @@ $data.="</g>
 <g id='dess' stroke-width='0.2'>
 	
 	</g>
+
 </g>
 	</svg>
 	

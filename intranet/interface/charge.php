@@ -136,7 +136,9 @@ $d="select * from admin_svg.col_sel where idtheme='".$cou[0]['idtheme']."'";
 		$col=tab_result($pgx,$d);
 		$f="select ";
 		$geometrie="";
+		
 		for ($z=0;$z<count($col);$z++){
+		
 		if($col[$z]['nom_as']=='rotation')
 		{
 		$rotation='true';
@@ -151,20 +153,48 @@ $d="select * from admin_svg.col_sel where idtheme='".$cou[0]['idtheme']."'";
 			}
 		}
 		$f=substr($f,0,-1)." from ".$cou[0]['schema'].".".$cou[0]['tabl'];
-		if ($cou[0]['partiel']==1){
-            if (substr($_SESSION['code_insee'], -3) == "000"){
-                $f.=" where code_insee like '".substr($_SESSION['code_insee'],0,3)."%' and ".$geometrie." && box'($xm,$ym,$xma,$yma)'";
-            }else{
-                $f.=" where code_insee like '".$_SESSION['code_insee']."%' and ".$geometrie." && box'($xm,$ym,$xma,$yma)'";
-            }
+		if ($cou[0]['partiel']==1)
+		{
+            if($cou[0]['schema']!="bd_topo")
+			{
+				if (substr($_SESSION['code_insee'], -3) == "000")
+					{
+					
+                	$f.=" where code_insee like '".substr($_SESSION['code_insee'],0,3)."%' and ".$geometrie." && box'($xm,$ym,$xma,$yma)'";
+            		}
+				else
+					{
+					
+                	$f.=" where code_insee like '".$_SESSION['code_insee']."%' and ".$geometrie." && box'($xm,$ym,$xma,$yma)'";
+            		}
+			}
+			else
+			{
+			
+			$f.=" where ".$geometrie." && box'($xm,$ym,$xma,$yma)'";
+			}
+				
         }
 		else
 		{
-		 if (substr($_SESSION['code_insee'], -3) == "000"){
-                $f.=" where code_insee like '".substr($_SESSION['code_insee'],0,3)."%'";
-            }else{
-                $f.=" where code_insee = '".$_SESSION['code_insee']."'";
-            }
+		 
+		 	if($cou[0]['schema']!="bd_topo")
+				{
+		 		if (substr($_SESSION['code_insee'], -3) == "000")
+		 			{
+					
+                	$f.=" where code_insee like '".substr($_SESSION['code_insee'],0,3)."%'";
+            		}
+				else
+					{
+					
+                	$f.=" where code_insee = '".$_SESSION['code_insee']."'";
+            		}
+				}
+				else
+				{
+				$f.=" where 1=1";
+				}
 		}
 		
 		$j="select * from admin_svg.col_where where idtheme='".$cou[0]['idtheme']."'";
@@ -172,6 +202,7 @@ $d="select * from admin_svg.col_sel where idtheme='".$cou[0]['idtheme']."'";
 		if (count($whr)>0){
 			
 			$f.=" and ".str_replace("VALEUR","'".$_SESSION['code_insee']."'",$whr[0]['clause']);
+						
 			}
 		
 		if($geometrie!="")

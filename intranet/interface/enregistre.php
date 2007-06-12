@@ -184,7 +184,7 @@ $d="select * from admin_svg.col_sel where idtheme='".$cou[$l]['idtheme']."'";
 		}
 		$f=substr($f,0,-1)." from ".$cou[$l]['schema'].".".$cou[$l]['tabl'];
 		//if ($cou[0]['partiel']==1){
-            if (substr($_SESSION['code_insee'], -3) == "000"){
+            if (substr($_SESSION['code_insee'], -3) == "000" || $cou[$l]['schema']=="bd_topo"){
                 $f.=" where ".$geometrie." && box'(".$xm.",".$ym.",".$xma.",".$yma.")'";
             }else{
                 $f.=" where code_insee like '".$_SESSION['code_insee']."%' and ".$geometrie." && box'(".$xm.",".$ym.",".$xma.",".$yma.")'";

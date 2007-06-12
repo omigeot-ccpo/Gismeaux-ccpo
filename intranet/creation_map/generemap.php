@@ -245,12 +245,14 @@ $map.="END \n";
 $req2="select appthe.idtheme,theme.libelle_them as nom_theme,theme.schema,theme.tabl,appthe.idappthe,col_theme.colonn,admin_svg.v_fixe(col_theme.valeur_texte),theme.raster as raster,style.fill as style_fill,style.symbole as style_symbole,style.opacity  as style_opacity,style.font_size  as style_fontsize,style.stroke_rgb  as style_stroke,appthe.objprincipal,appthe.objrecherche from admin_svg.appthe join admin_svg.theme on appthe.idtheme=theme.idtheme join admin_svg.application on appthe.idapplication=application.idapplication left outer join  admin_svg.col_theme on appthe.idappthe=col_theme.idappthe left outer join admin_svg.style on appthe.idtheme=style.idtheme where appthe.idapplication=".$appli." group by appthe.idtheme,theme.libelle_them,appthe.ordre,theme.schema,theme.tabl,col_theme.colonn,admin_svg.v_fixe(col_theme.valeur_texte),theme.raster,style.fill,style.symbole,style.opacity,style.font_size,style.stroke_rgb,appthe.idappthe,appthe.objprincipal,appthe.objrecherche order by appthe.ordre desc";
 
 $cou=tab_result($pgx,$req2);
-
+$mapprincipal="";
+$maprecherche="";
+$clause="";
 for ($c=0;$c<count($cou);$c++)
 {
 $clause="";
-$mapprincipal="";
-$maprecherche="";
+
+
 $d="select appel from admin_svg.col_sel where idtheme='".$cou[$c]['idtheme']."' and nom_as='geom'";
 		$col=tab_result($pgx,$d);
 $dd="select appel from admin_svg.col_sel where idtheme='".$cou[$c]['idtheme']."' and nom_as='ad'";
@@ -330,6 +332,7 @@ $req1="select distinct (col_theme.intitule_legende) as intitule_legende,col_them
 			
 			if($cou[$c]['objprincipal']=="t")
 			{
+			
 			$mapprincipal.="LAYER \n";
 	$mapprincipal.="CONNECTIONTYPE postgis \n";
 	$mapprincipal.="NAME \"".str_replace(" ","_",$couch[$r]['intitule_legende'])."\" group \"".str_replace(" ","_",$cou[$c]['nom_theme'])."\" \n";
@@ -344,7 +347,7 @@ $req1="select distinct (col_theme.intitule_legende) as intitule_legende,col_them
 	}
 	$mapprincipal.="STATUS on \n";
 	$mapprincipal.="TYPE ".$type." \n";
-    if($clause=="")
+    if($clause=="" && $cou[$c]['schema']!="bd_topo")
 	{
     $mapprincipal.="FILTER \"code_insee like '%insee%%'\" \n";
 	}
@@ -371,7 +374,7 @@ $req1="select distinct (col_theme.intitule_legende) as intitule_legende,col_them
 	if($type=="point")
 	{
 	$$mapp.="TYPE annotation \n";
-	if($clause=="")
+	if($clause=="" && $cou[$c]['schema']!="bd_topo")
 	{
     $$mapp.="FILTER \"code_insee like '%insee%%'\" \n";
 	}
@@ -407,7 +410,7 @@ $req1="select distinct (col_theme.intitule_legende) as intitule_legende,col_them
 	else
 	{
 	$$mapp.="TYPE ".$type." \n";
-    if($clause=="")
+    if($clause=="" && $cou[$c]['schema']!="bd_topo")
 	{
     $$mapp.="FILTER \"code_insee like '%insee%%'\" \n";
 	}
@@ -433,6 +436,7 @@ $$mapp.="END \n \n";
 		}
 	elseif($cou[$c]['raster']=='')
 	{
+		
 		if($cou[$c]['objrecherche']=="t")
 			{
 			$maprecherche.="LAYER \n";
@@ -469,6 +473,7 @@ $$mapp.="END \n \n";
 		
 		if($cou[$c]['objprincipal']=="t")
 			{
+			
 			$mapprincipal.="LAYER \n";
 			$mapprincipal.="CONNECTIONTYPE postgis \n";
 			$mapprincipal.="NAME \"".str_replace(" ","_",$cou[$c]['nom_theme'])."\" group \"".str_replace(" ","_",$cou[$c]['nom_theme'])."\" \n";
@@ -483,7 +488,7 @@ $$mapp.="END \n \n";
 			}
 			$mapprincipal.="STATUS on \n";
 			$mapprincipal.="TYPE ".$type." \n";
-			if($clause=="")
+			if($clause=="" && $cou[$c]['schema']!="bd_topo")
 			{
     		$mapprincipal.="FILTER \"code_insee like '%insee%%'\" \n";
 			}
@@ -509,7 +514,7 @@ $$mapp.="END \n \n";
 	if($cou[$c]['style_symbole'] !="")
 	{
 	$$mapp.="TYPE annotation \n";
-	if($clause=="")
+	if($clause=="" && $cou[$c]['schema']!="bd_topo")
 	{
     $$mapp.="FILTER \"code_insee like '%insee%%'\" \n";
 	}
@@ -531,7 +536,7 @@ $$mapp.="END \n \n";
 	elseif($cou[$c]['style_fontsize'] !="" && $cou[$c]['style_symbole'] =="")
 	{
 	$$mapp.="TYPE annotation \n";
-	if($clause=="")
+	if($clause=="" && $cou[$c]['schema']!="bd_topo")
 	{
     $$mapp.="FILTER \"code_insee like '%insee%%'\" \n";
 	}
@@ -553,7 +558,7 @@ $$mapp.="END \n \n";
 	else
 	{
 	$$mapp.="TYPE ".$type." \n";
-	if($clause=="")
+	if($clause=="" && $cou[$c]['schema']!="bd_topo")
 	{
     $$mapp.="FILTER \"code_insee like '%insee%%'\" \n";
 	}
@@ -595,4 +600,5 @@ fputs($myFile, $data);
 fclose($myFile);
 echo "Le fichier MAP de l'application ".$lib_appli[0]['libelle_appli']." a été généré avec success.<br>";
 echo "<a href=\"./index.php\" target=\"_parent\">Retour</a>";
-?>
+
+?> 
