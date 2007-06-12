@@ -1,6 +1,6 @@
-L'installation dÃ©crite correspond Ã  celle que nous utilisons, dans certains cas des adresses fixes et non relatives ont du Ãªtre utilisÃ© dans notre dÃ©veloppement.
+L'installation décrite correspond à celle que nous utilisons, dans certains cas des adresses fixes et non relatives ont du être utilisé dans notre développement donc si une autre structure est retenue il faudra corriger en conséquence les adresses fixes.
 
-Sur notre serveur Linux nous avons crÃ©er un utilisateur 'sig' et dans son home nous avons crÃ©Ã© les rÃ©pertoires intranet, internet et test_ssl(extranet).
+Sur notre serveur Linux nous avons créer un utilisateur 'sig' et dans son home nous avons créé les répertoires intranet, internet et test_ssl(extranet).
 /home
   |_>sig
       |_>intranet
@@ -9,8 +9,8 @@ Sur notre serveur Linux nous avons crÃ©er un utilisateur 'sig' et dans son home 
 
  Copier les fichiers dans les repertoires correspondants.ou svn:????
 
-CrÃ©er les liens symboliques.
-	Dans rÃ©pertoire internet
+Créer les liens symboliques.
+	Dans répertoire internet
 		logo ->intranet/logo
 		tmp -> intranet/tmp
 		interface -> intranet/interface
@@ -18,34 +18,34 @@ CrÃ©er les liens symboliques.
 		fpdf -> intranet/fpdf
 		ru -> intranet/ru
 		rrrr.php -> intranet/rrrr.php
-	Dans rÃ©pertoire test_ssl
+	Dans répertoire test_ssl
 		cgi-bin -> /var/www/cgi-bin
 		interface -> intranet/interface
 		logo -> intranet/logo
 
-CrÃ©er la tÃ¢che cron de nettoyage du rÃ©pertoire 'intranet/tmp' a effectuÃ© toutes les 1/2 heures (script 'clean_tmp.dd').
+Créer la tâche cron de nettoyage du répertoire 'intranet/tmp' a effectué toutes les 1/2 heures (script 'clean_tmp.dd').
 
-CrÃ©er les tables comme dÃ©crit dans table.txt. Remplacer '"+pg_utilis+"' par l'utilisateur postgres.
-Dans la table commune mettre la valeur par defaut de 'idagglo' Ã  une valeur dÃ©partement(2c)+agglo(1c)+000
-Dans la crÃ©ation du superadministrateur modifier la valeur 'idcommune' pour lui permettre d'afficher les cartes communales, mais seul l'utilisateur 'sig1' peut voir tous les utilisateurs, les autres administrateurs voient les utilisateurs de leur agglomÃ©ration, pas de gestion des utilisateurs au niveau communal.
-Dans postgres dans le schema 'general' table 'testmenu' les valeurs correspondent Ã  celle de notre site !!! Ã  modifier dÃ¨s la fin des tests.Il s'agit du menu du site internet.Une prochaine version devrait pour la partie rÃ©glement lire directement le contenu du repertoire de la commune concernÃ©e.
+Créer les tables comme décrit dans table.txt. Remplacer '"+pg_utilis+"' par l'utilisateur postgres.
+Dans la table commune mettre la valeur par defaut de 'idagglo' à une valeur département(2c)+agglo(1c)+000
+Dans la création du superadministrateur modifier la valeur 'idcommune' pour lui permettre d'afficher les cartes communales, mais seul l'utilisateur 'sig1' peut voir tous les utilisateurs, les autres administrateurs voient les utilisateurs de leur agglomération, pas de gestion des utilisateurs au niveau communal.
+Dans postgres dans le schema 'general' table 'testmenu' les valeurs correspondent à celle de notre site !!! à modifier dés la fin des tests.Il s'agit du menu du site internet.Une prochaine version devrait pour la partie réglement lire directement le contenu du repertoire de la commune concernée.
 
 Insertion BDTOPO
-copier les donnÃ©es au format shapefile dans un rÃ©pertoire, puis dans une console lancer "./maj.sh repdelabdtopo bd_topo nomdelabase" qui se chargera d'insÃ©rer les donnÃ©es de la BDTOPO dans postgrÃ¨s.
+copier les données au format shapefile dans un répertoire, puis dans une console lancer "./maj.sh repdelabdtopo bd_topo nomdelabase" qui se chargera d'insérer les données de la BDTOPO dans postgrès.
 
-crÃ©er la commune dans la table commune.
+créer la commune dans la table commune.
 si BDTOPO commande sql "insert into admin_svg.commune (select *,? from bd_topo.commune);"
-sinon rÃ©cupÃ©rer pÃ©rimÃ¨tre communal dans cadastre 
-sinon donner coordonnÃ©es de la fenetre englobante
+sinon récupérer périmètre communal dans cadastre 
+sinon donner coordonnées de la fenetre englobante
 
 modifier le fichier interface/config.php
-dans la variable $config_serveur_smtp insÃ©rer la valeur du serveur smtp utilisable par le serveur du sig.
+dans la variable $config_serveur_smtp insérer la valeur du serveur smtp utilisable par le serveur du sig.
 
 modifier intranet/connexion/deb.php et test_ssl/connexion/deb.php
 en ligne 34 remplacer par vos valeurs basepg, userpg, passpg
 
 modification httpd.conf
-dans le cas d'une fc5:
+dans le cas d'une fedora core 5:
 	UseCanonicalName On
 	DocumentRoot /home/sig/intranet/
 modifier la directory de l'ancien DocumentRoot
@@ -69,8 +69,8 @@ modification conf.d/ssl.conf
 attention apache n'autorise qu'un seul serveur ssl
 
 modification phpPgAdmin.conf
-ajoutez Ã  la ligne "Allow from 127.0.0.1" les adresses IP de la ou des personnes chargÃ©s d'administrÃ©s les donnÃ©es du sig, sÃ©parÃ© par un espace.
+ajoutez à la ligne "Allow from 127.0.0.1" les adresses IP de la ou des personnes chargés d'administrés les données du sig, séparé par un espace.
 
-modifier le style par dÃ©faut intranet/interface/css/default.css et renommer en code dÃ©partement(2c)+code agglo(1c)+codeinsee dela commune ('000' si agglo).css
+modifier le style par défaut intranet/interface/css/default.css et renommer en code département(2c)+code agglo(1c)+codeinsee dela commune ('000' si agglo).css
 
-insÃ©rer logo dans intranet/logo et enregistrer rÃ©fÃ©rence dans table admin_svg.commune.
+insérer logo dans intranet/logo et enregistrer référence dans table admin_svg.commune.

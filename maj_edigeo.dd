@@ -1,0 +1,29 @@
+#!/bin/sh
+cd $1
+inter=0		#commande de creation des tables au début du fichier si =0
+  for i in * ;do
+  	mkdir /home/sig/decompo/$i
+  	cd $i
+	commune=$2${i:4:3}
+  	for o in *;do
+ 		sect=${o:14:2}
+		cd /home/sig/$1/$i/$o
+  		tar -xjf /home/sig/$1/$i/$o/$o.tar.bz2 
+ 		perl /home/sig/edi2mif.pl /home/sig/$1/$i/$o /home/sig/decompo/$i test_cadastre $commune $inter
+		cd ..
+		inter=1	#on ne créé les tables qu'une fois!
+  	done
+  	cd /home/sig
+  	cd $1
+ done
+cd /home/sig/decompo
+
+#boucle de lecture des fichiers sql
+for i in *;do
+	for o in $i/*.sql;do
+		#echo $o
+		/usr/local/pgsql/bin/psql -e meaux -f $o
+	done
+done
+cd ..
+/usr/local/pgsql/bin/psql -e meaux -f maj_edigeo_sql.sql

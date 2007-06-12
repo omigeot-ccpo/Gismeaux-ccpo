@@ -1,0 +1,27 @@
+Importation MajicII
+1.copier sur serveur fichier REVNBAT, REVBATI, REVPROP, TOPFANR depuis le cd.
+2.Appeler avec navigateur 'http://serveur/cadastre/insert_cadastre.php'
+Année d'insertion si mise à jour (permet de nommée les tables de sauvegarde)
+indiquer l'emplacement et le nom complet des fichiers
+choisir le ou les gestionnaires de base de données et indiquez les paramètres correspondants
+si choix « création »:création des tables avant insertion; si choix « mise à jour »: sauvegarde des 
+tables de l'année précédente suivi de l'insertion.
+3.modifier le code direction pour gestion de plusieurs communautés de communes sur le même serveur : 
+» update cadastre,parcel set commune = substring(commune,0,3)||'X'||substring(commune,4) where commune 
+in ('') «  où X remplace l'identification de la communauté(62 posibilités:A-Z,a-z,0-9)
+modification à réaliser sur les tables suivantes: batidgi, propriet,p_subdif, p_exoner, voies, 
+b_taxdgi, b_subdgi, b_prodgi, b_habdgi, b_exodgi, b_depdgi.	
+4.modifier table parcel : « update cadastre,parcel set par1=ltrim(par1) where oid=oid »
+
+Importation EDIGEO
+Dans un répertoire (appelé edigeo par la suite), créer un répertoire com-XXX (XXX=code insee de la commune) pour chaque commune faisant partie de l'échange, copier dedans les répertoires de chaques feuilles. 
+1.modifier le fichier maj_edigeo.dd en lui indiquant votre répertoire perso, vérifier le chemin 
+d'accès au différent fichiers, le nom de la database
+2.modifier le fichier maj_edigeo_sql.sql en indiquant l'année dans le nom des tables sauvegardés.
+3.créer le répertoire decompo
+4.créer dans postgrès le schéma test_cadastre, dans le cas d'une mise à jour le vider.
+5.lancer « ./maj_edigeo.dd  edigeo 770 » où edigeo represente le répertoire où sont copier les 
+fichiers au format EDIGEO (si fichier compressé de type bz2 le programme les décompresse) et 
+770 l'identifiant composé du département et d'un indice pour la gestion de différentes communautés 
+de commune sur le même serveur.
+6.faire le ménage
