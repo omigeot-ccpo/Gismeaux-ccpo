@@ -79,7 +79,7 @@ class PDF extends FPDF {
 
   }
 }
-include("../rrrr.php");
+//include("../rrrr.php");
 include("../connexion/deb.php");
 
 $nocoche="deco.png";
