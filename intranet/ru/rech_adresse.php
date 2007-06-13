@@ -32,7 +32,7 @@ Le fait que vous puissiez accéder à cet en-tête signifie que vous avez
 pris connaissance de la licence CeCILL-C, et que vous en avez accepté les 
 termes.*/
 include("../connexion/deb.php");
-$sql = "SELECT  ccosec,dnupla FROM parcel WHERE dnuvoi='$nter' AND dindic='$cpter' AND ccoriv LIKE '$code'";
+$sql = "SELECT  ccosec,dnupla FROM cadastre.parcel WHERE dnuvoi='$nter' AND dindic='$cpter' AND ccoriv LIKE '$code'";
 
 $result = tab_result($pgx,$sql) ;
 if(count($result)==0){

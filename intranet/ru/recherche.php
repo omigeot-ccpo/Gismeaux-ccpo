@@ -44,7 +44,7 @@ print("<form name='form1' method='post' action='rech_adresse.php'>
  
   
 $sql = "SELECT code_voie,nom_voie
-FROM voies 
+FROM cadastre.voies 
 WHERE nom_voie 
 LIKE '%$libelleter%' ";
 
