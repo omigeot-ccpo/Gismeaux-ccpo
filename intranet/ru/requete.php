@@ -139,10 +139,10 @@ fclose($fp);
 $rq = tab_result($pgx,$q);
 if (count($rq)==0){header("Location: ./messparcel.php");}
 else{
-     $q1="select nom,tel_urba,horaire_urba,plu_pos,approb,modif from general.commune where code_insee = '".$codeinsee."'";
+     $q1="select nom,tel_urba,horaire_urba,plu_pos,approb,modif,larg_logo from admin_svg.commune where idcommune = '".$codeinsee."'";
      $r1=tab_result($pgx,$q1);
-     $qq="select larg_logo from cadastre.commune where cod_comm = '".$codeinsee."'";
-     $rr1=tab_result($pgx,$qq);
+     /*$qq="select larg_logo from cadastre.commune where cod_comm = '".$codeinsee."'";
+     $rr1=tab_result($pgx,$qq);*/
      //creation du fichier pdf
      $pdf=new PDF();
      $pdf->Open();
@@ -156,7 +156,7 @@ else{
      $pdf->Setautopagebreak(0,0);
      //fixe la marge droite des textes qui suivent
      $pdf->SetrightMargin(5);
-     $larg=(70*$rr1[0]['larg_logo'])/300;
+     $larg=(70*$r1[0]['larg_logo'])/100;
      $pdf->Image("../logo/".$codeinsee.".png",10,8,$larg,'20','','');
      //on se positionne à 130mm du bord gauche et à 15 mm du bord haut
      $pdf->Setxy(130,10);
@@ -287,9 +287,11 @@ $pdf->Setx(140);
 $pdf->Write(3,$beneficaire);
 $pdf->Ln();
 $y=$pdf->GetY()+$alig;
+//pas de données sur Zone d'Aménagement Différé donc nocoche par defaut à remplacer par un test si on possede la donnée
 $pdf->Image($nocoche,10,$y,3,3,'','');
 $pdf->Setxy(15,$y);//$pdf->Setxy(15,90);
 $pdf->Write(3,'Zone d'.chr(180).'Aménagement Différé');
+//pas de données sur Espaces Naturels Sensibles donc nocoche par defaut à remplacer par un test si on possede la donnée
 $pdf->Image($nocoche,120,$y,3,3,'','');
 $pdf->Setx(125);
 $pdf->Write(3,'Espaces Naturels Sensibles');
@@ -394,6 +396,7 @@ if($ppmh=="true"){$ppmh="okcoche.png";}else{$ppmh="deco.png";}
 $pdf->Image($ppmh,10,$y,3,3,'','');
 $pdf->Setxy(15,$y);
 $pdf->Write(3,'Périmètre de Protection');
+//pas de données sur Zone Protection Patrimoine donc nocoche par defaut à remplacer par un test si on possede la donnée
 $pdf->Image($nocoche,75,$y,3,3,'','');
 $pdf->Setxy(80,$y);
 $pdf->Write(3,'Zone Protection Patrimoine');
@@ -440,6 +443,7 @@ $pdf->Write(3,'Zone non aedificanti');
 //3eme ligne
 $pdf->Ln();
 $y=$pdf->GetY()+$alig;
+//pas de données sur perimetre Site Classé donc nocoche par defaut à remplacer par un test si on possede la donnée
 $pdf->Image($nocoche,10,$y,3,3,'','');
 $pdf->Setxy(15,$y);
 $pdf->Write(3,'Site Classé');
@@ -481,27 +485,33 @@ if($empl=="true"){$empl="okcoche.png";}else{$empl="deco.png";}
 $pdf->Image($empl,10,$y,3,3,'','');
 $pdf->Setxy(15,$y);
 $pdf->Write(3,'Emplacement Réservé pour équipement public');
+//pas de données sur perimetre de rénovaton urbaine donc nocoche par defaut à remplacer par un test si on possede la donnée
 $pdf->Image($nocoche,115,$y,3,3,'','');
 $pdf->Setxy(120,$y);
 $pdf->Write(3,'Périmètre de Rénovation Urbaine');
 $pdf->Ln();
 $y=$pdf->GetY()+$alig;
+//pas de données sur perimetre de Déclaration d'Utilité Publique donc nocoche par defaut à remplacer par un test si on possede la donnée
 $pdf->Image($nocoche,10,$y,3,3,'','');
 $pdf->Setxy(15,$y);
 $pdf->Write(3,'Périmètre de Déclaration d'.chr(180).'Utilité Publique');
+//pas de données sur Périmètre de Restauration Immobilière donc nocoche par defaut à remplacer par un test si on possede la donnée
 $pdf->Image($nocoche,115,$y,3,3,'','');
 $pdf->Setxy(120,$y);
 $pdf->Write(3,'Périmètre de Restauration Immobilière');
 $pdf->Ln();
 $y=$pdf->GetY()+$alig;
+//idem pas de donnée
 $pdf->Image($nocoche,10,$y,3,3,'','');
 $pdf->Setxy(15,$y);
 $pdf->Write(3,'Secteur Sauvegardé');
+//idem pas de donnée
 $pdf->Image($nocoche,115,$y,3,3,'','');
 $pdf->Setxy(120,$y);
 $pdf->Write(3,'Périmètre de Résorption Habitat Insalubre');
 $pdf->Ln();
 $y=$pdf->GetY()+$alig;
+//idem pas de donnée
 $pdf->Image($nocoche,10,$y,3,3,'','');
 $pdf->Setxy(15,$y);
 $pdf->Write(3,'Zone d'.chr(180).'Aménagement Concerté');
@@ -513,6 +523,7 @@ $pdf->Setxy(8,$y);
 $pdf->SetFillColor(225);
 $pdf->Cell(195,5,'E-Divers ',1,1,'L',1);
 $y=$pdf->GetY()+$aph;
+//idem pas de donnée
 $pdf->Image($nocoche,10,$y,3,3,'','');
 $pdf->Setxy(15,$y);
 $pdf->Write(3,'Interdiction d'.chr(180).'habiter');
@@ -520,17 +531,16 @@ if($bois=="true"){$bois="okcoche.png";}else{$bois="deco.png";}
 $pdf->Image($bois,75,$y,3,3,'','');
 $pdf->Setxy(80,$y);
 $pdf->Write(3,'Espace boisé classé');
+//idem pas de donnée
 $pdf->Image($nocoche,140,$y,3,3,'','');
 $pdf->Setxy(145,$y);
 $pdf->Write(3,'Zone de carrière');
 $pdf->Ln();
 $y=$pdf->GetY()+$alig;
+//idem pas de donnée
 $pdf->Image($nocoche,10,$y,3,3,'','');
 $pdf->Setxy(15,$y);
 $pdf->Write(3,'Arrêté de péril');
-//$pdf->Image($nocoche,10,260,3,3,'','');
-//$pdf->Setxy(15,260);
-//$pdf->Write(3,'Arrêté d'.chr(180).'insalubrité');
 if($cimet=="true"){$cimet="okcoche.png";}else{$cimet="deco.png";}
 $pdf->Image($cimet,75,$y,3,3,'','');
 $pdf->Setxy(80,$y);
@@ -598,14 +608,14 @@ while($row = mysql_fetch_row($result))
 	{
 	$dalign=$row[0];
 	}*/
-$result = pg_exec($pgx,"SELECT b.zone from cadastre.parcelle as a ,geotest.zoneinondable as b where ".$wh." order by b.zone ASC limit 1");
+/*$result = pg_exec($pgx,"SELECT b.zone from cadastre.parcelle as a ,geotest.zoneinondable as b where ".$wh." order by b.zone ASC limit 1");
 
 $num = pg_numrows($result);
 for ($i=0; $i<$num; $i++)
 {  
 $r = pg_fetch_row($result, $i);
 $lettreinond=$r[0];
-}
+}*/
 
 
 
@@ -614,13 +624,7 @@ $lettreinond=$r[0];
 //if (($alignement=="okcoche.png")  and ($_SESSION['code_insee']=='770284'))
 if (($alignement=="okcoche.png"))//  and ($codeinsee=='770284'))
 {
-//$result = pg_exec($pgx,"select Intersects(a.the_geom,b.the_geom),a.identifian,b.date_ali from cadastre.parcelle as a ,geotest.alignement as b where ".$wh." limit 1");
-//$num = pg_numrows($result);
-//for ($i=0; $i<$num; $i++) {
-//$r = pg_fetch_row($result, $i);
-//$ident=$r[1];
-//$dalign=$r[2];
-//}
+
 
 $result = pg_exec($pgx,"select XMIN(the_geom),YMIN(the_geom),XMAX(the_geom),Ymax(the_geom) from cadastre.parcelle where identifian in ('$q2')");
 $num = pg_numrows($result);
@@ -650,8 +654,8 @@ $xma=$xm+($h*(400/326));
 $idpar = str_replace(",", "','",$obj_keys);
 $erreur=error_reporting ();
 	error_reporting (1);
-		$serv="pays"; //mettre pays pour slinsig01 ou l'ip pour le serveur de test
-		$url="http://".$serv."/cgi-bin/mapserv?map=/home/sig/intranet/capm/capm_svg.map&parce=('".$idpar."')&layer=selectparcelle&layer=alignement&layer=numvoie&layer=nomvoie&layer=parcelle&layer=batiment&minx=".$xm."&miny=".$ym."&maxx=".$xma."&maxy=".$yma;
+	$serv=$_SERVER["SERVER_NAME"];
+	$url="http://".$serv."/cgi-bin/mapserv?map=/home/sig/intranet/capm/RU.map&insee=".$code_insee."&parce=('".$idpar."')&layer=alignement&layer=num_voie&layer=nom_voie&layer=parcelle&layer=batiment&minx=".$xm."&miny=".$ym."&maxx=".$xma."&maxy=".$yma."&mapsize=1240%201040";
 
         $contenu=file($url);
        		while (list($ligne,$cont)=each($contenu)){
@@ -675,7 +679,7 @@ $pdf->AddPage();
 //fixe la marge droite des textes qui suivent
   $pdf->SetrightMargin(5);
 $pdf->SetTextColor(0);
-$pdf->Image("../logo/".$codeinsee.".png",10,8,'70','20','','');
+$pdf->Image("../logo/".$codeinsee.".png",10,8,$lar,'20','','');
 //on se positionne à 130mm du bord gauche et à 15 mm du bord haut
 $pdf->Setxy(130,10);
      $pdf->Write(5,$r1[0]['nom'].', le '.date("d").' '.moix(date("m")).' '.date("Y"));
@@ -694,9 +698,8 @@ $pdf->SetFillColor(225,225,225);
 $pdf->Multicell(115,5,'Le présent document graphique est délivré à titre indicatif. Il ne peut en aucun cas se substituer au plan d'.chr(180).'alignement approuvé, consultable en Mairie. ',1,1,'L',1);
 }
 pg_close($pgx);
-//mysql_close;
 
 $pdf->Output();
 
 }
-?> 
+?>
