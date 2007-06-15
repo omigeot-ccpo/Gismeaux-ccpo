@@ -160,12 +160,12 @@ $d="select * from admin_svg.col_sel where idtheme='".$cou[0]['idtheme']."'";
 				if (substr($_SESSION['code_insee'], -3) == "000")
 					{
 					
-                	$f.=" where code_insee like '".substr($_SESSION['code_insee'],0,3)."%' and ".$geometrie." && box'($xm,$ym,$xma,$yma)'";
+                	$f.=" where (code_insee like '".substr($_SESSION['code_insee'],0,3)."%' or code_insee is null) and ".$geometrie." && box'($xm,$ym,$xma,$yma)'";
             		}
 				else
 					{
 					
-                	$f.=" where code_insee like '".$_SESSION['code_insee']."%' and ".$geometrie." && box'($xm,$ym,$xma,$yma)'";
+                	$f.=" where (code_insee like '".$_SESSION['code_insee']."%' or code_insee is null) and ".$geometrie." && box'($xm,$ym,$xma,$yma)'";
             		}
 			}
 			else
@@ -183,12 +183,12 @@ $d="select * from admin_svg.col_sel where idtheme='".$cou[0]['idtheme']."'";
 		 		if (substr($_SESSION['code_insee'], -3) == "000")
 		 			{
 					
-                	$f.=" where code_insee like '".substr($_SESSION['code_insee'],0,3)."%'";
+                	$f.=" where code_insee like '".substr($_SESSION['code_insee'],0,3)."%' or code_insee is null ";
             		}
 				else
 					{
 					
-                	$f.=" where code_insee = '".$_SESSION['code_insee']."'";
+                	$f.=" where code_insee = '".$_SESSION['code_insee']."' or code_insee is null ";
             		}
 				}
 				else

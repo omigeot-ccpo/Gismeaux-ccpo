@@ -187,7 +187,7 @@ $d="select * from admin_svg.col_sel where idtheme='".$cou[$l]['idtheme']."'";
             if (substr($_SESSION['code_insee'], -3) == "000" || $cou[$l]['schema']=="bd_topo"){
                 $f.=" where ".$geometrie." && box'(".$xm.",".$ym.",".$xma.",".$yma.")'";
             }else{
-                $f.=" where code_insee like '".$_SESSION['code_insee']."%' and ".$geometrie." && box'(".$xm.",".$ym.",".$xma.",".$yma.")'";
+                $f.=" where (code_insee like '".$_SESSION['code_insee']."%' or code_insee is null) and ".$geometrie." && box'(".$xm.",".$ym.",".$xma.",".$yma.")'";
             }
        /* }
 		else

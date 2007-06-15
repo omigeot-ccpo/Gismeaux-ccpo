@@ -349,7 +349,7 @@ $req1="select distinct (col_theme.intitule_legende) as intitule_legende,col_them
 	$mapprincipal.="TYPE ".$type." \n";
     if($clause=="" && $cou[$c]['schema']!="bd_topo")
 	{
-    $mapprincipal.="FILTER \"code_insee like '%insee%%'\" \n";
+    $mapprincipal.="FILTER \"code_insee like '%insee%%' or code_insee is null \" \n";
 	}
 	$mapprincipal.="CLASS \n";
 		$mapprincipal.="EXPRESSION ('[".$cou[$c]['colonn']."]' eq '".$couch[$r]['valeur_texte']."') \n";
@@ -376,7 +376,7 @@ $req1="select distinct (col_theme.intitule_legende) as intitule_legende,col_them
 	$$mapp.="TYPE annotation \n";
 	if($clause=="" && $cou[$c]['schema']!="bd_topo")
 	{
-    $$mapp.="FILTER \"code_insee like '%insee%%'\" \n";
+    $$mapp.="FILTER \"code_insee like '%insee%%' or code_insee is null \" \n";
 	}
 	$$mapp.="CLASS \n";
 		if($couch[$r]['symbole'] !="")
@@ -412,7 +412,7 @@ $req1="select distinct (col_theme.intitule_legende) as intitule_legende,col_them
 	$$mapp.="TYPE ".$type." \n";
     if($clause=="" && $cou[$c]['schema']!="bd_topo")
 	{
-    $$mapp.="FILTER \"code_insee like '%insee%%'\" \n";
+    $$mapp.="FILTER \"code_insee like '%insee%%' or code_insee is null \" \n";
 	}
 	$$mapp.="CLASS \n";
 		$$mapp.="EXPRESSION ('[".$cou[$c]['colonn']."]' eq '".$couch[$r]['valeur_texte']."') \n";
@@ -490,7 +490,7 @@ $$mapp.="END \n \n";
 			$mapprincipal.="TYPE ".$type." \n";
 			if($clause=="" && $cou[$c]['schema']!="bd_topo")
 			{
-    		$mapprincipal.="FILTER \"code_insee like '%insee%%'\" \n";
+    		$mapprincipal.="FILTER \"code_insee like '%insee%%' or code_insee is null \" \n";
 			}
 			$mapprincipal.="CLASS \n";
 			$mapprincipal.="OUTLINECOLOR ".str_replace(","," ",$cou[$c]['style_stroke'])." \n";
@@ -516,7 +516,7 @@ $$mapp.="END \n \n";
 	$$mapp.="TYPE annotation \n";
 	if($clause=="" && $cou[$c]['schema']!="bd_topo")
 	{
-    $$mapp.="FILTER \"code_insee like '%insee%%'\" \n";
+    $$mapp.="FILTER \"code_insee like '%insee%%' or code_insee is null \" \n";
 	}
 	$$mapp.="CLASS \n";
 		
@@ -538,7 +538,7 @@ $$mapp.="END \n \n";
 	$$mapp.="TYPE annotation \n";
 	if($clause=="" && $cou[$c]['schema']!="bd_topo")
 	{
-    $$mapp.="FILTER \"code_insee like '%insee%%'\" \n";
+    $$mapp.="FILTER \"code_insee like '%insee%%' or code_insee is null \" \n";
 	}
 	$$mapp.="CLASS \n";
 		
@@ -560,7 +560,7 @@ $$mapp.="END \n \n";
 	$$mapp.="TYPE ".$type." \n";
 	if($clause=="" && $cou[$c]['schema']!="bd_topo")
 	{
-    $$mapp.="FILTER \"code_insee like '%insee%%'\" \n";
+    $$mapp.="FILTER \"code_insee like '%insee%%' or code_insee is null \" \n";
 	}
 	$$mapp.="CLASS \n";
 		if($cou[$c]['style_fill']!='' && $cou[$c]['style_fill']!='none' )
