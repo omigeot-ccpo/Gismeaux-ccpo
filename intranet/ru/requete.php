@@ -116,6 +116,8 @@ $q2=substr($q2,0,strlen($q2)-3);
 $q.=$q2."') order by identifian";
 $wh=substr($wh,0,strlen($wh)-4);
 $an=number_format(date(Y));
+if (file_exists("./".$codeinsee."/compteur.txt"))
+{
 $fp=fopen("./".$codeinsee."/compteur.txt","r");
 while (!feof($fp)){
       $ligne=fgets($fp,255);
@@ -124,6 +126,7 @@ while (!feof($fp)){
       $annee=number_format($liste[1]);
 }
 fclose($fp);
+}
 if($an>$annee){
     $n=1;
     $annee=date(Y);
