@@ -1,0 +1,84 @@
+Structure des tables pour gérer les attributs des objets avant de générer les shapefiles.
+
+I] Listes des tables ayant la structure de base.
+	
+	La structure de base :
+      
+      gid		incrémentation automatique par une séquence à l’insertion des tables
+      the_geom		la géométrie générée par l’importation du shapefile(shp2pgsql)
+      code_insee	*
+
+
+*le code_insee est un attribut obligatoire pour chaque objet numérisé. Sa valeur par défaut est NULL.Si l’objet doit etre filtré au niveau commune ,il faut lui mettre sa valeur composé par les 2 chiffres du département,1 chiffre agglomération et les 3 chiffres insee (770284).
+
+
+	Les tables :
+
+		halage (chemin de halage)
+		lisiere
+		ppmh (périmètre protection monument historique) 
+		servradioelectrik (servitude radio electrique)
+		sidobre (périmètre risque technologique)
+		siteinscrit (site inscrit)
+		zac
+		zoneboise (zone boise classé)
+		zononaedificandi (zone sécurité SNCF)
+
+
+II] Liste des tables ayant la structure de base + des attributs supplémentaires obligatoires
+
+	alignement
+		date_ali	date de description de l’alignement (jj/mm/aaaa)
+
+	emplreserve (emplacement réservé)
+		desc		description de l’emplacement réservé
+
+	lotissement
+		nom		nom du lotissement
+		date		date de création lotissement(jj/mm/aaaa)
+		numarrete	numéro d’arrêté
+
+	ppri
+		ppri_id		classification,valeur(1,2,…..n)
+			
+
+	z_archeo (zone archeo)
+		zone		numéro de zone
+		nom		niveau de classification  ,valeur(1,2)
+
+	zonage
+		zone		référence des zones , valeur(AUB,AUCa,AUCb,AUD,AUE, AUXa,AUXb,N,NL,UAa,UAb,UBa,UBb,UCa,UCb,UL,UV,UXa,UXb,UXc,UZa,UZb)
+
+
+	zonebruit
+		type		type bruit , valeur(1_route,2_route,3_route,4_route,1_sncf))
+
+
+	zoneinondable
+		zone		zone , valeur(A,B)
+
+
+
+
+III] liste des tables ayant une structure spécifique.
+
+	ht_fuseau
+      		id_fuseau	incrémentation automatique par une séquence à l’insertion de la  table
+   		gid1		id_pylone de départ (relation avec table ht_pylone)
+ 		gid2		id_pylone de fin (relation avec table ht_pylone)
+      		distance	distance du fuseau
+      		hauteur	hauteur du fuseau
+      		code_insee	idem à la structure de base
+
+
+	ht_pylone
+		id_ligne	id_ligne (relation avec table ht_ligne)
+      		gid		incrémentation automatique par une séquence à l’insertion de la table
+   		the_geom	la géométrie générée par l’importation du shapefile
+   		type		valeur par défaut pylone
+    		precision	valeur par défaut 5
+
+
+	ht_ligne
+      		id_ligne	incrémentation automatique par une séquence à l’insertion de la table
+		libelle		description de la ligne haute tension.

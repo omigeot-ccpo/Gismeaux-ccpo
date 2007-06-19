@@ -1,0 +1,33 @@
+Executé le fichier ru.sql pour construire la structure de la base
+
+/usr/local/pgsql/bin/psql -d gismeaux -f home/sig/ru.sql
+
+Pour utiliser l’application ru, il faut numériser le PLU(POS) ainsi que les servitudes en respectant quelques règles de numérisation. Voir la documentation de la DDE Finistère décrivant les règles de numérisation : http://www.finistere.equipement.gouv.fr/IMG/zip/guide_num-plu_complet_cle6e1eb8-1.zip.
+Il faut absolument garder la structure même si votre commune ou communauté n'est pas soumis à une des servitudes dans ce cas laissez la table vide.
+
+Chaque objet numérisé devra avoir les attributs correspond à la structure de sa table qui est générer par ru.sql (voir structure_des_tables.txt).
+Exemple : Le zonage, la table c’est zonage et les attributs sont zone et code_insee .
+
+Créer un Shapefile de chaque numérisation.
+Exemple : zonage-> Nom de table.shp(zonage.shp)
+
+Créer le répertoire shp sous /home/sig/
+cd /home/sig/ 
+mkdir shp
+
+ensuite copier tous les Shapefiles dans ce répertoire.
+
+Exécution du script d’insertion des données dans Postgresql.
+cd /home/sig/
+./ru.sh
+
+
+Il faut maintenant mettre le réglement du PLU(POS) au format pdf.
+Créer un répertoire avec le code_insee(2chiffres departement,1 chiffre aglomération,3chiffre insee) ex:770284
+
+cd /home/sig/intranet/ru/
+mkdir 770284
+
+Créer REGLEMENT.pdf qui est le réglement complet et le réglememt de chaque zone (AUB.pdf,AUC.pdf,....) avec par exemple pdfcreator.
+Ensuite copier ces fichiers dans le répertoire créée.
+
