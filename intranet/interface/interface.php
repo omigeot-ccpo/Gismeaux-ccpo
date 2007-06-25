@@ -143,7 +143,7 @@ $req1="select distinct (col_theme.intitule_legende) as intitule_legende,col_them
 	$req1.=" join ".$cou[$c]['schema'].".".$cou[$c]['tabl']." on col_theme.valeur_texte=".$cou[$c]['tabl'].".".$cou[$c]['colonn']." where 					appthe.idapplication=".$appli." and theme.libelle_them='".$cou[$c]['nom_theme']."'";
 	if(substr($_SESSION['code_insee'], -3)!='000' && $cou[$c]['schema']!="bd_topo")
 	{
-	$req1.=" and ".$cou[$c]['tabl'].".code_insee like '".$_SESSION['code_insee']."' or code_insee is null ";
+	$req1.=" and (".$cou[$c]['tabl'].".code_insee like '".$_SESSION['code_insee']."'  or code_insee is null) ";
 	 }
 	 $req1.=" order by col_theme.ordre asc";
 	}
@@ -490,7 +490,6 @@ $data.="</g>
 <g id='dess' stroke-width='0.2'>
 	
 	</g>
-
 </g>
 	</svg>
 	
@@ -666,6 +665,15 @@ $data.=$legende;
 $data.="</g></svg>
 		</g>
 		
+<g id=\"message\" visibility=\"hidden\" class=\"fillfonce\" font-size=\"14\" opacity=\"0.8\">
+<rect id=\"idcont\" width=\"292\" height=\"100\" x=\"170\" y=\"66\" fill=\"url(#clair)\"/> 
+<rect width=\"292\" height=\"18\" x=\"170\" y=\"66\" class=\"fillclair\"/>
+<text pointer-events=\"none\" x=\"316\" y=\"80\" text-anchor=\"middle\" >Information</text>
+<g id=\"idmessage\" style=\"font-size:10;\">
+</g>
+<rect id='fermealerte' x=\"291\" y=\"140\" rx=\"1.5\" ry=\"1.5\" width=\"50\" height=\"15\" class=\"fillclair\" onclick=\"hidealert();clear('idmessage')\" onmouseover=\"switchColor(evt,'fill','white','','')\" onmouseout=\"switchColor(evt,'fill','url(#hors)','','')\"/>
+<text id=\"idok\" pointer-events=\"none\" text-anchor=\"middle\" x=\"316\" y=\"152.5\">OK</text>
+</g>
 		
 <g id=\"inforecherche\" visibility=\"hidden\" class=\"fillfonce\" font-size=\"14\" opacity=\"0.8\">
 <rect width=\"260\" height=\"400\" x=\"186\" y=\"66\" fill=\"url(#clair)\"/> 
@@ -697,6 +705,6 @@ $data.="</g></svg>
 	<text id=\"infotip\" x=\"25\" y=\"11\"  style=\"font-weight:normal;font-family:'Arial';font-size:8;text-anchor:left;pointer-events:none\" visibility=\"hidden\" >!</text>
 </g>
 </svg>";
-//$data=gzcompress("$data",9);
+$data=gzcompress("$data",9);
 echo $data;
 ?>

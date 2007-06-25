@@ -441,6 +441,7 @@ if (typeof postURL=='undefined') {
    xmlhttp.send(txt)
   } else {
    //Some Appropriate Fallback...
+
   }
  }
  if (typeof printNode=='undefined') {
@@ -1470,7 +1471,7 @@ function lien(evt,te,lhref,sel,nombre,target)
 						var nb = longueur.length;
 						if(nombre!=""&&nb==nombre)
 							{
-							alert("Ce type d'objet est limite a "+nb+" selections.");
+							message("Ce type d'objet est limite a "+nb+" selections.");
 							}
 							else
 							{
@@ -1485,12 +1486,12 @@ function lien(evt,te,lhref,sel,nombre,target)
 					}
 				else
 					{
-					alert("Vous devez choisir le meme type d'objet");
+					message("Vous devez choisir le meme type d'objet");
 					}
 			}
 			else
 				{
-					alert("Objet disponible uniquement en mode selection unique");
+					message("Objet disponible uniquement en mode selection unique");
 				}
 	}
 	else
@@ -1783,7 +1784,7 @@ placx=fragment[1].split(";");
 placy=fragment[2].split(";");
 if(placid=='point')
 {
-alert("La num"+String.fromCharCode(233)+"rotation n'est pas valide\nla carte sera positionn"+String.fromCharCode(233)+"e automatiquement\nsur la rue.");
+message("La num"+String.fromCharCode(233)+"rotation n'est pas valide la carte est positionn"+String.fromCharCode(233)+"e automatiquement sur la rue.");
 }
 else
 {
@@ -1853,6 +1854,7 @@ phrase1=phrase1+lettre1;
 } 
 svgdoc.getElementById("x_rectnum").getFirstChild().setData(phrase1);
 }
+
 
 }
 function activetrait(evt)
@@ -2308,7 +2310,7 @@ getURL(url,retoursurface)
 
 function retoursurface(x)
 {
-alert("la surface est de "+Math.floor(x.content*100)/100+" M2");	
+message("la surface est de "+Math.floor(x.content*100)/100+" M2");	
 }
 function clearobj()
 {
@@ -2469,7 +2471,7 @@ function enregistr(x)
 function callback2(data)
 {
 if (!data.success) 
-	alert("nok")
+	message("nok")
 }
 function callback(data)
 {
@@ -2477,7 +2479,7 @@ if (data.success){
 cache();
 }
 else
-{alert('enregistrement imposssible')
+{message('enregistrement imposssible')
 }
 
 }
@@ -2500,4 +2502,62 @@ var url="http://" + serveur + "/interface/mail/mailto.php";
 var param="_blank";
 var zer="contacte";	
 ouvrepage(url,param,zer)	
+}
+function message(data)
+{
+hideinfotip(evt)
+var chaine=new Array;
+nbcaract=data.length;
+nbligne=Math.ceil(nbcaract/55);
+debu=0
+for(a=0;a<nbligne;a++) 
+{
+	if(debu+55>nbcaract)
+	{
+	chaine.push(data.substring(debu));
+	}
+	else
+	{
+	chainepro=data.substr(debu,55);
+	positi=chainepro.lastIndexOf(" ");
+	chaine.push(data.substr(debu,positi));
+	debu=debu+positi+1;
+	}
+}
+vy=105;
+for(a=0;a<chaine.length;a++) 
+{
+texte=svgDocument.createElementNS(null, 'text');
+texte.setAttribute("pointer-events","none");
+texte.setAttribute("text-anchor","middle");
+texte.setAttribute("id","idmess"+a)
+texte.setAttribute("font-size","10");
+texte.setAttribute("x","316");
+texte.setAttribute("y",vy);
+text_content = svgDocument.createTextNode(chaine[a])
+texte.appendChild(text_content)
+svgDocument.getElementById("idmessage").appendChild(texte)
+vy=vy+15;
+heightcont=115;
+yrectferm=155;
+yidok=167.5;
+if(a>2)
+{
+	svgdoc.getElementById('fermealerte').setAttributeNS(null,'y',yrectferm);
+	svgdoc.getElementById('idcont').setAttributeNS(null,"height",heightcont);
+	svgdoc.getElementById('idok').setAttributeNS(null,'y',yidok);
+	heightcont=heightcont+15;
+	yidok=yidok+15;
+	yrectferm=yrectferm+15;
+}
+}
+svgdoc.getElementById('message').getStyle().setProperty('visibility','visible');
+//svgdoc.getElementById("idmess").getFirstChild().setData(chaine[0]);
+}
+function hidealert()
+{
+svgdoc.getElementById('message').getStyle().setProperty('visibility','hidden');
+svgdoc.getElementById('fermealerte').setAttributeNS(null,'y',"140");
+	svgdoc.getElementById('idcont').setAttributeNS(null,"height","100");
+	svgdoc.getElementById('idok').setAttributeNS(null,'y',"152.5");
 }
