@@ -214,9 +214,9 @@ if ($nbat!=""){
 		}
 	}
 	if ($vpg=='pgsql') {
-		$r=pg_exec($pgx,"select * from commune where cod_comm = '".$code_commune."';");
+		$r=pg_exec($pgx,"select * from cadastre.commune where cod_comm = '".$code_commune."';");
 		if (pg_numrows($r)==0) { 
-			pg_exec($pgx,"insert into commune (cod_comm,lib_com) values ('".$code_commune.$v.$nom_comm."');");
+			pg_exec($pgx,"insert into cadastre.commune (cod_comm,lib_com) values ('".$code_commune.$v.$nom_comm."');");
 		}
 	}
 	while (!feof($fp)){
@@ -250,7 +250,7 @@ if ($nbat!=""){
 			$ccoriv=substr($linfo,95,4);
 			$ccocif=substr($linfo,99,4);
 			$gpafpd=substr($linfo,103,1);
-			$comma10="insert into parcel (commune, ccosec, dnupla, dcntpa, dsrpar, cgroup, dnumcp, jdatat, dreflf,
+			$comma10="insert into cadastre.parcel (commune, ccosec, dnupla, dcntpa, dsrpar, cgroup, dnumcp, jdatat, dreflf,
 						  gpdl, cprsecr, ccosecr, dnuplar, dnupdl, gurbpa, dparpi, ccoarp, gparnf, gparbat, dnuvoi, 
 						  dindic, ccovoi, ccoriv, ccocif, par1, prop1) values ('";
 			$comma10.=$code_commune.$v.$ccosec.$v.$dnupla.$v.$dcntpa.$v.$dsrpar.$v.substr($dnupro,0,1).$v.substr($dnupro,1).$v.$jdata.$v.$dreflf.$v.$gpdl.$v.
@@ -293,7 +293,7 @@ if ($nbat!=""){
 			$topja=substr($linfo,137,1);
 			$datja=substr($linfo,138,8);
 			$postel=substr($linfo,146,1);
-			$comma21="insert into p_subdif (commune, ccosec, dnupla, ccosub, dcntsf, cgroup, dnumcp, gnexps, drcsub, drcsuba, ccostn, cgmum, 
+			$comma21="insert into cadastre.p_subdif (commune, ccosec, dnupla, ccosub, dcntsf, cgroup, dnumcp, gnexps, drcsub, drcsuba, ccostn, cgmum, 
 						dsgrpf, dclssf, cnatsp, drgpos, ccoprel,ccosecl, dnuplal, dnupdl, dnulot, topja, datja, postel) values ('";
 			$comma21.=$code_commune.$v.$ccosec.$v.$dnupla.$v.$ccosub.$v.$dcntsf.$v.substr($dnupro,0,1).$v.substr($dnupro,1).$v.$gnexps.$v.$drcsub.$v.
 						$drcsuba.$v.$ccostn.$v.$cgmum.$v.$dsgrpf.$v.$dclssf.$v.$cnatsp.$v.$drgpos.$v.$ccoprel.$v.$ccosecl.$v.$dnuplal.$v.
@@ -325,7 +325,7 @@ if ($nbat!=""){
 			$rcexna=substr($linfo,68,10);
 			$rcexnba=substr($linfo,78,10);
 			$mpexnba=substr($linfo,89,10);
-			$comma30="insert into p_exoner (commune, ccosec, dnupla, ccosub, muexn, vecexn, ccolloc, pexn, gnexts, jandeb, jfinex, rcexnba) values ('";
+			$comma30="insert into cadastre.p_exoner (commune, ccosec, dnupla, ccosub, muexn, vecexn, ccolloc, pexn, gnexts, jandeb, jfinex, rcexnba) values ('";
 			$comma30.=$code_commune.$v.$ccosec.$v.$dnupla.$v.$ccosub.$v.$muexn.$v.$vecexn.$v.$ccolloc.$v.$pexn.$v.$gnexts.$v.$jandeb.$v.$jfinex.$v.$rcexnba."');";
 			if ($vmysql=='mysql') {
 				if (!(mysql_query($comma30,$lk))){
@@ -350,7 +350,7 @@ if ($nbat!=""){
 			$bisufadr=substr($linfo,77,10);
 			$majposagc=substr($linfo,88,10);
 			$bisufadgc=substr($linfo,99,10);
-			$comma36="insert into p_taxat (commune, ccosec, dnupla, ccosub, majposac, bisufadc, majposad,
+			$comma36="insert into cadastre.p_taxat (commune, ccosec, dnupla, ccosub, majposac, bisufadc, majposad,
 						  bisufadd, majposar, bisufadr, majposagc, bisufadgc) values ('";
 			$comma36.=$commune.$v.$ccosec.$v.$dnupla.$v.$ccosub.$v.$majposac.$v.$bisufadc.$v.$majposad.$v.
 						$bisufadd.$v.$majposar.$v.$bisufadr.$v.$majposagc.$v.$bisufadgc."');";
@@ -434,7 +434,7 @@ if ($bat !=""){
 			$dindic=substr($linfo,70,1);
 			$ccocif=substr($linfo,71,4);
 			$dvoilib=addslashes(substr($linfo,75,30));
-			$comma00="insert into batidgi (commune,invar,ccopre,ccosec,dnupla,dnubat,desca,dniv,dpor,ccoriv,ccovoi,dnvoiri,
+			$comma00="insert into cadastre.batidgi (commune,invar,ccopre,ccosec,dnupla,dnubat,desca,dniv,dpor,ccoriv,ccovoi,dnvoiri,
 							dindic,ccocif,dvoilib ) values ('";
 			$comma00.=$code_commune.$v.$invar.$v.$ccopre.$v.$ccosec.$v.$dnupla.$v.$dnubat.$v.$desca.$v.$dniv.$v.$dpor.$v.$ccoriv.$v.
 						$ccovoi.$v.$dnvoiri.$v.$dindic.$v.$ccocif.$v.$dvoilib."');";
@@ -489,7 +489,7 @@ if ($bat !=""){
 			$cbtabt=substr($linfo,149,2);
 			$jdtabt=substr($linfo,151,4);
 			$jrtabt=substr($linfo,155,4);
-			$comma10="insert into b_desdgi (commune,invar,gpdl,dsrpar,dnupro,jdata,dnufnl,ccoeva,dteloc,gtauom,dcomrd,ccoplc,
+			$comma10="insert into cadastre.b_desdgi (commune,invar,gpdl,dsrpar,dnupro,jdata,dnufnl,ccoeva,dteloc,gtauom,dcomrd,ccoplc,
 							  cconlc,dvltrt,ccoape,cc48lc,dloy48a,top48,dnatic,cchpr,jannat,dnbniv,hmsem,postel,cbtabt,jdtabt,jrtabt) values ('";
 			$comma10.=$code_commune.$v.$invar.$v.$gpdl.$v.$dsrpar.$v.$dnupro.$v.$jdata.$v.$dnufnl.$v.$ccoeva.$v.$dteloc.$v.$gtauom.$v.$dcomrd.$v.
 						$ccoplc.$v.$cconlc.$v.$dvltrt.$v.$ccoape.$v.$cc48lc.$v.$dloy48a.$v.$top48.$v.$dnatic.$v.$cchpr.$v.$jannat.$v.$dnbniv.$v.
@@ -532,7 +532,7 @@ if ($bat !=""){
 			$clocv=substr($linfo,151,1);
 			$dvltpe=substr($linfo,152,9);
 			$dcralc=substr($linfo,161,3);
-			$comma21="insert into b_subdgi (commune,invar,dnupev,ccoaff,ccostb,dcapec,dcetlc,dcsplc,dsupot,
+			$comma21="insert into cadastre.b_subdgi (commune,invar,dnupev,ccoaff,ccostb,dcapec,dcetlc,dcsplc,dsupot,
 							  dvlper,dvlpera,gnexpl,ccthp,retimp,dnuref,gnidom,dcsglc,dvltpe,dcralc) values ('";
 			$comma21.=$code_commune.$v.$invar.$v.$dnupev.$v.$ccoaff.$v.$ccostb.$v.$dcapec.$v.$dcetlc.$v.$dcsplc.$v.$dsupot.$v.
 							  $dvlper.$v.$dvlpera.$v.$gnexpl.$v.$ccthp.$v.$retimp.$v.$dnuref.$v.$gnidom.$v.$dcsglc.$v.$dvltpe.$v.$dcralc."');";
@@ -563,7 +563,7 @@ if ($bat !=""){
 			$fcexb2=substr($linfo,122,9);
 			$fcexba2=substr($linfo,132,9);
 			$rcexba2=substr($linfo,142,9);
-			$comma30="insert into b_exodgi (commune,invar,dnupev,dnuord,ccolloc,pexb,gnextl,jandeb,janimp,
+			$comma30="insert into cadastre.b_exodgi (commune,invar,dnupev,dnuord,ccolloc,pexb,gnextl,jandeb,janimp,
 							  dvldif2,dvldif2a,fcexb2,fcexba2,rcexba2) values ('";
 			$comma30.=$code_commune.$v.$invar.$v.$dnupev.$v.$dnuord.$v.$ccolloc.$v.$pexb.$v.$gnextl.$v.$jandeb.$v.$janimp.$v.
 						$dvldif2.$v.$dvldif2a.$v.$fcexb2.$v.$fcexba2.$v.$rcexba2."');";
@@ -595,7 +595,7 @@ if ($bat !=""){
 			$vlbaigc=substr($linfo,125,9);
 			$vlbaiagc=substr($linfo,135,9);
 			$bipeviagc=substr($linfo,145,9);
-			$comma36="insert into b_taxdgi (commune,invar,dnupev,vlbaic,vlbaiac,bipeviac,vlbaid,vlbaiad,bipeviad,
+			$comma36="insert into cadastre.b_taxdgi (commune,invar,dnupev,vlbaic,vlbaiac,bipeviac,vlbaid,vlbaiad,bipeviad,
 							  vlbair,vlbaiar,bipeviar,vlbaigc,vlbaiagc,bipeviagc) values ('";
 			$comma36.=$code_commune.$v.$invar.$v.$dnupev.$v.$vlbaic.$v.$vlbaiac.$v.$bipeviac.$v.$vlbaid.$v.$vlbaiad.$v.$bipeviad.$v.
 						$vlbair.$v.$vlbaiar.$v.$bipeviar.$v.$vlbaigc.$v.$vlbaiagc.$v.$bipeviagc."');";
@@ -654,7 +654,7 @@ if ($bat !=""){
 			$jannat=substr($linfo,120,4);
 			$detent=substr($linfo,124,1);
 			$dnbniv=substr($linfo,125,2);
-			$comma40="insert into b_habdgi (commune,invar,dnupev,dnudes,cconadga,dsueicga,dcimei,cconadcv,dsueiccv,
+			$comma40="insert into cadastre.b_habdgi (commune,invar,dnupev,dnudes,cconadga,dsueicga,dcimei,cconadcv,dsueiccv,
 							  dcimeicv,cconadgr,dsueicgr,dcimeia,cconadtr,dsueictr,dcimeitr,geaulc,
 							  gelelc,gesclc,ggazlc,gasclc,gchclc,gvorlc,gteglc,dnbbai,
 							  dnbdou,dnblav,dnbwc,deqdha,dnbppr,dnbsam,dnbcha,dnbcu8,
@@ -687,7 +687,7 @@ if ($bat !=""){
 			$vsurzt=substr($linfo,71,9);
 			$vsurb1=substr($linfo,81,9);
 			$vsurb2=substr($linfo,90,9);
-			$comma50="insert into b_prodgi (commune,invar,dnupev,dnudes,vsurzt) values ('";
+			$comma50="insert into cadastre.b_prodgi (commune,invar,dnupev,dnudes,vsurzt) values ('";
 			$comma50.=$code_commune.$v.$invar.$v.$dnupev.$v.$dnudes.$v.$vsurzt."');";
 			if ($vmysql=='mysql') {
 				if (!(mysql_query($comma50,$lk))){
@@ -722,7 +722,7 @@ if ($bat !=""){
 			$dcimlc=substr($linfo,68,2);
 			$dcetde=substr($linfo,70,3);
 			$dcspde=substr($linfo,73,3);
-			$comma60="insert into b_depdgi (commune,invar,dnupev,dnudes,dsudep,cconad,asitet,dmatgm,dmatto,detent,geaulc,gelelc,
+			$comma60="insert into cadastre.b_depdgi (commune,invar,dnupev,dnudes,dsudep,cconad,asitet,dmatgm,dmatto,detent,geaulc,gelelc,
 							  gchclc,dnbbai,dnbdou,dnblav,dnbwc,deqtlc,dcimlc,dcetde,dcspde) values ('";
 			$comma60.=$code_commune.$v.$invar.$v.$dnupev.$v.$dnudes.$v.$dsudep.$v.$cconad.$v.$asitet.$v.$dmatgm.$v.$dmatto.$v.$detent.$v.$geaulc.$v.
 						$gelelc.$v.$gchclc.$v.$dnbbai.$v.$dnbdou.$v.$dnblav.$v.$dnbwc.$v.$deqtlc.$v.$dcimlc.$v.$dcetde.$v.$dcspde."');";
@@ -799,7 +799,7 @@ if ($prop !=""){
 		$dnomcp=addslashes(substr($linfo,405,30));
 		$dprncp=addslashes(substr($linfo,435,15));
 		$dsiren=substr($linfo,466,10);
-		$comma="insert into propriet (commune,cgroup,dnumcp,dnulp,ccocif,dnuper,ccodro,ccodem,gdesip,gtoper,ccoqua,dnatpr,ccogrm,
+		$comma="insert into cadastre.propriet (commune,cgroup,dnumcp,dnulp,ccocif,dnuper,ccodro,ccodem,gdesip,gtoper,ccoqua,dnatpr,ccogrm,
 						  dsglpm,dforme,ddenom,dlign3,dlign4,dlign5,dlign6,ccopay,dqualp,dnomlp,dprnlp,jdatnss,
 						  dldnss,epxnee,dnomcp,dprncp,dsiren,prop1) values ('";
 		$comma.=$code_commune.$v.$cgroup.$v.$dnumcp.$v.$dnulp.$v.$ccocif.$v.$dnuper.$v.$ccodro.$v.$ccodem.$v.$gdesip.$v.$gtoper.$v.
@@ -1000,7 +1000,7 @@ if ($fant !=""){
 			else {$libel=$nat." ";
 			}
 			$libel.=$lib;
-			$comma="insert into voies (commune, code_voie, nom_voie, caract, typ ) values ('";
+			$comma="insert into cadastre.voies (commune, code_voie, nom_voie, caract, typ ) values ('";
 			$comma.=$code_commune.$v.$code.$v.$libel.$v.$caract.$v.$typ."');";
 			if ($vmysql=='mysql') {
 				if (!(mysql_query($comma,$lk))){

@@ -51,7 +51,7 @@ $midmif=0;
 $postgres=1;
 
 # mettre $debug_on à 1 ou plus pour des infos supplémentaires dans le log
-$debug_on = 6;
+$debug_on = 3;
 
 # mettre $mif2tab à 0 pour ne pas convertir les mif/mid au format natif MapInfo
 # Si $mif2tab est à 1, il est nécessaire d'installer le programme tab2tab

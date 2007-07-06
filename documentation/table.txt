@@ -1,9 +1,9 @@
-create schema admin_svg
+create schema admin_svg;
 
 SET client_encoding = 'LATIN9';
 SET check_function_bodies = false;
 SET client_min_messages = warning;
-//	SET search_path = admin_svg, pg_catalog;
+-- 	SET search_path = admin_svg, pg_catalog;
 SET default_tablespace = '';
 SET default_with_oids = true;
 
@@ -54,8 +54,7 @@ CREATE TABLE admin_svg.apputi (
 	libelle_btn_polygo character varying,
 	ordre integer);
 ALTER TABLE admin_svg.apputi OWNER TO "+pg_utilis+";
-ALTER TABLE ONLY admin_svg.apputi ADD CONSTRAINT fk_appli FOREIGN KEY (idapplication) REFERENCES application(idapplication);
-ALTER TABLE ONLY admin_svg.apputi ADD CONSTRAINT fk_util FOREIGN KEY (idutilisateur) REFERENCES utilisateur(idutilisateur);
+ALTER TABLE ONLY admin_svg.apputi ADD CONSTRAINT fk_appli FOREIGN KEY (idapplication) REFERENCES admin_svg.application(idapplication);
 	
 CREATE TABLE admin_svg.col_sel (
 	idtheme character varying,
@@ -63,7 +62,6 @@ CREATE TABLE admin_svg.col_sel (
 	nom_as character varying,
 	ordre_sel character varying);
 ALTER TABLE admin_svg.col_sel OWNER TO "+pg_utilis+";
-ALTER TABLE ONLY admin_svg.col_sel ADD CONSTRAINT fk_appthe FOREIGN KEY (idtheme) REFERENCES theme(idtheme);
 	
 CREATE TABLE admin_svg.col_theme (
 	idappthe character varying,
@@ -87,11 +85,10 @@ CREATE TABLE admin_svg.col_theme (
 	ordre integer);
 ALTER TABLE admin_svg.col_theme OWNER TO "+pg_utilis+";
 	
-CREATE TABLEadmin_svg. col_where (
+CREATE TABLE admin_svg. col_where (
 	idtheme character varying,
 	clause character varying);
 ALTER TABLE admin_svg.col_where OWNER TO "+pg_utilis+";
-ALTER TABLE ONLY admin_svg.col_where ADD CONSTRAINT fk_appthe FOREIGN KEY (idtheme) REFERENCES theme(idtheme);
 	
 CREATE TABLE admin_svg.commune (
 	gid integer,
@@ -120,7 +117,7 @@ CREATE TABLE admin_svg.commune (
 	modif character varying,
 	idagglo character varying DEFAULT 770000);
 ALTER TABLE admin_svg.commune OWNER TO "+pg_utilis+";
-CREATE UNIQUE INDEX admin_svg.ndx_commune_insee ON commune USING btree (idcommune);
+CREATE UNIQUE INDEX ndx_commune_insee ON admin_svg.commune USING btree (idcommune);
 ALTER INDEX admin_svg.ndx_commune_insee OWNER TO "+pg_utilis+";
 	
 CREATE TABLE admin_svg.style (
@@ -142,8 +139,6 @@ CREATE TABLE admin_svg.style (
 ALTER TABLE admin_svg.style OWNER TO "+pg_utilis+";
 ALTER TABLE ONLY admin_svg.style ADD CONSTRAINT pk_styl PRIMARY KEY (idstyle);
 ALTER INDEX admin_svg.pk_styl OWNER TO "+pg_utilis+";
-ALTER TABLE ONLYadmin_svg. style ADD CONSTRAINT fk_appthe FOREIGN KEY (idtheme) REFERENCES theme(idtheme);
-ALTER TABLE ONLY admin_svg.style ADD CONSTRAINT fk_util FOREIGN KEY (idutilisateur) REFERENCES utilisateur(idutilisateur);
 	
 CREATE TABLE admin_svg.theme (
 	idtheme character varying DEFAULT nextval('admin_svg.them'::text) NOT NULL,
@@ -161,6 +156,8 @@ CREATE TABLE admin_svg.theme (
 ALTER TABLE admin_svg.theme OWNER TO "+pg_utilis+";
 ALTER TABLE ONLY admin_svg.theme ADD CONSTRAINT pk_theme PRIMARY KEY (idtheme);
 ALTER INDEX admin_svg.pk_theme OWNER TO "+pg_utilis+";
+ALTER TABLE ONLY admin_svg.col_sel ADD CONSTRAINT fk_appthe FOREIGN KEY (idtheme) REFERENCES admin_svg.theme(idtheme);
+ALTER TABLE ONLY admin_svg.col_where ADD CONSTRAINT fk_appthe FOREIGN KEY (idtheme) REFERENCES admin_svg.theme(idtheme);
 	
 CREATE TABLE admin_svg.utilisateur (
 	idutilisateur character varying(10) NOT NULL,
@@ -171,8 +168,11 @@ CREATE TABLE admin_svg.utilisateur (
 ALTER TABLE admin_svg.utilisateur OWNER TO "+pg_utilis+";
 ALTER TABLE ONLY admin_svg.utilisateur ADD CONSTRAINT pk_util PRIMARY KEY (idutilisateur);
 ALTER INDEX admin_svg.pk_util OWNER TO "+pg_utilis+";
+ALTER TABLE ONLY admin_svg.apputi ADD CONSTRAINT fk_util FOREIGN KEY (idutilisateur) REFERENCES admin_svg.utilisateur(idutilisateur);
+ALTER TABLE ONLY admin_svg. style ADD CONSTRAINT fk_appthe FOREIGN KEY (idtheme) REFERENCES admin_svg.theme(idtheme);
+ALTER TABLE ONLY admin_svg.style ADD CONSTRAINT fk_util FOREIGN KEY (idutilisateur) REFERENCES admin_svg.utilisateur(idutilisateur);
 
-	//créer utilisateur super-admin
+	--créer utilisateur super-admin
 insert into admin_svg.utilisateur values('1','770000','sig1','admin','AD');
 	
 CREATE TABLE admin_svg.temp_cotation (
@@ -204,10 +204,10 @@ CREATE SEQUENCE admin_svg.incident_num_seq
     CACHE 1;
 
 ALTER TABLE admin_svg.incident_num_seq OWNER TO "+pg_utilis+";
-ALTER SEQUENCE admin_svg.incident_num_seq OWNED BY incident.num;
+ALTER SEQUENCE admin_svg.incident_num_seq OWNED BY admin_svg.incident.num;
 
 
-create function admin_svg.v_fixe(character varying) returns character varying language plpsql as $_$declare 
+create function admin_svg.v_fixe(character varying) returns character varying language plpgsql as $_$declare 
 id alias for $1;
 chaine character varying:='1';
 begin
@@ -216,7 +216,7 @@ begin
   end if;
 end;$_$;
 
-create function admin_svg.v_fixe(character varying,character varying) returns character varying language plpsql as $_$declare 
+create function admin_svg.v_fixe(character varying,character varying) returns character varying language plpgsql as $_$declare 
 cola alias for $1; 
 cole alias for $2; 
 col  character varying ;	
@@ -327,7 +327,8 @@ $_$
 
 ALTER FUNCTION public.xy2geom(text, text, text, text, text) OWNER TO "+pg_utilis+";
 
-
+create schema general;
+SET search_path = general, pg_catalog;
 CREATE TABLE general.testmenu (
     id integer DEFAULT nextval(('general.seq_menu'::text)::regclass) NOT NULL,
     id_pere integer,
@@ -366,7 +367,7 @@ INSERT INTO testmenu VALUES (25, 5, 'Plan', 'http://www.seine-et-marne.equipemen
 CREATE UNIQUE INDEX "testmenu.ndx" ON general.testmenu USING btree (id);
 
 SET search_path = admin_svg, pg_catalog;
-//création renseignement d'urbanisme
+-- création renseignement d'urbanisme
 INSERT INTO application (libelle_appli, btn_polygo, libelle_btn_polygo, divers, zoom_ouverture, zoom_min, zoom_max, url) VALUES ('RU', '', '', '', 600, 600, 8000, 'interface/carto.php');
 INSERT INTO apputi VALUES (currval('admin_svg.appli'::text), '1', NULL, NULL, NULL, 1);
 INSERT INTO theme (libelle_them, schema, tabl, raster, partiel, vu_initial, couch_tjs_visible, zoommin, zoommax, zoommax_raster, vu_anonyme) VALUES ('batiment', 'cadastre', 'batiment', '', '1', '0', '', 200, 10000, '1200', false);
@@ -502,7 +503,7 @@ INSERT INTO col_sel VALUES (currval('admin_svg.them'::text), 'the_geom', 'geom',
 INSERT INTO style VALUES (nextval('admin_svg.styl'::text), currval('admin_svg.them'::text), NULL, '126,238,111', '126,238,111', '', '1', '', '', '', '', '', '-1', '', '');
 INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche) VALUES (currval('admin_svg.appli'::text), currval('admin_svg.them'::text), '', '', '', 17, 0, 0, '', false, NULL, NULL, NULL, false, false, false);
 
-//création cadastre cartographique
+--création cadastre cartographique
 INSERT INTO application (libelle_appli, btn_polygo, libelle_btn_polygo, divers, zoom_ouverture, zoom_min, zoom_max, url) VALUES ('cadastre', '', '', '', 600, 200, 8000, 'interface/carto.php');
 INSERT INTO apputi VALUES (currval('admin_svg.appli'::text), '1', NULL, NULL, NULL, 1);
 INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche) VALUES (currval('admin_svg.appli'::text), '1', '', '', '', 2, 0, 0, '', true, NULL, NULL, NULL, false, false, false);
@@ -528,7 +529,7 @@ INSERT INTO col_sel VALUES (currval('admin_svg.them'::text), 'the_geom', 'geom',
 INSERT INTO style VALUES (nextval('admin_svg.styl'::text), currval('admin_svg.them'::text), NULL, '0,0,255', '', '', 'arial', '2', '', '', '', '', '', '', '');
 INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche) VALUES (currval('admin_svg.appli'::text), currval('admin_svg.them'::text), '', '', '', 4, 0, 0, '', true, 200, 10000, 50000, true, false, false);
 
-//création cadastre littéral
+--création cadastre littéral
 INSERT INTO application (libelle_appli, btn_polygo, libelle_btn_polygo, divers, zoom_ouverture, zoom_min, zoom_max, url) VALUES ('Cadastre', '', '', '', NULL, NULL, NULL, '/cadastre/index.php');
 INSERT INTO apputi VALUES (currval('admin_svg.appli'::text), '1', NULL, NULL, NULL, 1);
 

@@ -40,11 +40,12 @@ termes.*/
 
 <body>
 <?php if ($vpg=='pgsql') {
-	$pgx=pg_connect("dbname=".$dbpg." host=localhost user=".$upg);
+	$pgx=pg_connect("dbname=".$bdpg." host=localhost user=".$upg." password=".$pswpg);
 	set_time_limit(120);
 	//$ctab=fopen($rep_f."cree_tab.sql",w);
 	if ($nvl=='O'){
 		/* Dépendance des bâtiments cenr=60 */
+		pg_exec($pgx,"CREATE SCHEMA cadastre");
 		pg_exec($pgx,"CREATE TABLE cadastre.b_depdgi (commune varchar(6),invar varchar(10),dnupev char(3),dnudes char(3),
 						  dsudep varchar(6),cconad char(2),asitet varchar(6),dmatgm char(2),
 						  dmatto char(2),detent char(1),geaulc char(1),gelelc char(1),
@@ -157,10 +158,10 @@ termes.*/
 		function rename_table($name_tb,$ann,$ct){
 			$dx=strval($ann-1);
 			$dx=substr($dx,2,2); echo $dx;
-			$chain1="create table ".substr($name_tb,0,-2).$dx." as select * from ".$name_tb.";\n";
-			fwrite ($ct,$chain1);
-			$chain2="delete from ".$name_tb.";\n";
-			fwrite ($ct,$chain2);
+			$chain1=pg_exec($pgx,"create table ".substr($name_tb,0,-2).$dx." as select * from ".$name_tb.";");
+			//fwrite ($ct,$chain1);
+			$chain2=pg_exec($pgx,"delete from ".$name_tb.";");
+			//fwrite ($ct,$chain2);
 		}
 		rename_table("cadastre.b_depdgi",$ann_ref,$ctab);
 		rename_table("cadastre.b_desdgi",$ann_ref,$ctab);
@@ -178,7 +179,7 @@ termes.*/
 		rename_table("cadastre.voies",$ann_ref,$ctab);
 		rename_table("cadastre.commune",$ann_ref,$ctab);
 	}
-fclose($ctab);
+//fclose($ctab);
 
 }
 ?>
