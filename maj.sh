@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #premier param�re : r�ertoire contenant les shp
 #deuxi�e param�re : Sch�a postgr� contenant la table
 #troisième paramètre : nom de la base postgrès

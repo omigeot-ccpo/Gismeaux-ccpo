@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 cd $1
 inter=0		#commande de creation des tables au début du fichier si =0
   for i in * ;do
