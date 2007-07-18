@@ -35,7 +35,7 @@ copier les données au format shapefile dans un répertoire, puis dans une console
 
 créer la commune dans la table commune.
 si BDTOPO commande sql "insert into admin_svg.commune (select *,envelope(the_geom),xmax(the_geom),xmin(the_geom),ymax(the_geom),ymin(the_geom),'idagglo' from bd_topo.commune);"
-sinon récupérer périmètre communal dans cadastre "insert into admin_svg.commune (nom,idcommune,canton,the_geom,enveloppe,xma,xmi,yma,ymi,idagglo) (select first(lower(tex2)),code_insee,'nom du canton',the_geom,envelope(the_geom),xmax(the_geom),xmin(the_geom),ymax(the_geom),ymin(the_geom),idagglo from test_cadastre.commune)"
+sinon récupérer périmètre communal dans cadastre "insert into admin_svg.commune (nom,idcommune,canton,the_geom,enveloppe,xma,xmi,yma,ymi) (select first(lower(tex2)),code_insee,'nom du canton',the_geom,envelope(the_geom),xmax(the_geom),xmin(the_geom),ymax(the_geom),ymin(the_geom) from test_cadastre.commune)"
 sinon donner coordonnées de la fenetre englobante
 
 modifier le fichier interface/config.php

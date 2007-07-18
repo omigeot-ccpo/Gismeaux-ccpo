@@ -102,7 +102,6 @@ CREATE TABLE admin_svg.commune (
 	region character varying,
 	population bigint,
 	multi_cant character varying,
-	the_geom public.geometry,
 	enveloppe public.geometry,
 	logo character varying,
 	larg_logo character varying,
@@ -116,6 +115,7 @@ CREATE TABLE admin_svg.commune (
 	approb character varying,
 	modif character varying,
 	idagglo character varying DEFAULT 770000);
+SELECT addgeometrycolumn('admin_svg','commune','the_geom',-1,'MULTYPOLYGON',2);
 ALTER TABLE admin_svg.commune OWNER TO "+pg_utilis+";
 CREATE UNIQUE INDEX ndx_commune_insee ON admin_svg.commune USING btree (idcommune);
 ALTER INDEX admin_svg.ndx_commune_insee OWNER TO "+pg_utilis+";
@@ -214,18 +214,7 @@ begin
   if (id ='') then 
 	chaine = '0';
   end if;
-end;$_$;
-
-create function admin_svg.v_fixe(character varying,character varying) returns character varying language plpgsql as $_$declare 
-cola alias for $1; 
-cole alias for $2; 
-col  character varying ;	
-begin
-   col=cola;
-   if (cola is NULL) then
-	col = cole;
-   end if;
-   return col;
+	return chaine;
 end;$_$;
 
 CREATE FUNCTION public.rd2dg(double precision) RETURNS double precision
