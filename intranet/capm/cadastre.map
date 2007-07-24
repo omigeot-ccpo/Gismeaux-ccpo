@@ -1,0 +1,389 @@
+#ENTETE#
+MAP
+NAME cadastre
+STATUS on
+SIZE 3100 2600
+#size 4960 4160
+UNITS meters
+IMAGECOLOR 255 255 255
+FONTSET"fonts/fontset.txt"
+IMAGETYPE jpeg
+OUTPUTFORMAT
+  NAME jpeg
+  DRIVER "GD/JPEG"
+  MIMETYPE "image/jpeg"
+  IMAGEMODE RGB
+  EXTENSION "jpg"
+END
+#EXTENT 625000 129000 656000 153382
+#DEBUT_DIALOGUE#
+WEB
+	TEMPLATE capm_svg.php
+	#MINSCALE 200
+	#MAXSCALE 8000
+	IMAGEPATH "/home/sig/intranet/tmp/"
+	IMAGEURL "/tmp/"
+END
+#FIN_DIALOGUE#
+#FIN_ENTETE#
+#BIBLIO_SYMBOLE#
+SYMBOL
+NAME 'circle'
+TYPE ELLIPSE
+POINTS 1 1 END
+FILLED false
+END
+SYMBOL
+NAME 'agrille'
+TYPE vector
+POINTS
+#rect
+0.1 0
+0.1 0.65
+0.9 0.65
+0.9 0
+0.1 0
+-99 -99
+#cercle
+0.5 0.05
+0.4 0.075
+0.35 0.125
+0.325 0.225
+0.35 0.325
+0.4 0.375
+0.5 0.4
+0.6 0.375
+0.625 0.325
+0.675 0.225
+0.6 0.075
+0.5 0.05
+-99 -99
+#demi cercle
+0.1 0.65
+0.25 0.55
+0.5 0.5
+0.75 0.55
+0.9 0.65
+-99 -99
+#rect grille
+0.3 0.65
+0.3 1
+0.7 1
+0.7 0.65
+-99 -99
+#ligne grille
+0.325 0.725
+0.675 0.725
+-99 -99
+0.325 0.825
+0.675 0.825
+-99 -99
+0.325 0.925
+0.675 0.925
+-99 -99
+END
+FILLed false
+end
+SYMBOL
+NAME 'avaloir'
+TYPE vector
+POINTS
+0 0
+0 1
+1 1
+1 0
+0 0
+-99 -99
+0 1 
+0.25 0.87
+0.5 0.80
+0.75 0.87
+1 1
+-99 -99
+
+0.5 0.1
+0.35 0.15
+0.28 0.25
+0.25 0.35
+0.28 0.45
+0.35 0.55
+0.5 0.6
+0.65 0.55
+0.72 0.45
+0.75 0.35
+0.72 0.25
+0.65 0.15
+0.5 0.1
+END
+FILLED false
+END
+SYMBOL
+NAME 'carre'
+TYPE vector
+POINTS
+0 0
+0 1
+1 1
+1 0
+0 0
+END
+FILLed false
+end
+SYMBOL
+NAME 'croix'
+TYPE vector
+POINTS
+0 0
+1 1
+-99 -99
+0 1
+1 0
+END
+end 
+SYMBOL
+NAME 'grille'
+TYPE vector
+POINTS
+0 0
+0 1
+1 1
+1 0
+0 0
+-99 -99 
+0 0.75
+1 0.75
+-99 -99
+0 0.5
+1 0.5
+-99 -99
+0 0.25
+1 0.25
+END
+end 
+SYMBOL
+NAME 'regard'
+TYPE ELLIPSE
+POINTS 1 1 END
+FILLED TRUE
+END
+#FIN_BIBLIO_SYMBOLE#
+#FIN_ENTETE#
+#DEF_COUCHE#
+#COUCHE_ORTHO#
+LAYER
+	NAME "ortho-photo" group "ortho-photo"
+	TYPE raster
+	STATUS on
+	#MINSCALE 1500
+	MAXSCALE 1000
+	TILEINDEX "/home/sig/intranet/capm/data/rast.shp"
+	TILEITEM "location"
+	END
+LAYER
+	NAME "ortho-photo" group "ortho-photo"
+	TYPE raster
+	STATUS on
+	MINSCALE 1000
+	MAXSCALE 2000
+	TILEINDEX "/home/sig/intranet/capm/data/rast50.shp"
+	TILEITEM "location"
+	END
+LAYER
+	NAME "ortho-photo" group "ortho-photo"
+	TYPE raster
+	STATUS on
+	MINSCALE 2000
+	#MAXSCALE 1000
+	TILEINDEX "/home/sig/intranet/capm/data/rast25.shp"
+	TILEITEM "location"
+	END
+#FIN_COUCHE_ORTHO#
+#COUCHE_POLYGON#
+
+LAYER
+	CONNECTIONTYPE postgis
+	NAME "Parcelle_ville" group "Parcelle_ville"
+	CONNECTION "user=postgres dbname=meaux"
+	DATA "the_geom from (select the_geom from cadastre.parcelle1 where prop1 in(select prop1 from cadastre.propriet where ddenom like(select 'COMMUNE D%'||upper(nom)||'%' from admin_svg.commune where idcommune like '%insee%%')) and parcelle1.code_insee like '%insee%%') as neo using unique the_geom using SRID=-1"
+	STATUS on
+	TYPE POLYGON
+	CLASS
+		COLOR 131 214 164
+		OUTLINECOLOR 0 0 0
+	END
+END
+
+LAYER
+	CONNECTIONTYPE postgis
+	NAME "Bati_dur" group "batiment"
+	CONNECTION "user=postgres dbname=meaux"
+	DATA "the_geom from cadastre.batiment using unique the_geom using SRID=-1"
+	STATUS on
+	TYPE POLYGON
+    FILTER "code_insee like '%insee%%'"
+	CLASS
+		EXPRESSION ('[constructi]' eq 'Bati dur')
+		COLOR 184 84 149
+		OUTLINECOLOR 0 0 0
+	END
+END
+LAYER
+	CONNECTIONTYPE postgis
+	NAME "Bati_leger" group "batiment"
+	CONNECTION "user=postgres dbname=meaux"
+	DATA "the_geom from cadastre.batiment using unique the_geom using SRID=-1"
+	STATUS on
+	TYPE POLYGON
+	FILTER "code_insee like '%insee%%'"
+    CLASS
+		EXPRESSION ('[constructi]' eq 'Bati leger')
+		COLOR 221 174 205
+		OUTLINECOLOR 0 0 0
+	END
+END
+
+
+
+
+#FIN_COUCHE_POLYGON#
+#COUCHE_LIGNE#
+
+LAYER
+	CONNECTIONTYPE postgis
+	NAME "parcelle" group "parcelle"
+	CONNECTION "user=postgres dbname=meaux"
+	DATA "the_geom from cadastre.parcelle using unique the_geom using SRID=-1"
+	STATUS on
+	TYPE POLYGON
+    FILTER "code_insee like '%insee%%'"
+	CLASS
+		COLOR 255 128 0
+		OUTLINECOLOR 0 0 0
+	END
+	TRANSPARENCY 5
+END
+
+LAYER
+	CONNECTIONTYPE postgis
+	NAME "num_voie" group "num_voie"
+	CONNECTION "user=postgres dbname=meaux"
+	DATA "the_geom from cadastre.numvoie using unique gid using SRID=-1"
+	STATUS on
+	TYPE annotation
+	LABELITEM texte
+	SYMBOLSCALE 5000
+	CLASS
+		LABEL
+			COLOR 0 0 255
+			ANGLE auto
+			TYPE truetype
+			FONT "arial"
+			POSITION cc
+			size 2
+			MINSIZE 3
+			MAXSIZE 12
+		END
+	END
+END
+LAYER
+	CONNECTIONTYPE postgis
+	NAME "nom_voie" group "nom_voie"
+	CONNECTION "user=postgres dbname=meaux"
+	DATA "the_geom from cadastre.nomvoie using unique the_geom using SRID=-1"
+	STATUS on
+	TYPE annotation
+	#LABELITEM '[texte]||[texte2]'
+	SYMBOLSCALE 5000
+	CLASS
+		text ([texte] [texte2] [texte3] [texte4] [texte5] [texte6] [texte7] [texte8] [texte9] [texte10])
+		LABEL
+		
+			#FORCE true
+			PARTIALS false
+			COLOR 0 0 0
+			ANGLE auto
+			TYPE truetype
+			FONT "arial"
+			POSITION cc
+			MINSIZE 5
+			MAXSIZE 15
+			#size 1
+		END
+	END
+END
+LAYER
+  CONNECTIONTYPE postgis
+  NAME "parcelle" group "parcelle"
+  CONNECTION "user=postgres dbname=meaux"
+  DATA "the_geom FROM cadastre.parcelle using unique the_geom using SRID=-1"
+  STATUS on
+  TYPE polygon
+  FILTER "identifian in %parce%"
+  LABELITEM identifian
+   CLASS
+   		LABEL
+			ANGLE auto
+			TYPE truetype
+			ANTIALIAS true
+			FONT "arial"
+			POSITION cc
+			size 10
+		END
+   COLOR 150 254 150
+END
+TRANSPARENCY 70
+  END
+#couche contour parcelle
+LAYER
+  CONNECTIONTYPE postgis
+  NAME "parcelle" group "parcelle"
+  CONNECTION "user=postgres dbname=meaux"
+  DATA "the_geom FROM cadastre.parcelle using unique the_geom using SRID=-1"
+  STATUS on
+  TYPE polygon
+  FILTER "code_insee like '%insee%%'"
+   CLASS
+     OUTLINECOLOR  0 0 0
+  END
+END
+
+LAYER
+  CONNECTIONTYPE postgis
+  NAME "cotation" group "cotation"
+  CONNECTION "user=postgres dbname=meaux"
+  DATA "the_geom FROM admin_svg.temp_cotation using unique the_geom using SRID=-1"
+  STATUS on
+  TYPE line
+  FILTER "session_temp like '%sess%'"
+   LABELITEM valeur
+   CLASS
+		EXPRESSION ('[type]' eq 'fleche')
+		OUTLINECOLOR 255 0 0
+		symbol "circle"
+		SIZE 2
+		
+	END
+   CLASS
+   		EXPRESSION ('[type]' eq 'line')
+   		LABEL
+			COLOR 255 0 0
+			ANGLE auto
+			TYPE truetype
+			ANTIALIAS true
+			FONT "arial"
+			POSITION uc
+			MINSIZE 10
+			MAXSIZE 15
+		END
+     OUTLINECOLOR  0 0 255
+  END
+  
+END
+
+
+#FIN_COUCHE_LIGNE#
+#COUCHE_POINT#
+#FIN_COUCHE_POINT#
+#FIN_DEF_COUCHE#
+#FIN_MAP#
+END

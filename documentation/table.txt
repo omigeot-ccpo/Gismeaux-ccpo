@@ -274,20 +274,20 @@ ch2 character varying;
 
 begin
 ch2=replace(ch1,' ','_');
-ch2=replace(ch2,'ï¿½,'e');
-ch2=replace(ch2,'ï¿½,'e');
-ch2=replace(ch2,'ï¿½,'e');
-ch2=replace(ch2,'ï¿½,'o');
-ch2=replace(ch2,'ï¿½,'o');
-ch2=replace(ch2,'ï¿½,'e');
-ch2=replace(ch2,'ï¿½,'i');
-ch2=replace(ch2,'ï¿½,'a');
-ch2=replace(ch2,'ï¿½,'a');
-ch2=replace(ch2,'ï¿½,'a');
-ch2=replace(ch2,'','u');
-ch2=replace(ch2,'ï¿½,'i');
-ch2=replace(ch2,'ï¿½,'c');
-ch2=replace(ch2,'','u');
+ch2=replace(ch2,'é','e');
+ch2=replace(ch2,'è','e');
+ch2=replace(ch2,'ê','e');
+ch2=replace(ch2,'ô','o');
+ch2=replace(ch2,'ö','o');
+ch2=replace(ch2,'ë','e');
+ch2=replace(ch2,'ï','i');
+ch2=replace(ch2,'ä','a');
+ch2=replace(ch2,'à','a');
+ch2=replace(ch2,'â','a');
+ch2=replace(ch2,'û','u');
+ch2=replace(ch2,'î','i');
+ch2=replace(ch2,'ç','c');
+ch2=replace(ch2,'ù','u');
 return ch2;
 end;
 $_$

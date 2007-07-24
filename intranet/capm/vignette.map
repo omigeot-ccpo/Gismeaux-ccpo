@@ -1,6 +1,6 @@
 #ENTETE#
 MAP
-NAME vignette
+NAME tt
 STATUS on
 SIZE 302 254
 UNITS meters
@@ -10,12 +10,14 @@ IMAGETYPE jpeg
 #EXTENT 625000 129000 656000 153382
 #DEBUT_DIALOGUE#
 WEB
-	TEMPLATE capm_svg.html
+	TEMPLATE capm_svg.php
 	#MINSCALE 200
 	#MAXSCALE 8000
 	IMAGEPATH "/home/sig/intranet/interface/communes/"
 	IMAGEURL "/tmp/"
 END
+
+
 LAYER
 	CONNECTIONTYPE postgis
 	NAME "commune" group "commune"
