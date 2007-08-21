@@ -130,7 +130,7 @@ termes.*/
 						  dnupdl char(3),gurbpa char(1),dparpi varchar(4),ccoarp char(1),
 						  gparnf char(1),gparbat char(1),dnuvoi varchar(4),
 						  dindic char(1),ccovoi varchar(5),ccoriv varchar(4),ccocif varchar(4),
-						  par1 varchar(6),prop1 varchar(6));");
+						  par1 varchar(6),prop1 varchar(6),ind varchar(12));");
 		pg_exec($pgx,"CREATE index ndx_parcel_comm on cadastre.parcel (commune);");
 		pg_exec($pgx,"CREATE index ndx_parcel_par1 on cadastre.parcel (par1);");
 		pg_exec($pgx,"CREATE index ndx_parcel_prop1 on cadastre.parcel (prop1);");

@@ -374,6 +374,7 @@ if ($nbat!=""){
 		$linfo=fgets($fp);
 	}
 fclose($fp);
+pg_exec($pgx,"update cadastre.parcel set ind = substr(commune,4,3)||'000'||ccosec||dnupla where oid=oid");
 if ($voracle=='oracle') {
 	fclose($parc_ora);
 	fclose($psubd_ora);
