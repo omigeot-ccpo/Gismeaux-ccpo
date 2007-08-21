@@ -85,7 +85,7 @@ include("../connexion/deb.php");
 $nocoche="deco.png";
 $coche="okcoche.png";
 
-$q="SELECT  nom_voie,dnuvoi,dindic,identifian FROM cadastre.parcelle1 WHERE identifian in ('";
+$q="SELECT  nom_voie,dnuvoi,dindic,identifian FROM cadastre.parcelle WHERE identifian in ('";
 $wh=""; $q2="";
 if ($OBJ_KEYS){	$obj_keys=$OBJ_KEYS;}
 if ($obj_keys){
