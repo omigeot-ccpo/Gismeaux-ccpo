@@ -106,7 +106,7 @@ var indexfo=document.forms[0].elements[1].options.selectedIndex;
 </script>
 </head>
 <?php
-if($nav==0)
+if($_GET['nav']==0)
 {
 echo "<body onload='init();prev();'>";
 }
@@ -115,9 +115,9 @@ else
 echo "<body onload='prev();'>";
 }
 
-if($nav!="0")
+if($_GET['nav']!="0")
 {
-$raster=str_replace("chr(224)","à",$raster);
+$raster=str_replace("chr(224)","à",$_GET['raster']);
 $raster=str_replace("chr(233)","é",$raster);
 $raster=str_replace("chr(232)","è",$raster);
 $raster=str_replace("chr(234)","ê",$raster);
@@ -128,7 +128,11 @@ $raster=str_replace("chr(238)","î",$raster);
 $raster=str_replace("chr(251)","û",$raster);
 $raster=str_replace("chr(95)","_",$raster);
 }
-print("<form id=\"form1\" name=\"form1\" target=\"_parent\" method=\"post\" action=\"./printpdf.php?raster=".$raster."&x=".$x."&y=".$y."&lar=".$lar."&hau=".$hau."&zoom=".$zoom."&xini=".$xini."&yini=".$yini."&parce=".stripslashes($parce)."\" onload=\"modif(this.form)\">");
+else
+{
+$raster=$_GET['raster'];
+}
+print("<form id=\"form1\" name=\"form1\" target=\"_parent\" method=\"post\" action=\"./printpdf.php?raster=".$raster."&x=".$_GET['x']."&y=".$_GET['y']."&lar=".$_GET['lar']."&hau=".$_GET['hau']."&zoom=".$_GET['zoom']."&xini=".$_GET['xini']."&yini=".$_GET['yini']."&parce=".stripslashes($_GET['parce'])."\" onload=\"modif(this.form)\">");
 ?>
 
   <div style="position:absolute;left:50px;top:15px">
@@ -160,11 +164,11 @@ print("<form id=\"form1\" name=\"form1\" target=\"_parent\" method=\"post\" acti
     <input name="titre" type="text" size="30" maxlength="40" />
   </div>
   <div style="position:absolute;left:50px;top:280px">
-    Vous êtes à une échelle:1/<?php echo round($echini);?>
+    Vous êtes à une échelle:1/<?php echo round($_GET['echini']);?>
   </div>
 	<div style="position:absolute;left:50px;top:310px">
     Echelle:1/
-    <input name="echelle" type="text" value="<?php echo round($echini)?>" size="4" maxlength="5" />*Laissez la valeur si pas de mise à l'echelle
+    <input name="echelle" type="text" value="<?php echo round($_GET['echini'])?>" size="4" maxlength="5" />*Laissez la valeur si pas de mise à l'echelle
   </div>
   </div>
 	<div style="position:absolute;left:120px;top:340px"><input name="Valider" type="submit" value="Valider" /></div>

@@ -34,13 +34,14 @@ termes.*/
 ini_set('session.gc_maxlifetime', 3600);
 session_start();
 include("../connexion/deb.php");
+$parcelle=$_GET['parcelle'];
 if($parcelle=='')
 {
-$numero1=$numero;
-$numero='0000'.$numero;
+$numero1=$_GET['numero'];
+$numero='0000'.$_GET['numero'];
 $numero=substr($numero,-4);
-$cod_insee=substr($code,0,6);
-$ccoriv=substr($code,6);
+$cod_insee=substr($_GET['code'],0,6);
+$ccoriv=substr($_GET['code'],6);
 $q= "SELECT ccosec,dnupla FROM cadastre.parcel WHERE dnuvoi='$numero' AND ccoriv='$ccoriv' AND commune='$cod_insee'";
 $cou=tab_result($pgx,$q);
 $section1=ltrim($cou[0]['ccosec']);
@@ -48,9 +49,10 @@ $section1=str_pad($section1, 2, "0", STR_PAD_LEFT);
 $parcelle1=$cou[0]['dnupla'];
 
 $parcelle=substr($cod_insee,3).'000'.$section1.$parcelle1;
+
 	if(count($cou)==0)
 	{
-	$result ="SELECT X(centroid(Translate(the_geom,-$xini,-$yini))) as 		x,Y(centroid(Translate(the_geom,-$xini,-$yini))) as y FROM eco.adresse WHERE numero='$numero1' AND rivoli='$ccoriv' AND code_insee='$cod_insee'";
+	$result ="SELECT X(centroid(Translate(the_geom,-".$_SESSION['xini'].",-".$_SESSION['yini']."))) as x,Y(centroid(Translate(the_geom,-".$_SESSION['xini'].",-".$_SESSION['yini']."))) as y FROM eco.adresse WHERE numero='$numero1' AND rivoli='$ccoriv' AND code_insee='$cod_insee'";
 	$cou1=tab_result($pgx,$result);
 	$xmin=$cou1[0]['x'];
 	$ymin=$cou1[0]['y'];
@@ -71,7 +73,7 @@ $parcelle=substr($cod_insee,3).'000'.$section1.$parcelle1;
 			if(count($cou2)>0)
 			{
 			$parcelle=strtoupper($parcelle);
-			$qs1="select X(centroid(Translate(the_geom,-$xini,-$yini))) as x,Y(centroid(Translate(the_geom,-$xini,-$yini))) as y from 			cadastre.parcelle where identifian='$parcelle'";
+			$qs1="select X(centroid(Translate(the_geom,-".$_SESSION['xini'].",-".$_SESSION['yini']."))) as x,Y(centroid(Translate(the_geom,-".$_SESSION['xini'].",-".$_SESSION['yini']."))) as y from 			cadastre.parcelle where identifian='$parcelle'";
 			$cou4=tab_result($pgx,$qs1);
 			$xmin=$cou4[0]['x'];
 			$ymin=$cou4[0]['y'];
@@ -88,7 +90,7 @@ $parcelle=substr($cod_insee,3).'000'.$section1.$parcelle1;
 if($parcelle!='point' && strlen($parcelle)!=6)
 {
 $parcelle=strtoupper($parcelle);
-$qs="select X(centroid(Translate(the_geom,-$xini,-$yini))) as x,Y(centroid(Translate(the_geom,-$xini,-$yini))) as y from cadastre.parcelle where identifian='$parcelle'";
+$qs="select X(centroid(Translate(the_geom,-".$_SESSION['xini'].",-".$_SESSION['yini']."))) as x,Y(centroid(Translate(the_geom,-".$_SESSION['xini'].",-".$_SESSION['yini']."))) as y from cadastre.parcelle where identifian='$parcelle'";
 $cou3=tab_result($pgx,$qs);
 	$xmin=$cou3[0]['x'];
 	$ymin=$cou3[0]['y'];

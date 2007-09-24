@@ -34,7 +34,7 @@ termes.*/
 ini_set('session.gc_maxlifetime', 3600);
 session_start();
 include('../connexion/deb.php');
-$q="select area(GeometryFromtext('POLYGON((".$polygo."))',-1)) as aire";
+$q="select area(GeometryFromtext('POLYGON((".$_GET['polygo']."))',-1)) as aire";
 $resultat = tab_result($pgx, $q);
 echo $resultat[0]['aire'];
 ?>

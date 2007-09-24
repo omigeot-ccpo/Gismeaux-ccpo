@@ -1,4 +1,5 @@
 <?php
+//phpinfo();
 /*Copyright Ville de Meaux 2004-2007
 contributeur: jean-luc Dechamp - robert Leguay 
 sig@meaux.fr
@@ -31,35 +32,36 @@ sécurité de leurs systèmes et ou de leurs données et, plus généralement,
 Le fait que vous puissiez accéder à cet en-tête signifie que vous avez 
 pris connaissance de la licence CeCILL-C, et que vous en avez accepté les 
 termes.*/
-if($SERVER_PORT!=443)
+if($_SERVER['SERVER_PORT']!=443)
 {
 ini_set('session.gc_maxlifetime', 3600);
 session_start();
 }
 else
 {
-$_SESSION['xini']=& $xini;
-$_SESSION['yini']=& $yini;
-$_SESSION['code_insee']=& $code_insee;
+$_SESSION['xini']= $_GET["xini"];
+$_SESSION['yini']= $_GET["yini"];
+$_SESSION['code_insee']= $_GET["code_insee"];
 }
-$_SESSION['zoommm'] =& $zoom;
-$_SESSION['cx'] =& round($x+($lar/2));
-$_SESSION['cy'] =& round($y+($hau/2));
-$_SESSION['boitelarg'] =& $lar;
-$_SESSION['boitehaut'] =& $hau;
-$_SESSION['prace'] =& $placid;
+
+$_SESSION['zoommm'] =$_GET['zoom'];
+$_SESSION['cx'] =round($_GET["x"]+($_GET["lar"]/2));
+$_SESSION['cy'] =round( $_GET["y"]+( $_GET["hau"]/2));
+$_SESSION['boitelarg'] =$_GET["lar"];
+$_SESSION['boitehaut'] =$_GET["hau"];
+$_SESSION['prace'] =$_GET["placid"];
 include("../connexion/deb.php");
-$xm=$x + $xini;
-$xma=($x+$lar) + $xini;
-$yma= $yini - $y;
-$ym= $yini - ($y+$hau);
+$xm= $_GET["x"]+  $_GET["xini"];
+$xma=($_GET["x"]+ $_GET["lar"]) +  $_GET["xini"];
+$yma=  $_GET["yini"] -  $_GET["y"];
+$ym=  $_GET["yini"] - ($_GET["y"] +  $_GET["hau"]);
 $textq="";
 $sql_app="select supp_chr_spec(libelle_appli) as libelle_appli from admin_svg.application where idapplication=".$_SESSION['appli'];
 $app=tab_result($pgx,$sql_app);
 $application=$app[0]['libelle_appli'];
 
-	if ($type=='raster'){
-	$rastx=explode(";",$raster);
+	if ( $_GET["type"]=='raster'){
+	$rastx=explode(";", $_GET["raster"]);
 	$raster="";
 	for($i=0;$i<count($rastx);$i++)
 	{
@@ -73,41 +75,43 @@ $application=$app[0]['libelle_appli'];
 	error_reporting (1);
 
 $serv=$_SERVER["SERVER_NAME"];
-
+//$serv="127.0.0.1";
 	if(substr($_SESSION['code_insee'], -3)=='000')
 	{
 
-	$url="http://".$serv."/cgi-bin/mapserv?map=/home/sig/intranet/capm/".$application.".map&map_imagetype=jpeg&insee=".substr($_SESSION['code_insee'],0,3)."&layer=".$raster."&minx=".$xm."&miny=".$ym."&maxx=".$xma."&maxy=".$yma."&mapsize=1240%201040&parce=('')";
+	$url="http://".$serv."/cgi-bin/mapserv?map=/home/sig/intranet/capm/".$application.".map&insee=".substr($_SESSION['code_insee'],0,3)."&layer=".$raster."&minx=".$xm."&miny=".$ym."&maxx=".$xma."&maxy=".$yma."&mapsize=1240%201040&parce=('')";
 	}
 	else
 	{
-	$url="http://".$serv."/cgi-bin/mapserv?map=/home/sig/intranet/capm/".$application.".map&map_imagetype=jpeg&insee=".$_SESSION['code_insee']."&layer=".$raster."&minx=".$xm."&miny=".$ym."&maxx=".$xma."&maxy=".$yma."&mapsize=1240%201040&parce=('')";
+	$url="http://".$serv."/cgi-bin/mapserv?map=/home/sig/intranet/capm/".$application.".map&insee=".$_SESSION['code_insee']."&layer=".$raster."&minx=".$xm."&miny=".$ym."&maxx=".$xma."&maxy=".$yma."&mapsize=1240%201040&parce=('')";
 	}
-		$contenu=file($url);
+	//echo $url;	
+$contenu=file($url);
+//echo $contenu[0];
        		while (list($ligne,$cont)=each($contenu)){
 			$numligne[$ligne]=$cont;
 		}
-		$texte=$numligne[1];
+		$texte=$contenu[1];
 		$image=explode('/',$texte);
 		$conte1=explode('.',$image[4]);
 		$image=$conte1[0];
 		
-		$textq.="<g id='".$layer."'>\n";
-		$textq.="<image id='ima' x='".$x."' y='".$y."' width='".$lar."' height='".$hau."'  visibility='visible' xlink:href='../tmp/".$image.".jpg'></image>";
+		$textq.="<g id='".$_GET['layer']."'>\n";
+		$textq.="<image id='ima' x='". $_GET["x"]."' y='". $_GET["y"]."' width='". $_GET["lar"]."' height='". $_GET["hau"]."'  visibility='visible' xlink:href='../tmp/".$image.".jpg'></image>";
 		
 		error_reporting ($erreur);
 $textq.="</g>\n";
 }
 else
 {
-$rast=$raster;
+$rast= $_GET["raster"];
 if($nav=="2")
 {
-$rast=utf8_decode($raster);
+$rast=utf8_decode( $_GET["raster"]);
 }
 if($nav=="1")
 {
-$rast=str_replace("chr(224)","à",$raster);
+$rast=str_replace("chr(224)","à",$_GET["raster"]);
 $rast=str_replace("chr(233)","é",$rast);
 $rast=str_replace("chr(232)","è",$rast);
 $rast=str_replace("chr(234)","ê",$rast);
@@ -128,8 +132,8 @@ $rast=str_replace("chr(95)","_",$rast);
 $ras=explode(".",$rast);
 	$rast=$ras[1];
 	$id=$ras[0];
-$sql="select theme.schema,theme.tabl,col_theme.colonn,col_theme.valeur_mini,col_theme.valeur_maxi,col_theme.valeur_texte,sinul(col_theme.fill, style.fill) as fill,sinul(col_theme.stroke_rgb, style.stroke_rgb) as stroke_rgb,sinul(col_theme.symbole,style.symbole) as symbole,sinul(col_theme.opacity,style.opacity) as opacity,sinul(col_theme.font_familly,style.font_familly) as font_familly,sinul(col_theme.font_size,style.font_size) as font_size,appthe.mouseover,appthe.mouseout,appthe.click,appthe.idtheme,theme.partiel,sinul(col_theme.stroke_width,style.stroke_width) as stroke_width,appthe.pointer_events from admin_svg.appthe join admin_svg.theme on appthe.idtheme=theme.idtheme left outer join  admin_svg.col_theme on appthe.idappthe=col_theme.idappthe left outer join  admin_svg.style on appthe.idtheme=style.idtheme where appthe.idapplication=".$_SESSION['appli']." and (col_theme.intitule_legende='".$rast."' or theme.libelle_them='".$rast."') and appthe.idappthe=".$id;
-
+//$sql="select theme.schema,theme.tabl,col_theme.colonn,col_theme.valeur_mini,col_theme.valeur_maxi,col_theme.valeur_texte,sinul(col_theme.fill, style.fill) as fill,sinul(col_theme.stroke_rgb, style.stroke_rgb) as stroke_rgb,sinul(col_theme.symbole,style.symbole) as symbole,sinul(col_theme.opacity,style.opacity) as opacity,sinul(col_theme.font_familly,style.font_familly) as font_familly,sinul(col_theme.font_size,style.font_size) as font_size,appthe.mouseover,appthe.mouseout,appthe.click,appthe.idtheme,theme.partiel,sinul(col_theme.stroke_width,style.stroke_width) as stroke_width,appthe.pointer_events from admin_svg.appthe join admin_svg.theme on appthe.idtheme=theme.idtheme left outer join  admin_svg.col_theme on appthe.idappthe=col_theme.idappthe left outer join  admin_svg.style on appthe.idtheme=style.idtheme where appthe.idapplication=".$_SESSION['appli']." and (col_theme.intitule_legende='".$rast."' or theme.libelle_them='".$rast."') and appthe.idappthe=".$id;
+$sql="select theme.schema,theme.tabl,col_theme.colonn,col_theme.valeur_mini,col_theme.valeur_maxi,col_theme.valeur_texte,sinul(col_theme.fill, style.fill) as fill,sinul(col_theme.stroke_rgb, style.stroke_rgb) as stroke_rgb,sinul(col_theme.symbole,style.symbole) as symbole,sinul(col_theme.opacity,style.opacity) as opacity,sinul(col_theme.font_familly,style.font_familly) as font_familly,sinul(col_theme.font_size,style.font_size) as font_size,appthe.mouseover,appthe.mouseout,appthe.click,appthe.idtheme,sinul(appthe.partiel,theme.partiel) as partiel,sinul(col_theme.stroke_width,style.stroke_width) as stroke_width,appthe.pointer_events from admin_svg.appthe join admin_svg.theme on appthe.idtheme=theme.idtheme left outer join  admin_svg.col_theme on appthe.idappthe=col_theme.idappthe left outer join  admin_svg.style on appthe.idtheme=style.idtheme where appthe.idapplication=".$_SESSION['appli']." and (col_theme.intitule_legende='".$rast."' or theme.libelle_them='".$rast."') and appthe.idappthe=".$id;
 $cou=tab_result($pgx,$sql);
 $rotation='false';
 $d="select * from admin_svg.col_sel where idtheme='".$cou[0]['idtheme']."'";
@@ -251,7 +255,7 @@ if($type_geo=="texte" && $rotation=="false")
 {
 $styl.="text-anchor:middle;";
 }
-$textq.="<g id=\"".$layer."\" style=\"".$styl."\" ";
+$textq.="<g id=\"".$_GET['layer']."\" style=\"".$styl."\" ";
 if($cou[0]['mouseover']!='')
 {
 $textq.="onmouseover=\"".$cou[0]['mouseover']."\" onmouseout=\"".$cou[0]['mouseout']."\" ";
@@ -321,7 +325,7 @@ if($cou[0]['mouseover']!=''||$cou[0]['click']!='')
 				{
 				for ($e=0;$e<count($res);$e++)
 					{
-					if($res[$e]['ident']==$placid)
+					if($res[$e]['ident']==$_GET['placid'])
 					{
 					$textq.="<a id='li".$res[$e]['ident']."'><path id='".$res[$e]['ident']."' ";
 					if($res[$e]['ad']!="")
@@ -353,11 +357,12 @@ if($cou[0]['mouseover']!=''||$cou[0]['click']!='')
 }	
 else
 {	
-	if($type_geo=="point")
+	if($type_geo=="symbole")
 				{
 				for ($e=0;$e<count($res);$e++)
 					{
-					$textq.="<use ".$res[$e]['geom']." id='".$res[$e]['ident']."' xlink:href='#".$cou[0]['symbole']."'/>\n";
+					$textq.="<text ".$res[$e]['geom']." id='".$res[$e]['ident']."' font-family='fontsvg' ";
+					$textq.=">".$cou[0]['symbole']."</text>\n";
 					}
 				}
 	elseif($type_geo=="texte")
@@ -379,7 +384,7 @@ else
 				{
 				for ($e=0;$e<count($res);$e++)
 					{
-					if($res[$e]['ident']==$placid && $res[$e]['ident']!='')
+					if($res[$e]['ident']==$_GET['placid'] && $res[$e]['ident']!='')
 					{
 					$textq.="<path id='".$res[$e]['ident']."' fill='rgb(150,254,150)' fill-opacity='0.7' d='".$res[$e]['geom']."'/>\n";
 					}

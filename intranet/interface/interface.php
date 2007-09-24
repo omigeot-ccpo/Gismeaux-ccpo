@@ -31,11 +31,12 @@ sécurité de leurs systèmes et ou de leurs données et, plus généralement,
 Le fait que vous puissiez accéder à cet en-tête signifie que vous avez 
 pris connaissance de la licence CeCILL-C, et que vous en avez accepté les 
 termes.*/
-if (eregi('MSIE', $HTTP_USER_AGENT))
+//phpinfo();
+if (eregi('MSIE', $_SERVER['HTTP_USER_AGENT']))
 {    
 $nav="0";// Internet Explorer 
 }
-elseif (eregi('Opera', $HTTP_USER_AGENT))
+elseif (eregi('Opera', $_SERVER['HTTP_USER_AGENT']))
 { 
 $nav="1";//opÃ©ra
 }
@@ -52,8 +53,8 @@ session_start();
 $sessi=session_id();
 if($_GET["appli"]=='')
 {
-$_SESSION['code_insee']=770284;
-$_SESSION['appli']=13;
+$_SESSION['code_insee']=770475;
+$_SESSION['appli']=2;
 }
 else
 {
@@ -79,7 +80,8 @@ $chaine="";
 $symbol="";
 $textsymbol="";
 $extraction="";
-$req2="select theme.libelle_them as nom_theme,theme.schema,theme.tabl,appthe.idappthe,col_theme.colonn,admin_svg.v_fixe(col_theme.valeur_texte),appthe.raster,sinul(appthe.zoommin::character varying,theme.zoommin::character varying) as zoommin,sinul(appthe.zoommax::character varying,theme.zoommax::character varying) as zoommax,sinul(appthe.zoommaxraster::character varying,theme.zoommax_raster::character varying) as zoommax_raster,theme.raster as testraster,application.zoom_min as zoom_min_appli,application.zoom_max as zoom_max_appli,application.zoom_ouverture as zoom_ouverture_appli,theme.partiel,theme.vu_initial,style.fill as style_fill,style.symbole as style_symbole,style.opacity  as style_opacity,style.font_size  as style_fontsize,style.stroke_rgb  as style_stroke,application.btn_polygo,application.libelle_btn_polygo from admin_svg.appthe join admin_svg.theme on appthe.idtheme=theme.idtheme join admin_svg.application on appthe.idapplication=application.idapplication left outer join  admin_svg.col_theme on appthe.idappthe=col_theme.idappthe left outer join admin_svg.style on appthe.idtheme=style.idtheme where appthe.idapplication=".$_SESSION['appli']." group by theme.libelle_them,appthe.ordre,theme.schema,theme.tabl,col_theme.colonn,admin_svg.v_fixe(col_theme.valeur_texte),appthe.raster,theme.zoommin,appthe.zoommin,theme.zoommax,appthe.zoommax,theme.zoommax_raster,appthe.zoommaxraster,theme.raster,application.zoom_min,application.zoom_max,application.zoom_ouverture,theme.partiel,theme.vu_initial,style.fill,style.symbole,style.opacity,style.font_size,style.stroke_rgb,appthe.idappthe,application.btn_polygo,application.libelle_btn_polygo order by appthe.ordre asc";
+//$req2="select theme.libelle_them as nom_theme,theme.schema,theme.tabl,appthe.idappthe,col_theme.colonn,admin_svg.v_fixe(col_theme.valeur_texte),appthe.raster,sinul(appthe.zoommin::character varying,theme.zoommin::character varying) as zoommin,sinul(appthe.zoommax::character varying,theme.zoommax::character varying) as zoommax,sinul(appthe.zoommaxraster::character varying,theme.zoommax_raster::character varying) as zoommax_raster,theme.raster as testraster,application.zoom_min as zoom_min_appli,application.zoom_max as zoom_max_appli,application.zoom_ouverture as zoom_ouverture_appli,theme.partiel,theme.vu_initial,style.fill as style_fill,style.symbole as style_symbole,style.opacity  as style_opacity,style.font_size  as style_fontsize,style.stroke_rgb  as style_stroke,application.btn_polygo,application.libelle_btn_polygo from admin_svg.appthe join admin_svg.theme on appthe.idtheme=theme.idtheme join admin_svg.application on appthe.idapplication=application.idapplication left outer join  admin_svg.col_theme on appthe.idappthe=col_theme.idappthe left outer join admin_svg.style on appthe.idtheme=style.idtheme where appthe.idapplication=".$_SESSION['appli']." group by theme.libelle_them,appthe.ordre,theme.schema,theme.tabl,col_theme.colonn,admin_svg.v_fixe(col_theme.valeur_texte),appthe.raster,theme.zoommin,appthe.zoommin,theme.zoommax,appthe.zoommax,theme.zoommax_raster,appthe.zoommaxraster,theme.raster,application.zoom_min,application.zoom_max,application.zoom_ouverture,theme.partiel,theme.vu_initial,style.fill,style.symbole,style.opacity,style.font_size,style.stroke_rgb,appthe.idappthe,application.btn_polygo,application.libelle_btn_polygo order by appthe.ordre asc";
+$req2="select theme.idtheme,theme.libelle_them as nom_theme,theme.schema,theme.tabl,appthe.idappthe,col_theme.colonn,admin_svg.v_fixe(col_theme.valeur_texte),appthe.raster,sinul(appthe.zoommin::character varying,theme.zoommin::character varying) as zoommin,sinul(appthe.zoommax::character varying,theme.zoommax::character varying) as zoommax,sinul(appthe.zoommaxraster::character varying,theme.zoommax_raster::character varying) as zoommax_raster,theme.raster as testraster,application.zoom_min as zoom_min_appli,application.zoom_max as zoom_max_appli,application.zoom_ouverture as zoom_ouverture_appli,sinul(appthe.partiel,theme.partiel) as partiel,sinul(appthe.vu_initial,theme.vu_initial) as vu_initial,style.idstyle,style.fill as style_fill,style.symbole as style_symbole,style.opacity  as style_opacity,style.font_size  as style_fontsize,style.stroke_rgb  as style_stroke,style.stroke_width  as style_strokewidth,application.btn_polygo,application.libelle_btn_polygo from admin_svg.appthe join admin_svg.theme on appthe.idtheme=theme.idtheme join admin_svg.application on appthe.idapplication=application.idapplication left outer join  admin_svg.col_theme on appthe.idappthe=col_theme.idappthe left outer join admin_svg.style on appthe.idtheme=style.idtheme where appthe.idapplication=".$_SESSION['appli']." group by theme.idtheme,theme.libelle_them,appthe.ordre,theme.schema,theme.tabl,col_theme.colonn,admin_svg.v_fixe(col_theme.valeur_texte),appthe.raster,theme.zoommin,appthe.zoommin,theme.zoommax,appthe.zoommax,theme.zoommax_raster,appthe.zoommaxraster,theme.raster,application.zoom_min,application.zoom_max,application.zoom_ouverture,appthe.partiel,theme.partiel,appthe.vu_initial,theme.vu_initial,style.idstyle,style.fill,style.symbole,style.opacity,style.font_size,style.stroke_rgb,style.stroke_width,appthe.idappthe,application.btn_polygo,application.libelle_btn_polygo order by appthe.ordre asc";
 $cou=tab_result($pgx,$req2);
 $zoommin=$cou[0]['zoom_min_appli'];
 $zoommax=$cou[0]['zoom_max_appli'];
@@ -140,7 +142,7 @@ for ($c=0;$c<count($cou);$c++)
 $req1="select distinct (col_theme.intitule_legende) as intitule_legende,col_theme.fill,col_theme.stroke_rgb,col_theme.symbole,col_theme.font_size,col_theme.font_familly,col_theme.opacity,col_theme.ordre from admin_svg.appthe join admin_svg.col_theme on appthe.idappthe=col_theme.idappthe join admin_svg.theme on appthe.idtheme=theme.idtheme";
 	if($cou[$c]['v_fixe']=='1' and $cou[$c]['colonn']<>'')
 	{
-	$req1.=" join ".$cou[$c]['schema'].".".$cou[$c]['tabl']." on col_theme.valeur_texte=".$cou[$c]['tabl'].".".$cou[$c]['colonn']." where 					appthe.idapplication=".$appli." and theme.libelle_them='".$cou[$c]['nom_theme']."'";
+	$req1.=" join ".$cou[$c]['schema'].".".$cou[$c]['tabl']." on col_theme.valeur_texte=".$cou[$c]['tabl'].".".$cou[$c]['colonn']." where 					appthe.idapplication=".$_SESSION['appli']." and theme.libelle_them='".$cou[$c]['nom_theme']."'";
 	if(substr($_SESSION['code_insee'], -3)!='000' && $cou[$c]['schema']!="bd_topo")
 	{
 	$req1.=" and (".$cou[$c]['tabl'].".code_insee like '".$_SESSION['code_insee']."'  or code_insee is null) ";
@@ -150,7 +152,7 @@ $req1="select distinct (col_theme.intitule_legende) as intitule_legende,col_them
 	
 	else
 	{
-	$req1.=" where appthe.idapplication=".$appli." and theme.libelle_them='".$cou[$c]['nom_theme']."'";
+	$req1.=" where appthe.idapplication=".$_SESSION['appli']." and theme.libelle_them='".$cou[$c]['nom_theme']."' order by col_theme.ordre asc";
 	}
 	$couch=tab_result($pgx,$req1);
 	$z=$c+1;
@@ -388,7 +390,7 @@ $data.="cy=".$yc.";\n";
 $data.="intervale=".$intervale.";\n";
 $data.="theZoom=".$zoomouv.";\n";
 $data.="zoomVal=".$zoomouv.";\n";
-$data.="appli=".$appli."; \n";
+$data.="appli=".$_SESSION['appli']."; \n";
 $data.="sessionid='".$sessi."';\n";
 $data.="sessionname='".session_name()."';\n";
 $data.="code_insee=".$_SESSION['code_insee'].";\n";
@@ -396,7 +398,7 @@ $data.="xini=".$vu[0]['xini'].";\n";
 $data.="yini=".$vu[0]['yini'].";\n";
 $data.="largeurini=".$_SESSION['large'].";\n";
 $data.="hauteurini=".$_SESSION['haute'].";\n";
-$data.="serveur='".$HTTP_HOST."';\n";
+$data.="serveur='".$_SERVER['HTTP_HOST']."';\n";
 $data.="zoom_init=100;\n";
 //$data.="";
 $data.="]]></script>
@@ -705,6 +707,6 @@ $data.="</g></svg>
 	<text id=\"infotip\" x=\"25\" y=\"11\"  style=\"font-weight:normal;font-family:'Arial';font-size:8;text-anchor:left;pointer-events:none\" visibility=\"hidden\" >!</text>
 </g>
 </svg>";
-$data=gzcompress("$data",9);
+//$data=gzcompress("$data",9);
 echo $data;
 ?>

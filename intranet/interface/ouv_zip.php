@@ -33,14 +33,14 @@ pris connaissance de la licence CeCILL-C, et que vous en avez accepté les
 termes.*/
     require_once('zip.lib.php');
     // nom du fichier à ajouter dans l'archive
-$fileattente = '../tmp/'.$nom.'.ok';
-    $filename = '../tmp/'.$nom.'.svg';
+$fileattente = '../tmp/'.$_GET['nom'].'.ok';
+    $filename = '../tmp/'.$_GET['nom'].'.svg';
 	$filename1="";
 	//$filename1 ="../tmp/".$_SESSION['image'];
 	$fich='nok';
 	$fich1='nok';
 	// attente construction fichier
-	if($nom!="")
+	if($_GET['nom']!="")
 	{
 	while($fich!='ok')
 	{
@@ -49,25 +49,25 @@ $fileattente = '../tmp/'.$nom.'.ok';
 	$fich='ok';
 	}
 	}}
-	if($image=="ok")
+	if($_GET['image']=="ok")
 	{
-	$filename1= '../tmp/'.$nom.'.tmp';
+	$filename1= '../tmp/'.$_GET['nom'].'.tmp';
 	while($fich1!='ok')
 	{
 	if (file_exists($filename1)) 
 	{
-	$fp = fopen ('../tmp/'.$nom.'.tmp', 'r');
-    $conte = fread($fp, filesize('../tmp/'.$nom.'.tmp'));
+	$fp = fopen ('../tmp/'.$_GET['nom'].'.tmp', 'r');
+    $conte = fread($fp, filesize('../tmp/'.$_GET['nom'].'.tmp'));
     fclose ($fp);
 	$conte1=explode('.',$conte);
-	$image=$conte1[0];
+	$_GET['image']=$conte1[0];
 	$fich1='ok';
 	}
 	}}
 // création d'un objet 'zipfile'
     $zip = new zipfile();
     // contenu du fichier
-	if ($nom!="") 
+	if ($_GET['nom']!="") 
 	{
 	$fp = fopen ($filename, 'r');
     $content = fread($fp, filesize($filename));
@@ -77,10 +77,10 @@ $fileattente = '../tmp/'.$nom.'.ok';
 	}
        if ($filename1!="") 
 	{
-	$fp = fopen ("../tmp/".$image.".jpg", 'r');
-    $content1 = fread($fp, filesize("../tmp/".$image.".jpg"));
+	$fp = fopen ("../tmp/".$_GET['image'].".jpg", 'r');
+    $content1 = fread($fp, filesize("../tmp/".$_GET['image'].".jpg"));
     fclose ($fp);
-    $zip->addfile($content1,$image.".jpg");
+    $zip->addfile($content1,$_GET['image'].".jpg");
 	}
     // production de l'archive' Zip
     $archive = $zip->file();

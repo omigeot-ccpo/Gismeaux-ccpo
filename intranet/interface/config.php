@@ -33,14 +33,14 @@ pris connaissance de la licence CeCILL-C, et que vous en avez accepté les
 termes.*/
 //$config_serveur_smtp="smtp.mydomain" ;
 $config_serveur_smtp="192.168.200.2" ;
-// Si vous ne maitriser pas le serveur SMTP ou si à l'utilisation, vous avez une erreur de connexion au serveur, 
+// Si vous ne maîtriser pas le serveur SMTP ou si, à l'utilisation, vous avez une érreur de connexion au serveur, 
 //  laisser cette variable vide ("")
 
 /**************************************************************************************************************/
 /**************************************************************************************************************/
 //  ENVOI DE MAIL 
 //adresse administrateur
-$adresse_admin="sig@meaux.fr;sig1@meaux.fr";
+$adresse_admin="jean-luc.dechamp@meaux.fr;robert.leguay@meaux.fr";
 // sujet du message :
 $config_mail_sujet= "- Problème interface -";
 // corps du message : 

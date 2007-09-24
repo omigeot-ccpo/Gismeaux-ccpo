@@ -441,7 +441,6 @@ if (typeof postURL=='undefined') {
    xmlhttp.send(txt)
   } else {
    //Some Appropriate Fallback...
-
   }
  }
  if (typeof printNode=='undefined') {
@@ -602,6 +601,7 @@ var url='charge.php?type=svg&raster='+ cou +'&layer=' + x + '&x='+ xnulcorner + 
 	var url='charge.php?type=svg&raster='+couchesvgvisible+'&layer=' + x + '&x='+ xnulcorner + '&y=' + ynulcorner + '&lar=' + nWidth  + '&hau=' + nHeight+ '&zoom=' + zoomVal  + '&sessionname=' + sessionname + '&sessionid=' + sessionid + '&xini=' + xini + '&yini=' + yini+ '&nav=' + nav + '&placid=' + placid;}
 	animation()
 	//alert(url)
+//message("toto")
 	getURL(url,retour_extract)
 	couchesvgvisible="";
 	}
@@ -650,16 +650,23 @@ function convasc(data)
 function retour_extract(data)
 {
 	 var string = '';
-    if(data.success) 
+	if(data.success) 
 	{
     string = data.content;
-	//alert(string)
+	if(string!="")
+	{
 	var docFragment=parseXML(string, document);
 	var frag=docFragment.firstChild;
 	var elem=frag.getAttributeNS(null,"id");
 	var content = document.getElementById(elem);
     content.appendChild(docFragment);
 	cache()
+	}
+	else
+	{
+	cache()	
+	message('Impossible de charger cette couche...')
+	}
 	}
 }
  
@@ -1745,6 +1752,7 @@ function retour(data)
  var string = '';
     if(data.success) {
       string = data.content;
+//alert(string)
     var docFragment=parseXML(string, document);
 	afficherecherche = svgdoc.getElementById('controlrecherche');
 var content = document.getElementById('controlrecherche');
@@ -1854,7 +1862,6 @@ phrase1=phrase1+lettre1;
 } 
 svgdoc.getElementById("x_rectnum").getFirstChild().setData(phrase1);
 }
-
 
 }
 function activetrait(evt)
@@ -2462,9 +2469,21 @@ function enregistr(x)
 	}
 	else
 	{
-	var st="";
-	st = construction_svg()	
-	postURL("enregistre.php?centre="+centre+"&droite="+droite+"&nom=" +nomval+"&svg="+couche_svg+"&raster="+raster+"&x="+ xnulcorner + "&y=" + ynulcorner + "&lar=" + nWidth  + "&hau=" + nHeight+ "&zoom=" + zoomVal  + "&xini=" + xini + "&yini=" + yini +"&nav="+nav+"&parce="+par,st,callback,"image/xml+svg",null);
+	//var st="";
+	//st = construction_svg()
+var nb = varcotations.length;
+		for(a=0;a<nb;a++)
+		{
+		getURL("cotation.php?eff=0&num="+a+"&cot="+varcotations[a],callback2);
+		}
+		if(nb==0)
+		{
+		getURL("cotation.php?eff=1",callback2);	
+		}	
+	//postURL("enregistre.php?centre="+centre+"&droite="+droite+"&nom=" +nomval+"&svg="+couche_svg+"&raster="+raster+"&x="+ xnulcorner + "&y=" + ynulcorner + "&lar=" + nWidth  + "&hau=" + nHeight+ "&zoom=" + zoomVal  + "&xini=" + xini + "&yini=" + yini +"&nav="+nav+"&parce="+par,st,callback,"image/xml+svg",null);
+//alert(couche_svg)
+postURL("enregistre.php?centre="+centre+"&droite="+droite+"&nom=" +nomval+"&svg="+couche_svg+"&raster="+raster+"&x="+ xnulcorner + "&y=" + ynulcorner + "&lar=" + nWidth  + "&hau=" + nHeight+ "&zoom=" + zoomVal  + "&xini=" + xini + "&yini=" + yini +"&nav="+nav+"&parce="+par+"&sessionname=","",null,"image/xml+svg",null);
+		setTimeout("cache()",6000);
 	}
 	
 }

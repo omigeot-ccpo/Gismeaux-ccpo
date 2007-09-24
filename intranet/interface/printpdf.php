@@ -32,13 +32,13 @@ Le fait que vous puissiez accéder à cet en-tête signifie que vous avez
 pris connaissance de la licence CeCILL-C, et que vous en avez accepté les 
 termes.*/
 session_start();
-$xi=$x;
+$xi=$_GET['x'];
 $orientation='P';
 $unit='mm';
 $aph=4; //espace avant paragraphe
 $alig=5; //espace entre ligne
 $acel=2; //espace entre deux ligne dans la meme cellule
-$rastx=explode(";",$raster);
+$rastx=explode(";",$_GET['raster']);
 	$raster="";
 	for($i=0;$i<count($rastx);$i++)
 	{
@@ -198,7 +198,7 @@ function RotatedCell($angle,$x,$y,$w,$h,$txt,$bor,$ln,$aling)
 }
 
 include("../connexion/deb.php");
-$sql="select a.nom,a.logo,a.larg_logo,b.logo as logo_communaute,b.larg_logo as larg_communaute from admin_svg.commune as a join admin_svg.commune as b on  a.idagglo=b.idcommune where a.idcommune='".$_SESSION['code_insee']."'";
+$sql="select a.nom,a.logo,a.larg_logo,b.logo as logo_communaute,b.larg_logo as larg_communaute from admin_svg.commune as a left join admin_svg.commune as b on  a.idagglo=b.idcommune where a.idcommune='".$_SESSION['code_insee']."'";
 	$retour=tab_result($pgx,$sql);
 	if($retour[0]['larg_logo']!="")
 	{
@@ -210,10 +210,10 @@ else
 $larglogo=($retour[0]['larg_communaute']/2.5);
 $logo=$retour[0]['logo_communaute'];
 }
-$xm=$x + $xini;
-$xma=($x+$lar) + $xini;
-$yma= $yini - $y;
-$ym= $yini - ($y+$hau);
+$xm=$_GET['x'] + $_GET['xini'];
+$xma=($_GET['x']+$_GET['lar']) + $_GET['xini'];
+$yma= $_GET['yini'] - $_GET['y'];
+$ym= $_GET['yini'] - ($_GET['y']+$_GET['hau']);
 $mapsize="";
 
 $tableau=$_SESSION['cotation'];
@@ -222,10 +222,10 @@ if(is_array($tableau))
 		for($ij=0;$ij<count($tableau);$ij++)
 {
 $coor=explode("|",$tableau[$ij]);
-$x1=$xini+$coor[0];
-$y1=$yini-$coor[1];
-$x2=$xini+$coor[2];
-$y2=$yini-$coor[3];
+$x1=$_GET['xini']+$coor[0];
+$y1=$_GET['yini']-$coor[1];
+$x2=$_GET['xini']+$coor[2];
+$y2=$_GET['yini']-$coor[3];
 
 $lo=2;
 
@@ -296,11 +296,12 @@ $sql="insert into admin_svg.temp_cotation (the_geom,session_temp,type) values(Ge
 pg_exec($pgx,$sql);
 	}
 }
-if($legende==1 || $legende==2)
+//echo $_POST['legende'].",".$_POST['format'];
+if($_POST['legende']==1 || $_POST['legende']==2)
 {
 	$vision=pay;
 	$angle=90;
-	if($format=='A4')
+	if($_POST['format']=='A4')
 	{
 	$px=20;
 	$py=280;
@@ -327,7 +328,7 @@ if($legende==1 || $legende==2)
 	$mapsize='&mapsize=1240%201040';
 	$ratioechelle=2;
 	}
-	elseif($format=='A3')
+	elseif($_POST['format']=='A3')
 	{
 	$posiximage=15*(29.7/21);
 	$posiyimage=233*(29.7/21);
@@ -354,7 +355,7 @@ if($legende==1 || $legende==2)
 	$mapsize='&mapsize=1753.7%201470.9';
 	$ratioechelle=2;
 	}
-	elseif($format=='A2')
+	elseif($_POST['format']=='A2')
 	{
 	$posiximage=15*2;
 	$posiyimage=233*2;
@@ -380,7 +381,7 @@ if($legende==1 || $legende==2)
 	$sizetitre=30;
 	$ratioechelle=4;
 	}
-	elseif($format=='A1')
+	elseif($_POST['format']=='A1')
 	{
 	$posiximage=15*2*(29.7/21);
 	$posiyimage=233*2*(29.7/21);
@@ -438,7 +439,7 @@ else
 {
 	$vision=por;
 	$angle=0;
-	if($format=='A4')
+	if($_POST['format']=='A4')
 	{
 	$px=20;
 	$py=200;
@@ -465,7 +466,7 @@ else
 	$mapsize='&mapsize=1240%201040';
 	$ratioechelle=2/0.8;
 	}
-	elseif($format=='A3')
+	elseif($_POST['format']=='A3')
 	{
 	$px=20*(29.7/21);
 	$py=200*(29.7/21);
@@ -496,7 +497,7 @@ else
 	
 }
 
-$ech="&mapxy=".($xm+($xma-$xm)/2).'%20'.($ym+($yma-$ym)/2)."&SCALE=".$echelle/$ratioechelle;
+$ech="&mapxy=".($xm+($xma-$xm)/2).'%20'.($ym+($yma-$ym)/2)."&SCALE=".($_POST['echelle'])/$ratioechelle;
 //$raster=str_replace(";","&layer=",$raster);
 	$erreur=error_reporting ();
 	error_reporting (1);
@@ -513,7 +514,9 @@ $sql_app="select supp_chr_spec(libelle_appli) as libelle_appli from admin_svg.ap
 $app=tab_result($pgx,$sql_app);
 $application=$app[0]['libelle_appli'];
 //$application=str_replace(" ","_",$application);
-$url='http://'.$serv.'/cgi-bin/mapserv?map=/home/sig/intranet/capm/'.$application.'.map&map_imagetype=jpeg&insee='.$code_insee.'&sess='.session_id().'&parce='.stripslashes($parce).'&layer=cotation&layer='.$raster.$ech.$mapsize;
+
+$url='http://'.$serv.'/cgi-bin/mapserv?map=/home/sig/intranet/capm/'.$application.'.map&insee='.$code_insee.'&sess='.session_id().'&parce='.stripslashes($_GET['parce']).'&layer=cotation&layer='.$raster.$ech.$mapsize;
+//echo $url;
 		$contenu=file($url);
        		while (list($ligne,$cont)=each($contenu)){
 			$numligne[$ligne]=$cont;
@@ -521,9 +524,6 @@ $url='http://'.$serv.'/cgi-bin/mapserv?map=/home/sig/intranet/capm/'.$applicatio
 		$texte=$numligne[1];
 		$text = explode("/", $texte);
 		$tex=explode(".",$text[4]);
-		
-	
-	
 $sql="delete from admin_svg.temp_cotation where session_temp='".session_id()."'";
 pg_exec($pgx,$sql);
 		
@@ -531,33 +531,29 @@ pg_exec($pgx,$sql);
 //creation du fichier pdf
   $pdf=new PDF();
    $pdf->Open();
- $pdf->FPDF($orientation,$unit,$format);
+ $pdf->FPDF($orientation,$unit,$_POST['format']);
 //création page
 $pdf->AddFont('font1','','font1.php');
   $pdf->AddPage();
-  
 $pdf->RotatedImage('../tmp/'.$tex[0].'.jpg',$posiximage,$posiyimage,$larimage,$hauimage,$angle);
 $pdf->SetFont('font1','',$sizerosa);
+//echo $logo.",".$posixlogo.",".$posiylogo.",".$larlogo.",".$haulogo.",".$angle;
 $pdf->RotatedText($posixrosa,$posiyrosa,'a',$angle);
-//$pdf->SetFont('arial','',12);
-//$pdf->SetAlpha(0.5);
-//$pdf->RotatedImage('rosa.jpg',$posixrosa,$posiyrosa,15,15,$angle);
-//$pdf->SetAlpha(1);
 $pdf->RotatedImage($logo,$posixlogo,$posiylogo,$larlogo,$haulogo,$angle);
 $pdf->SetFont('arial','',$sizetitre);
-$pdf->RotatedCell($angle,$xtitre,$ytitre,$wtitre,$htitre,$titre,0,0,'C'); 
+$pdf->RotatedCell($angle,$xtitre,$ytitre,$wtitre,$htitre,$_POST['titre'],0,0,'C'); 
 $pdf->SetFont('arial','',$sizeechelle);
-if($echelle==0)
+if($_POST['echelle']==0)
 {
 $pdf->RotatedText($posixechelle,$posiyechelle,'Sans échelle',$angle);
 }
 else
 {
-$pdf->RotatedText($posixechelle,$posiyechelle,'1/'.$echelle.' ème',$angle);
+$pdf->RotatedText($posixechelle,$posiyechelle,'1/'.$_POST['echelle'].' ème',$angle);
 }
 $pdf->SetDrawColor(0);
 $pdf->SetFont('arial','',10);
-if($legende==1 || $legende==3)
+if($_POST['legende']==1 || $_POST['legende']==3)
 {
 $legende="";
 
@@ -570,7 +566,7 @@ for($i=0;$i<count($rastx);$i++)
 	$lib=str_replace("_"," ",$ra[1]);;
 	if($id!="")
 	{
-$req1="select col_theme.intitule_legende as intitule_legende,theme.libelle_them,col_theme.fill,col_theme.symbole,col_theme.opacity::real,col_theme.ordre,col_theme.stroke_rgb,style.fill as style_fill,style.symbole as style_symbole,style.opacity::real  as style_opacity,style.font_size  as style_fontsize,style.stroke_rgb  as style_stroke from admin_svg.appthe left outer join admin_svg.col_theme on appthe.idappthe=col_theme.idappthe join admin_svg.theme on appthe.idtheme=theme.idtheme left outer join admin_svg.style on appthe.idtheme=style.idtheme where appthe.idappthe=".$id."  and (intitule_legende='".$lib."' or libelle_them='".$lib."')";
+$req1="select col_theme.intitule_legende as intitule_legende,theme.libelle_them,col_theme.fill,col_theme.symbole,col_theme.opacity,col_theme.ordre,col_theme.stroke_rgb,style.fill as style_fill,style.symbole as style_symbole,style.opacity as style_opacity,style.font_size  as style_fontsize,style.stroke_rgb  as style_stroke from admin_svg.appthe left outer join admin_svg.col_theme on appthe.idappthe=col_theme.idappthe join admin_svg.theme on appthe.idtheme=theme.idtheme left outer join admin_svg.style on appthe.idtheme=style.idtheme where appthe.idappthe=".$id."  and (intitule_legende='".$lib."' or libelle_them='".$lib."')";
 
 	$couch=tab_result($pgx,$req1);
 		

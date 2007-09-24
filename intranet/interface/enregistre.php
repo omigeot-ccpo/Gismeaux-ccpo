@@ -39,31 +39,31 @@ session_start();
 }
 else
 {
-$_SESSION['xini']=& $xini;
-$_SESSION['yini']=& $yini;
+$_SESSION['xini']=& $_GET['xini'];
+$_SESSION['yini']=& $_GET['yini'];
 $_SESSION['code_insee']=& $code_insee;
 }
-$_SESSION['zoommm'] =& $zoom;
-$_SESSION['boitex'] =& $x;
-$_SESSION['boitey'] =& $y;
-$_SESSION['boitelarg'] =& $lar;
-$_SESSION['boitehaut'] =& $hau;
+$_SESSION['zoommm'] =& $_GET['zoom'];
+$_SESSION['boitex'] =& $_GET['x'];
+$_SESSION['boitey'] =& $_GET['y'];
+$_SESSION['boitelarg'] =& $_GET['lar'];
+$_SESSION['boitehaut'] =& $_GET['hau'];
 include("../connexion/deb.php");
-$placeid=explode(",",$parce);
-$str2=$HTTP_RAW_POST_DATA;
-$xm=$x + $xini;
-$xma=($x+$lar) + $xini;
-$yma= $yini - $y;
-$ym= $yini - ($y+$hau);
+$placeid=explode(",",$_GET['parce']);
+//$str2=$_SERVER['HTTP_RAW_POST_DATA'];
+$xm=$_GET['x'] + $_GET['xini'];
+$xma=($_GET['x']+$_GET['lar']) + $_GET['xini'];
+$yma= $_GET['yini'] - $_GET['y'];
+$ym= $_GET['yini'] - ($_GET['y']+$_GET['hau']);
 $str1 ="<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?>";
 $str1 .="<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.0//EN\" \"http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd\">";
 $str1 .="<svg  x='0' y='0' width='620' height='620' viewBox='0 0 620 620'>\n";
-$str1 .="<svg  x='0' y='0' width='620' height='520' viewBox='".$x." ".$y." ".$lar." ".$hau."' xmlns:sodipodi='http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd' xmlns:inkscape='http://www.inkscape.org/namespaces/inkscape' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns='http://www.w3.org/2000/svg'>\n";
+$str1 .="<svg  x='0' y='0' width='620' height='520' viewBox='".$_GET['x']." ".$_GET['y']." ".$_GET['lar']." ".$_GET['hau']."' xmlns:sodipodi='http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd' xmlns:inkscape='http://www.inkscape.org/namespaces/inkscape' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns='http://www.w3.org/2000/svg'>\n";
 $str1 .="<defs>";
 $str1 .="<marker id='debut_mesure' markerWidth='5' markerHeight='10' orient='auto' refX='0' refY='5'><path pointer-events='none' fill='none' stroke='red' d='M 5 7.5 0 5 5 2.5' /></marker><marker id='fin_mesure' markerWidth='5' markerHeight='10' orient='auto' refX='5' refY='5'><path pointer-events='none' fill='none' stroke='red' d='M 0 7.5 5 5 0 2.5' /></marker>";
 $textq="";
-	if ($raster!=''){
-	$raster=str_replace("chr(224)","à",$raster);
+	if ($_GET['raster']!=''){
+	$raster=str_replace("chr(224)","à",$_GET['raster']);
 $raster=str_replace("chr(233)","é",$raster);
 $raster=str_replace("chr(232)","è",$raster);
 $raster=str_replace("chr(234)","ê",$raster);
@@ -108,28 +108,29 @@ $url="http://".$serv."/cgi-bin/mapserv?map=/home/sig/intranet/capm/".$applicatio
 		}
 		$texte=$numligne[1];
 		$image=explode('/',$texte);
-		$fp = fopen("../tmp/".$nom.".tmp", "w");
+		$fp = fopen("../tmp/".$_GET['nom'].".tmp", "w");
 		fwrite($fp,$image[4]);
 		fclose ($fp);
 		$conte1=explode('.',$image[4]);
 		$image=$conte1[0];
 	error_reporting ($erreur);
-		$str1 .="<pattern id=\"imag\" height=\"".$hau."\" width=\"".$lar."\" patternUnits=\"userSpaceOnUse\" inkscape:collect=\"always\" patternTransform=\"translate(".$x.",".$y.")\">";
-$str1 .="<image height='".$hau."'  width='".$lar."' sodipodi:absref='c:\\carte\\".$image.".jpg' xlink:href='c:\\carte\\".$image.".jpg' /></pattern>";
+		$str1 .="<pattern id=\"imag\" height=\"".$_GET['hau']."\" width=\"".$_GET['lar']."\" patternUnits=\"userSpaceOnUse\" inkscape:collect=\"always\" patternTransform=\"translate(".$_GET['x'].",".$_GET['y'].")\">";
+$str1 .="<image height='".$_GET['hau']."'  width='".$_GET['lar']."' sodipodi:absref='c:\\carte\\".$image.".jpg' xlink:href='c:\\carte\\".$image.".jpg' /></pattern>";
 		$textq.="<g>\n";
-		$textq.="<rect y='".$y."' x='".$x."' height='".$hau."' width='".$lar."' style='fill:url(#imag);stroke:none'/>";
+		$textq.="<rect y='".$_GET['y']."' x='".$_GET['x']."' height='".$_GET['hau']."' width='".$_GET['lar']."' style='fill:url(#imag);stroke:none'/>";
 		$textq.="</g>\n";
 }
-if($svg!="")
+echo $_GET['svg'];
+if($_GET['svg']!="")
 {
-$rast=$svg;
+$rast=$_GET['svg'];
 /*if($nav=="2")
 {
 $rast=utf8_decode($svg);
 }*/
-if($nav!="0")
+if($_GET['nav']!="0")
 {
-$rast=str_replace("chr(224)","à",$svg);
+$rast=str_replace("chr(224)","à",$_GET['svg']);
 $rast=str_replace("chr(233)","é",$rast);
 $rast=str_replace("chr(232)","è",$rast);
 $rast=str_replace("chr(234)","ê",$rast);
@@ -320,20 +321,20 @@ $textq.="</g>";
 }
 }
 }
-$str3="<rect y='".($y-600)."' x='".($x-1200)."' height='".($hau+600)."' width='1200' style='fill:white;stroke:none'/>";
-$str3.="<rect y='".($y-600)."' x='".($x+$lar)."' height='".($hau+600)."' width='1200' style='fill:white;stroke:none'/>";
-$str3.="<rect y='".($y-600)."' x='".($x-1200)."' height='600' width='".($lar+1800)."' style='fill:white;stroke:none'/>";
-$str3.="<rect y='".($y+$hau)."' x='".($x-600)."' height='600' width='".($lar+1800)."' style='fill:white;stroke:none'/>";
+$str3="<rect y='".($_GET['y']-600)."' x='".($_GET['x']-1200)."' height='".($_GET['hau']+600)."' width='1200' style='fill:white;stroke:none'/>";
+$str3.="<rect y='".($_GET['y']-600)."' x='".($_GET['x']+$_GET['lar'])."' height='".($_GET['hau']+600)."' width='1200' style='fill:white;stroke:none'/>";
+$str3.="<rect y='".($_GET['y']-600)."' x='".($_GET['x']-1200)."' height='600' width='".($_GET['lar']+1800)."' style='fill:white;stroke:none'/>";
+$str3.="<rect y='".($_GET['y']+$_GET['hau'])."' x='".($_GET['x']-600)."' height='600' width='".($_GET['lar']+1800)."' style='fill:white;stroke:none'/>";
 $str3.="</svg>";
 $str3.="<rect style='fill:white;stroke:blue' width='90' height='18' x='50' y='546'/>";
 $str3.="<rect y='555' x='50' height='9' width='45' style='fill:blue'/>";
 $str3.="<rect y='546' x='95' height='9' width='45' style='fill:blue'/>";
 $str3.="<text y='577' x='87' style='stroke:black;stroke-width:0.5;font-size:12px;fill-opacity:1'>KM</text>";
 $str3.="<text id='gauche' y='544' x='50' style='stroke:black;text-anchor:middle;stroke-width:0.5;font-size:12px;fill-opacity:1'>0</text>";
-$str3.="<text id='centre' y='544' x='95' style='stroke:black;text-anchor:middle;stroke-width:0.5;font-size:12px;fill-opacity:1'>".$centre."</text>";
-$str3.="<text id='droite' y='544' x='140' style='stroke:black;text-anchor:middle;stroke-width:0.5;font-size:12px;fill-opacity:1'>".$droite."</text>";
-if($nav!="0")
-{
+$str3.="<text id='centre' y='544' x='95' style='stroke:black;text-anchor:middle;stroke-width:0.5;font-size:12px;fill-opacity:1'>".$_GET['centre']."</text>";
+$str3.="<text id='droite' y='544' x='140' style='stroke:black;text-anchor:middle;stroke-width:0.5;font-size:12px;fill-opacity:1'>".$_GET['droite']."</text>";
+//if($_GET['nav']!="0")
+//{
 $dess="<g id=\"dess\" stroke-width=\"0.2\">";
 $tableau=$_SESSION['cotation'];
 for($ij=0;$ij<count($tableau);$ij++)
@@ -343,18 +344,18 @@ $dess.="<line id=\"cotation".($ij+1)."\" x1=\"".$coor[0]."\" y1=\"".$coor[1]."\"
 }	
 $dess.="</g>";
 $cota=$dess;
-}
-else
-{
-$cota=$str2;
-}
+//}
+//else
+//{
+//$cota=$str2;
+//}
 
 $data=$str1."</defs>".$essai.$textq.$cota.$str3."</svg>";
-$filename = "../tmp/".$nom.".svg";
+$filename = "../tmp/".$_GET['nom'].".svg";
 $myFile = fopen($filename, "w");  
 fputs($myFile, $data);
 fclose($myFile);
-$fp = fopen("../tmp/".$nom.".ok", "w");
+$fp = fopen("../tmp/".$_GET['nom'].".ok", "w");
 fwrite($fp,"ok");
 fclose ($fp);
 ?> 

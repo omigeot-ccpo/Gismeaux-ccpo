@@ -35,20 +35,20 @@ ini_set('session.gc_maxlifetime', 3600);
 session_start();
 //$pgx = pg_connect("host=localhost dbname=meaux user=meaux");
 include('../connexion/deb.php');
-$indice=strtoupper($indice);
+$indice=strtoupper($_GET['indice']);
 $essai=ereg("([A-Z]{1,2})", $indice, $regs);
 $debut=$regs[1];
 $reste='0000'.str_replace($regs[1],"",$indice);
 $reste=substr($reste,-4);
 $concat=$debut.$reste;
 print("<g id=\"recherche\" onclick=\"clear('controlrecherche');rechercheavance(evt)\"  onmouseover=\"switchColor(evt,'fill','red','','')\" onmouseout=\"switchColor(evt,'fill','url(#survol)','','')\" style=\"text-anchor:middle\">");
-if(substr($code_insee, -3)=='000')
+if(substr($_GET['code_insee'], -3)=='000')
 {
-$result = pg_exec($pgx,"SELECT identifian,commune.nom FROM cadastre.parcelle join admin_svg.commune on parcelle.code_insee=commune.idcommune WHERE (identifian LIKE '%$indice' OR identifian LIKE '%$concat') AND code_insee like '".substr($code_insee,0,3)."%' group by identifian,nom");
+$result = pg_exec($pgx,"SELECT identifian,commune.nom FROM cadastre.parcelle join admin_svg.commune on parcelle.code_insee=commune.idcommune WHERE (identifian LIKE '%$indice' OR identifian LIKE '%$concat') AND code_insee like '".substr($_GET['code_insee'],0,3)."%' group by identifian,nom");
 }
 else
 {
-$result = pg_exec($pgx,"SELECT parcelle.identifian FROM cadastre.parcelle WHERE (identifian LIKE '%$indice' OR identifian LIKE '%$concat') AND code_insee=".$code_insee." group by identifian");
+$result = pg_exec($pgx,"SELECT parcelle.identifian FROM cadastre.parcelle WHERE (identifian LIKE '%$indice' OR identifian LIKE '%$concat') AND code_insee=".$_GET['code_insee']." group by identifian");
 }
 $num = pg_numrows($result);
 if ($num>0)
@@ -73,11 +73,11 @@ $n=$n+13;
 
 
 $z=$n+13;
-if(substr($code_insee, -3)=='000'){
-    $result = pg_exec($pgx,"SELECT voies.commune||code_voie as cod,commune.nom||', '||voies.nom_voie as nom_voie FROM cadastre.voies join admin_svg.commune on voies.commune=commune.idcommune WHERE voies.nom_voie LIKE '%$indice%' AND voies.commune like'".substr($code_insee,0,3)."%'");
+if(substr($_GET['code_insee'], -3)=='000'){
+    $result = pg_exec($pgx,"SELECT voies.commune||code_voie as cod,commune.nom||', '||voies.nom_voie as nom_voie FROM cadastre.voies join admin_svg.commune on voies.commune=commune.idcommune WHERE voies.nom_voie LIKE '%$indice%' AND voies.commune like'".substr($_GET['code_insee'],0,3)."%'");
 	
 }else{
-    $result = pg_exec($pgx,"SELECT voies.commune||code_voie as cod,nom_voie FROM cadastre.voies WHERE nom_voie LIKE '%".$indice."%' AND commune='".$code_insee."'");
+    $result = pg_exec($pgx,"SELECT voies.commune||code_voie as cod,nom_voie FROM cadastre.voies WHERE nom_voie LIKE '%".$indice."%' AND commune='".$_GET['code_insee']."'");
 }
 $num = pg_numrows($result);
 if ($num>0)
