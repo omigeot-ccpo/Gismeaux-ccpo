@@ -339,7 +339,7 @@ if($idlotiss=="true"){
     for($p=0;$p<$n;$p++){
        ereg("[A-Z]{1,}",$zone[$p],$vr);
        $pdf->Setxy(135+(15*$p),$y1);
-       $pdf->PutLink("./".$codeinsee."/".$vr[0].".pdf",$zone[$p]);
+       $pdf->PutLink("http://".$_SERVER["SERVER_NAME"]."/ru/".$codeinsee."/".$vr[0].".pdf",$zone[$p]);
     }
 	$idlotiss="deco.png";
     $plu="okcoche.png";
@@ -359,7 +359,7 @@ if($idlotiss=="true"){
     $pdf->Setxy(25,$y);
     $pdf->SetFont('','IU',8);
     $pdf->SetTextColor(0,0,255);
-    $pdf->Write(3,'ici','./'.$codeinsee.'/REGLEMENT.pdf');
+    $pdf->Write(3,'ici','http://'.$_SERVER["SERVER_NAME"].'/ru/'.$codeinsee.'/REGLEMENT.pdf');
     $pdf->SetFont('','I',8);
     $pdf->SetTextColor(0);
     $pdf->Setxy(29,$y);
