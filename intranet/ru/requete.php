@@ -85,7 +85,7 @@ include("../connexion/deb.php");
 $nocoche="deco.png";
 $coche="okcoche.png";
 
-$q="SELECT  nom_voie,dnuvoi,dindic,identifian FROM cadastre.parcelle WHERE identifian in ('";
+$q="SELECT  nom_voie,dnuvoi,dindic,identifian FROM cadastre.parcelle1 WHERE identifian in ('";
 $wh=""; $q2="";
 if ($OBJ_KEYS){	$obj_keys=$OBJ_KEYS;}
 if ($obj_keys){
@@ -127,6 +127,7 @@ while (!feof($fp)){
 }
 fclose($fp);
 }
+
 if($an>$annee){
     $n=1;
     $annee=date(Y);
@@ -339,7 +340,7 @@ if($idlotiss=="true"){
     for($p=0;$p<$n;$p++){
        ereg("[A-Z]{1,}",$zone[$p],$vr);
        $pdf->Setxy(135+(15*$p),$y1);
-       $pdf->PutLink("http://".$_SERVER["SERVER_NAME"]."/ru/".$codeinsee."/".$vr[0].".pdf",$zone[$p]);
+       $pdf->PutLink('http://'.$_SERVER["HTTP_HOST"].'/ru/'.$codeinsee."/".$vr[0].".pdf",$zone[$p]);
     }
 	$idlotiss="deco.png";
     $plu="okcoche.png";
@@ -359,7 +360,7 @@ if($idlotiss=="true"){
     $pdf->Setxy(25,$y);
     $pdf->SetFont('','IU',8);
     $pdf->SetTextColor(0,0,255);
-    $pdf->Write(3,'ici','http://'.$_SERVER["SERVER_NAME"].'/ru/'.$codeinsee.'/REGLEMENT.pdf');
+    $pdf->Write(3,'ici','http://'.$_SERVER["HTTP_HOST"].'/ru/'.$codeinsee.'/REGLEMENT.pdf');
     $pdf->SetFont('','I',8);
     $pdf->SetTextColor(0);
     $pdf->Setxy(29,$y);
