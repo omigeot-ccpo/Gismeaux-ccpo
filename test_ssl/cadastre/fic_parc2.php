@@ -112,7 +112,7 @@ if (! $PHP_AUTH_USER || ! $PHP_AUTH_PW){
 				if (substr($row_Recordset1[0]['prop1'],0,1)=='*') {
 					$req="select dnupro from cadastre.b_desdgi where invar = '".$row_Recordset3[$s]['invar']."';";
 					$lrow=tab_result($pgx,$req);
-					$preq="select * from cadastre.propriet where prop1='".$lrow[0]['dnupro']."' order by dnulp asc;";
+					$preq="select * from cadastre.propriet where prop1='".$lrow[0]['dnupro']."' and commune='".$insee."' order by dnulp asc;";
 					$bprow=tab_result($pgx,$preq);
 					for ($d=0;$d<count($bprow);$d++) { 
 						echo '<tr><td>Nom</td><td colspan="3">';
