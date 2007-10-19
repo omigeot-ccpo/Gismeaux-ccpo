@@ -157,7 +157,7 @@ for($i=0;$i<count($ras);$i++)
 }	
 //$rast="'".$rast."'";
 //$rast=str_replace(",","','",$rast);
-$sql="select appthe.idappthe,theme.schema,theme.tabl,col_theme.colonn,col_theme.valeur_mini,col_theme.valeur_maxi,col_theme.valeur_texte,sinul(col_theme.fill, style.fill) as fill,sinul(col_theme.stroke_rgb, style.stroke_rgb) as stroke_rgb,sinul(col_theme.symbole,style.symbole) as symbole,sinul(col_theme.opacity,style.opacity) as opacity,sinul(col_theme.font_familly,style.font_familly) as font_familly,sinul(col_theme.font_size,style.font_size) as font_size,appthe.mouseover,appthe.mouseout,appthe.click,appthe.idtheme,theme.partiel,sinul(col_theme.stroke_width,style.stroke_width) as stroke_width from admin_svg.appthe join admin_svg.theme on appthe.idtheme=theme.idtheme left outer join  admin_svg.col_theme on appthe.idappthe=col_theme.idappthe left outer join  admin_svg.style on appthe.idtheme=style.idtheme where appthe.idapplication=".$_SESSION['appli']." group by appthe.idappthe,theme.schema,theme.tabl,col_theme.colonn,col_theme.valeur_mini,col_theme.valeur_maxi,col_theme.valeur_texte,sinul(col_theme.fill, style.fill),sinul(col_theme.stroke_rgb, style.stroke_rgb),sinul(col_theme.symbole,style.symbole),sinul(col_theme.opacity,style.opacity),sinul(col_theme.font_familly,style.font_familly),sinul(col_theme.font_size,style.font_size),appthe.mouseover,appthe.mouseout,appthe.click,appthe.idtheme,theme.partiel,sinul(col_theme.stroke_width,style.stroke_width) order by appthe.idappthe desc";
+$sql="select appthe.idappthe,appthe.ordre,theme.schema,theme.tabl,col_theme.colonn,col_theme.valeur_mini,col_theme.valeur_maxi,col_theme.valeur_texte,sinul(col_theme.fill, style.fill) as fill,sinul(col_theme.stroke_rgb, style.stroke_rgb) as stroke_rgb,sinul(col_theme.symbole,style.symbole) as symbole,sinul(col_theme.opacity,style.opacity) as opacity,sinul(col_theme.font_familly,style.font_familly) as font_familly,sinul(col_theme.font_size,style.font_size) as font_size,appthe.mouseover,appthe.mouseout,appthe.click,appthe.idtheme,theme.partiel,sinul(col_theme.stroke_width,style.stroke_width) as stroke_width from admin_svg.appthe join admin_svg.theme on appthe.idtheme=theme.idtheme left outer join  admin_svg.col_theme on appthe.idappthe=col_theme.idappthe left outer join  admin_svg.style on appthe.idtheme=style.idtheme where appthe.idapplication=".$_SESSION['appli']." group by appthe.idappthe,appthe.ordre,theme.schema,theme.tabl,col_theme.colonn,col_theme.valeur_mini,col_theme.valeur_maxi,col_theme.valeur_texte,sinul(col_theme.fill, style.fill),sinul(col_theme.stroke_rgb, style.stroke_rgb),sinul(col_theme.symbole,style.symbole),sinul(col_theme.opacity,style.opacity),sinul(col_theme.font_familly,style.font_familly),sinul(col_theme.font_size,style.font_size),appthe.mouseover,appthe.mouseout,appthe.click,appthe.idtheme,theme.partiel,sinul(col_theme.stroke_width,style.stroke_width) order by appthe.ordre desc";
 $cou=tab_result($pgx,$sql);
 //$essai="";
 for ($l=0;$l<count($cou);$l++){
@@ -281,11 +281,12 @@ $textq.="<g style=\"".$styl."\" ";
 
 $textq.=">\n";
 	
-	if($type_geo=="point")
+	if($type_geo=="symbole")
 				{
 				for ($e=0;$e<count($res);$e++)
 					{
-					$textq.="<use ".$res[$e]['geom']." xlink:href='#".$cou[$l]['symbole']."'/>\n";
+					//$textq.="<use ".$res[$e]['geom']." xlink:href='#".$cou[$l]['symbole']."'/>\n";
+					$textq.="<text ".$res[$e]['geom']." style=\"font-family:svg\">".$cou[$l]['symbole']."</text>\n";
 					}
 				}
 	elseif($type_geo=="texte")
