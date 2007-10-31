@@ -31,7 +31,11 @@ sécurité de leurs systèmes et ou de leurs données et, plus généralement,
 Le fait que vous puissiez accéder à cet en-tête signifie que vous avez 
 pris connaissance de la licence CeCILL-C, et que vous en avez accepté les 
 termes.*/
-$pgx=pg_connect("dbname=basepg host=localhost user=userpg password=passpg");
+// Quelques reglages (omigeot)
+$db_params = "dbname=basepg host=localhost user=userpg password=passpg";
+// Fin des reglages
+
+$pgx=pg_connect($db_params);
 function tab_result($pgx,$quest){
 	$resultat = pg_exec($pgx, $quest);
 	if (!$resultat){
