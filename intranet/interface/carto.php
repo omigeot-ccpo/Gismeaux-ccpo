@@ -32,15 +32,18 @@ sécurité de leurs systèmes et ou de leurs données et, plus généralement,
 Le fait que vous puissiez accéder à cet en-tête signifie que vous avez 
 pris connaissance de la licence CeCILL-C, et que vous en avez accepté les 
 termes.*/
+$default_insee = 770284;
+$default_appli = 13;
+
 ini_set('session.gc_maxlifetime', 3600);
 session_start();
 if($_SESSION['code_insee']=='')
 {
-$_SESSION['code_insee']=770284;
+$_SESSION['code_insee']=$default_insee;
 }
 if($_GET["appli"]=='')
 {
-$_GET["appli"]=13;
+$_GET["appli"]=$default_appli;
 }
 if (eregi('MSIE', $HTTP_USER_AGENT))
 {    
