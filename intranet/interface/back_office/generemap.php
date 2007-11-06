@@ -95,7 +95,7 @@ $map.="EXTENSION \"jpg\" \n";
 $map.="END \n";
 $map.="WEB \n";
 	$map.="TEMPLATE capm_svg.php \n";
-	$map.="IMAGEPATH \"/home/sig/intranet/tmp/\" \n";
+	$map.="IMAGEPATH \"$fs_root/tmp/\" \n";
 	$map.="IMAGEURL \"/tmp/\" \n";
 $map.="END \n";
 

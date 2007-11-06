@@ -33,6 +33,8 @@ pris connaissance de la licence CeCILL-C, et que vous en avez accepté les
 termes.*/
 // Quelques reglages (omigeot)
 $db_params = "dbname=basepg host=localhost user=userpg password=passpg";
+$ms_dbg_line = 1;
+$fs_root = "/home/sig/intranet";
 // Fin des reglages
 
 $pgx=pg_connect($db_params);

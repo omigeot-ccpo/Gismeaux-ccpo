@@ -515,13 +515,13 @@ $app=tab_result($pgx,$sql_app);
 $application=$app[0]['libelle_appli'];
 //$application=str_replace(" ","_",$application);
 
-$url='http://'.$serv.'/cgi-bin/mapserv?map=/home/sig/intranet/capm/'.$application.'.map&insee='.$code_insee.'&sess='.session_id().'&parce='.stripslashes($_GET['parce']).'&layer=cotation&layer='.$raster.$ech.$mapsize;
+$url='http://'.$serv.'/cgi-bin/mapserv?map=".$fs_root."/capm/'.$application.'.map&insee='.$code_insee.'&sess='.session_id().'&parce='.stripslashes($_GET['parce']).'&layer=cotation&layer='.$raster.$ech.$mapsize;
 //echo $url;
 		$contenu=file($url);
        		while (list($ligne,$cont)=each($contenu)){
 			$numligne[$ligne]=$cont;
 		}
-		$texte=$numligne[1];
+		$texte=$numligne[$ms_dbg_line];
 		$text = explode("/", $texte);
 		$tex=explode(".",$text[4]);
 $sql="delete from admin_svg.temp_cotation where session_temp='".session_id()."'";

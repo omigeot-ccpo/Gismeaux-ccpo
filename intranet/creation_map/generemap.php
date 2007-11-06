@@ -52,7 +52,7 @@ $lib_appli=tab_result($pgx,$libappli);
 $mapcotation="LAYER \n";
 $mapcotation.="CONNECTIONTYPE postgis \n";
 $mapcotation.="NAME \"cotation\" group \"cotation\" \n";
-$mapcotation.="CONNECTION \"user=postgres dbname=meaux\" \n";
+$mapcotation.="CONNECTION \"$db_params\" \n";
 $mapcotation.="DATA \"the_geom FROM admin_svg.temp_cotation using unique the_geom using SRID=-1\" \n";
 $mapcotation.="STATUS on \n";
 $mapcotation.="TYPE line \n";
@@ -96,7 +96,7 @@ $map.=" EXTENSION \"jpg\" \n";
 $map.="END \n";
 $map.="WEB \n";
 	$map.="TEMPLATE capm_svg.php \n";
-	$map.="IMAGEPATH \"/home/sig/intranet/tmp/\" \n";
+	$map.="IMAGEPATH \"$fs_root/tmp/\" \n";
 	$map.="IMAGEURL \"/tmp/\" \n";
 $map.="END \n";
 
@@ -300,7 +300,7 @@ $req1="select distinct (col_theme.intitule_legende) as intitule_legende,col_them
 			$maprecherche.="LAYER \n";
 			$maprecherche.="CONNECTIONTYPE postgis \n";
 			$maprecherche.="NAME \"".str_replace(" ","_",$couch[$r]['intitule_legende'])."\" group \"".str_replace(" ","_",$cou[$c]['nom_theme'])."\" \n";
-			$maprecherche.="CONNECTION \"user=postgres dbname=meaux\" \n";
+			$maprecherche.="CONNECTION \"$db_params\" \n";
 			if($clause=="")
 			{
 			$maprecherche.="DATA \"".$col[0]['appel']." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." using unique ".$col[0]['appel']." using SRID=-1\" \n";
@@ -337,7 +337,7 @@ $req1="select distinct (col_theme.intitule_legende) as intitule_legende,col_them
 			$mapprincipal.="LAYER \n";
 	$mapprincipal.="CONNECTIONTYPE postgis \n";
 	$mapprincipal.="NAME \"".str_replace(" ","_",$couch[$r]['intitule_legende'])."\" group \"".str_replace(" ","_",$cou[$c]['nom_theme'])."\" \n";
-	$mapprincipal.="CONNECTION \"user=postgres dbname=meaux\" \n";
+	$mapprincipal.="CONNECTION \"$db_params\" \n";
 	if($clause=="")
 	{
 	$mapprincipal.="DATA \"".$col[0]['appel']." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." using unique ".$col[0]['appel']." using SRID=-1\" \n";
@@ -362,7 +362,7 @@ $req1="select distinct (col_theme.intitule_legende) as intitule_legende,col_them
 			$$mapp.="LAYER \n";
 	$$mapp.="CONNECTIONTYPE postgis \n";
 	$$mapp.="NAME \"".str_replace(" ","_",$couch[$r]['intitule_legende'])."\" group \"".str_replace(" ","_",$cou[$c]['nom_theme'])."\" \n";
-	$$mapp.="CONNECTION \"user=postgres dbname=meaux\" \n";
+	$$mapp.="CONNECTION \"$db_params\" \n";
 	if($clause=="")
 	{
 	$$mapp.="DATA \"".$col[0]['appel']." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." using unique ".$col[0]['appel']." using SRID=-1\" \n";
@@ -443,7 +443,7 @@ $$mapp.="END \n \n";
 			$maprecherche.="LAYER \n";
 			$maprecherche.="CONNECTIONTYPE postgis \n";
 			$maprecherche.="NAME \"".str_replace(" ","_",$cou[$c]['nom_theme'])."\" group \"".str_replace(" ","_",$cou[$c]['nom_theme'])."\" \n";
-			$maprecherche.="CONNECTION \"user=postgres dbname=meaux\" \n";
+			$maprecherche.="CONNECTION \"$db_params\" \n";
 			if($clause=="")
 			{
 			$maprecherche.="DATA \"".$col[0]['appel']." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." using unique ".$col[0]['appel']." using SRID=-1\" \n";
@@ -479,7 +479,7 @@ $$mapp.="END \n \n";
 			$mapprincipal.="LAYER \n";
 			$mapprincipal.="CONNECTIONTYPE postgis \n";
 			$mapprincipal.="NAME \"".str_replace(" ","_",$cou[$c]['nom_theme'])."\" group \"".str_replace(" ","_",$cou[$c]['nom_theme'])."\" \n";
-			$mapprincipal.="CONNECTION \"user=postgres dbname=meaux\" \n";
+			$mapprincipal.="CONNECTION \"$db_params\" \n";
 			if($clause=="")
 			{
 			$mapprincipal.="DATA \"".$col[0]['appel']." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." using unique ".$col[0]['appel']." using SRID=-1\" \n";
@@ -502,7 +502,7 @@ $$mapp.="END \n \n";
 		$$mapp.="LAYER \n";
 	$$mapp.="CONNECTIONTYPE postgis \n";
 	$$mapp.="NAME \"".str_replace(" ","_",$cou[$c]['nom_theme'])."\" group \"".str_replace(" ","_",$cou[$c]['nom_theme'])."\" \n";
-	$$mapp.="CONNECTION \"user=postgres dbname=meaux\" \n";
+	$$mapp.="CONNECTION \"$db_params\" \n";
 	if($clause=="")
 	{
 	$$mapp.="DATA \"".$col[0]['appel']." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." using unique ".$col[0]['appel']." using SRID=-1\" \n";

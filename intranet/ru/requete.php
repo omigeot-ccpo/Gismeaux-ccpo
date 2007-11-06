@@ -659,13 +659,13 @@ $idpar = str_replace(",", "','",$obj_keys);
 $erreur=error_reporting ();
 	error_reporting (1);
 	$serv=$_SERVER["SERVER_NAME"];
-	$url="http://".$serv."/cgi-bin/mapserv?map=/home/sig/intranet/capm/RU.map&insee=".$code_insee."&parce=('".$idpar."')&layer=alignement&layer=num_voie&layer=nom_voie&layer=parcelle&layer=batiment&minx=".$xm."&miny=".$ym."&maxx=".$xma."&maxy=".$yma."&mapsize=1240%201040";
+	$url="http://".$serv."/cgi-bin/mapserv?map=".$fs_root."/capm/RU.map&insee=".$code_insee."&parce=('".$idpar."')&layer=alignement&layer=num_voie&layer=nom_voie&layer=parcelle&layer=batiment&minx=".$xm."&miny=".$ym."&maxx=".$xma."&maxy=".$yma."&mapsize=1240%201040";
 
         $contenu=file($url);
        		while (list($ligne,$cont)=each($contenu)){
 			$numligne[$ligne]=$cont;
 		}
-		$texte=$numligne[1];
+		$texte=$numligne[$ms_dbg_line];
 	
 	$couche=explode("/",$texte);
 	$cou=explode(".",$couche[4]);

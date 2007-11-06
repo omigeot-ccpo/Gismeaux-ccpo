@@ -93,23 +93,23 @@ $code=$res[$z]['code_insee'];
 }
 if($bd=="o")
 {
-$url="http://".$serv."/cgi-bin/mapserv?map=/home/sig/intranet/capm/vignette.map&layer=commune&layer=".$laybat."&layer=surface_eau&layer=troncon_route&insee=".$code."&ID=".$res[$z]['code_insee']."&minx=".$xm."&miny=".$ym."&maxx=".$xma."&maxy=".$yma."&mapsize=".$largeur."%20".$hauteur;
+$url="http://".$serv."/cgi-bin/mapserv?map=".$fs_root."/capm/vignette.map&layer=commune&layer=".$laybat."&layer=surface_eau&layer=troncon_route&insee=".$code."&ID=".$res[$z]['code_insee']."&minx=".$xm."&miny=".$ym."&maxx=".$xma."&maxy=".$yma."&mapsize=".$largeur."%20".$hauteur;
 }
 else
 {
-$url="http://".$serv."/cgi-bin/mapserv?map=/home/sig/intranet/capm/vignette.map&layer=commune&layer=batiment&insee=".$code."&ID=".$res[$z]['code_insee']."&minx=".$xm."&miny=".$ym."&maxx=".$xma."&maxy=".$yma."&mapsize=".$largeur."%20".$hauteur;
+$url="http://".$serv."/cgi-bin/mapserv?map=".$fs_root."/capm/vignette.map&layer=commune&layer=batiment&insee=".$code."&ID=".$res[$z]['code_insee']."&minx=".$xm."&miny=".$ym."&maxx=".$xma."&maxy=".$yma."&mapsize=".$largeur."%20".$hauteur;
 }
 $contenu=file($url);
        		while (list($ligne,$cont)=each($contenu)){
 			$numligne[$ligne]=$cont;
 		}
-		$texte=$numligne[1];
+		$texte=$numligne[$ms_dbg_line];
 		$image=explode('/',$texte);
 		
 		$conte1=explode('.',$image[4]);
 		$image=$conte1[0];
 //echo $lar." ".$hau." ".$largeur." ".$hauteur;
-if(@rename("/home/sig/intranet/interface/communes/tt".$res[$z]['code_insee'].".jpg","/home/sig/intranet/interface/communes/".$res[$z]['code_insee'].".JPG"))
+if(@rename($fs_root."/interface/communes/tt".$res[$z]['code_insee'].".jpg",$fs_root."/interface/communes/".$res[$z]['code_insee'].".JPG"))
 {
 echo $res[$z]['code_insee'].",".$res[$z]['nom']." ok<br>";
 }

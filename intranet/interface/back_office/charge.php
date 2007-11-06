@@ -79,11 +79,11 @@ $serv=$_SERVER["SERVER_NAME"];
 	if(substr($_SESSION['code_insee'], -3)=='000')
 	{
 
-	$url="http://".$serv."/cgi-bin/mapserv?map=/home/sig/intranet/capm/".$application.".map&insee=".substr($_SESSION['code_insee'],0,3)."&layer=".$raster."&minx=".$xm."&miny=".$ym."&maxx=".$xma."&maxy=".$yma."&mapsize=1240%201040&parce=('')";
+	$url="http://".$serv."/cgi-bin/mapserv?map=".$fs_root."/capm/".$application.".map&insee=".substr($_SESSION['code_insee'],0,3)."&layer=".$raster."&minx=".$xm."&miny=".$ym."&maxx=".$xma."&maxy=".$yma."&mapsize=1240%201040&parce=('')";
 	}
 	else
 	{
-	$url="http://".$serv."/cgi-bin/mapserv?map=/home/sig/intranet/capm/".$application.".map&insee=".$_SESSION['code_insee']."&layer=".$raster."&minx=".$xm."&miny=".$ym."&maxx=".$xma."&maxy=".$yma."&mapsize=1240%201040&parce=('')";
+	$url="http://".$serv."/cgi-bin/mapserv?map=".$fs_root."/capm/".$application.".map&insee=".$_SESSION['code_insee']."&layer=".$raster."&minx=".$xm."&miny=".$ym."&maxx=".$xma."&maxy=".$yma."&mapsize=1240%201040&parce=('')";
 	}
 	//echo $url;	
 $contenu=file($url);
@@ -91,7 +91,7 @@ $contenu=file($url);
        		while (list($ligne,$cont)=each($contenu)){
 			$numligne[$ligne]=$cont;
 		}
-		$texte=$contenu[1];
+		$texte=$contenu[$ms_dbg_line];
 		$image=explode('/',$texte);
 		$conte1=explode('.',$image[4]);
 		$image=$conte1[0];
