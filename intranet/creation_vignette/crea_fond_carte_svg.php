@@ -91,13 +91,14 @@ else
 {
 $code=$res[$z]['code_insee'];
 }
+$extra_url = "&user=".$db_user."&password=".$db_passwd."&dbname=".$db_name."&host=".$db_host;
 if($bd=="o")
 {
-$url="http://".$serv."/cgi-bin/mapserv?map=".$fs_root."/capm/vignette.map&layer=commune&layer=".$laybat."&layer=surface_eau&layer=troncon_route&insee=".$code."&ID=".$res[$z]['code_insee']."&minx=".$xm."&miny=".$ym."&maxx=".$xma."&maxy=".$yma."&mapsize=".$largeur."%20".$hauteur;
+$url="http://".$serv."/cgi-bin/mapserv?map=".$fs_root."/capm/vignette.map&layer=commune&layer=".$laybat."&layer=surface_eau&layer=troncon_route&insee=".$code."&ID=".$res[$z]['code_insee']."&minx=".$xm."&miny=".$ym."&maxx=".$xma."&maxy=".$yma."&mapsize=".$largeur."%20".$hauteur.$extra_url;
 }
 else
 {
-$url="http://".$serv."/cgi-bin/mapserv?map=".$fs_root."/capm/vignette.map&layer=commune&layer=batiment&insee=".$code."&ID=".$res[$z]['code_insee']."&minx=".$xm."&miny=".$ym."&maxx=".$xma."&maxy=".$yma."&mapsize=".$largeur."%20".$hauteur;
+$url="http://".$serv."/cgi-bin/mapserv?map=".$fs_root."/capm/vignette.map&layer=commune&layer=batiment&insee=".$code."&ID=".$res[$z]['code_insee']."&minx=".$xm."&miny=".$ym."&maxx=".$xma."&maxy=".$yma."&mapsize=".$largeur."%20".$hauteur.$extra_url;
 }
 $contenu=file($url);
        		while (list($ligne,$cont)=each($contenu)){
