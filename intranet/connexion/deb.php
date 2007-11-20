@@ -31,14 +31,15 @@ sécurité de leurs systèmes et ou de leurs données et, plus généralement,
 Le fait que vous puissiez accéder à cet en-tête signifie que vous avez 
 pris connaissance de la licence CeCILL-C, et que vous en avez accepté les 
 termes.*/
-// Quelques reglages (omigeot)
-$db_host = "localhost";
-$db_name = "basepg";
-$db_user = "userpg";
-$db_passwd = "passpg";
-$db_params = "dbname=".$db_name." host=".$db_host." user=".$db_user." password=".$db_passwd;
-$ms_dbg_line = 1;
-$fs_root = "/home/sig/intranet";
+// Quelques reglages (omigeot) 
+include("../../config.php");
+//$db_host = "localhost";
+//$db_name = "sig";
+//$db_user = "sig";
+//$db_passwd = "sig";
+//$db_params = "dbname=".$db_name." host=".$db_host." user=".$db_user." password=".$db_passwd;
+//$ms_dbg_line = 0;
+$fs_root = "/home/sig/gismeaux2/intranet";
 // Fin des reglages
 
 $pgx=pg_connect($db_params);

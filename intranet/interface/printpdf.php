@@ -198,17 +198,24 @@ function RotatedCell($angle,$x,$y,$w,$h,$txt,$bor,$ln,$aling)
 }
 
 include("../connexion/deb.php");
-$sql="select a.nom,a.logo,a.larg_logo,b.logo as logo_communaute,b.larg_logo as larg_communaute from admin_svg.commune as a left join admin_svg.commune as b on  a.idagglo=b.idcommune where a.idcommune='".$_SESSION['code_insee']."'";
-	$retour=tab_result($pgx,$sql);
-	if($retour[0]['larg_logo']!="")
-	{
-$larglogo=($retour[0]['larg_logo']/2.5);
-$logo=$retour[0]['logo'];
+$insee = $_SESSION['code_insee'];
+if (strlen($insee) == 3)
+   $insee = $insee . '000';
+$sql="select a.nom,a.logo,a.larg_logo,b.logo as logo_communaute,b.larg_logo as larg_communaute from admin_svg.commune as a left join admin_svg.commune as b on  a.idagglo=b.idcommune where a.idcommune='".$insee."'";
+$retour=tab_result($pgx,$sql);
+// omigeot : desormais, on ne verifie plus l'existence du champ "larg_logo", mais celui de logo directement.
+// Ainsi, on peut livrer une DB par defaut independante du repertoire d'installation, mais aussi pointer 
+// vers des images situees en dehors de l'arborescence de Gismeaux, les rendant resistantes a la reinstallation
+// de ce dernier.
+if($retour[0]['logo']!="") 
+{
+	$larglogo=($retour[0]['larg_logo']/2.5);
+	$logo=$retour[0]['logo'];
 }
 else
 {
-$larglogo=($retour[0]['larg_communaute']/2.5);
-$logo=$retour[0]['logo_communaute'];
+	$larglogo=($retour[0]['larg_communaute']/2.5);
+	$logo=$retour[0]['logo_communaute'];
 }
 $xm=$_GET['x'] + $_GET['xini'];
 $xma=($_GET['x']+$_GET['lar']) + $_GET['xini'];
@@ -515,7 +522,7 @@ $app=tab_result($pgx,$sql_app);
 $application=$app[0]['libelle_appli'];
 //$application=str_replace(" ","_",$application);
 
-$url='http://'.$serv.'/cgi-bin/mapserv?map=".$fs_root."/capm/'.$application.'.map&insee='.$code_insee.'&sess='.session_id().'&parce='.stripslashes($_GET['parce']).'&layer=cotation&layer='.$raster.$ech.$mapsize;
+$url='http://'.$serv.'/cgi-bin/mapserv?map='.$fs_root.'/capm/'.$application.'.map&insee='.$code_insee.'&sess='.session_id().'&parce='.stripslashes($_GET['parce']).'&layer=cotation&layer='.$raster.$ech.$mapsize;
 //echo $url;
 		$contenu=file($url);
        		while (list($ligne,$cont)=each($contenu)){
@@ -539,7 +546,11 @@ $pdf->RotatedImage('../tmp/'.$tex[0].'.jpg',$posiximage,$posiyimage,$larimage,$h
 $pdf->SetFont('font1','',$sizerosa);
 //echo $logo.",".$posixlogo.",".$posiylogo.",".$larlogo.",".$haulogo.",".$angle;
 $pdf->RotatedText($posixrosa,$posiyrosa,'a',$angle);
-$pdf->RotatedImage($logo,$posixlogo,$posiylogo,$larlogo,$haulogo,$angle);
+if ($logo != "")
+   if ($logo[0] != '/') // Si le chemin du logo est relatif, le faire decouler de fs_root
+      $pdf->RotatedImage($fs_root."/".$logo,$posixlogo,$posiylogo,$larlogo,$haulogo,$angle);
+   else
+      $pdf->RotatedImage($logo,$posixlogo,$posiylogo,$larlogo,$haulogo,$angle);
 $pdf->SetFont('arial','',$sizetitre);
 $pdf->RotatedCell($angle,$xtitre,$ytitre,$wtitre,$htitre,$_POST['titre'],0,0,'C'); 
 $pdf->SetFont('arial','',$sizeechelle);
