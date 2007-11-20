@@ -39,7 +39,7 @@ include("../../config.php");
 //$db_passwd = "sig";
 //$db_params = "dbname=".$db_name." host=".$db_host." user=".$db_user." password=".$db_passwd;
 //$ms_dbg_line = 0;
-$fs_root = "/home/sig/gismeaux2/intranet";
+$fs_root = "/home/sig/gismeaux/intranet";
 // Fin des reglages
 
 $pgx=pg_connect($db_params);
