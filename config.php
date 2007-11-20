@@ -37,7 +37,7 @@ $db_name = "basepg";
 $db_user = "userpg";
 $db_passwd = "passpg";
 $db_params = "dbname=".$db_name." host=".$db_host." user=".$db_user." password=".$db_passwd;
-$ms_dbg_line = 0;
+$ms_dbg_line = 1;
 // Fin des reglages
 
 ?>
