@@ -583,13 +583,32 @@ $$mapp.="END \n \n";
 	}
 	else
 	{
-	$mapraster="LAYER \n";
-	$mapraster.="NAME \"".str_replace(" ","_",$cou[$c]['nom_theme'])."\" group \"".str_replace(" ","_",$cou[$c]['nom_theme'])."\" \n";
-	$mapraster.="STATUS on \n";
-	$mapraster.="TYPE raster \n";
-   	$mapraster.="TILEINDEX \"".$cou[$c]['raster']."\" \n";
-	$mapraster.="TILEITEM \"location\" \n";
-	$mapraster.="END \n \n";
+		$raster = $cou[$c]['raster'];
+		$name = str_replace(" ","_",$cou[$c]['nom_theme']);
+		if ($raster[0] == '/')
+		{
+			$tileindex ="TILEINDEX \"".$raster."\" \n";
+			$mapraster ="";
+		}
+		else
+		{
+			$tileindex ="TILEINDEX \"".$name."idx\" \n";
+			$mapraster = "LAYER \n"; 
+			$mapraster .= "NAME \"".$name."idx\" \n";
+			$mapraster .= "STATUS on \n";
+			$mapraster .= "TYPE polygon \n";
+			$mapraster .= "CONNECTIONTYPE postgis \n";
+			$mapraster .= "CONNECTION \"$db_params\" \n";
+			$mapraster .= "DATA \"the_geom from ".$raster." using unique the_geom using SRID=-1\" \n";
+			$mapraster .= "END \n \n";
+		}
+		$mapraster.="LAYER \n";
+		$mapraster.="NAME \"".$name."\" group \"".str_replace(" ","_",$cou[$c]['nom_theme'])."\" \n";
+		$mapraster.="STATUS on \n";
+		$mapraster.="TYPE raster \n";		
+		$mapraster.=$tileindex;
+		$mapraster.="TILEITEM \"location\" \n";
+		$mapraster.="END \n \n";
 	}
 
 }

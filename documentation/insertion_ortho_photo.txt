@@ -9,3 +9,12 @@ le programme se charge de créer les répertoires correspondant à chaque echelle
 lancer "./gdaltindex /home/sig/intranet/capm/data/rast100.shp /home/sig/ortho/tt100/*.png"
 puis "./gdaltindex /home/sig/intranet/capm/data/rast25.shp /home/sig/ortho/tt25/*.png"
 puis "./gdaltindex /home/sig/intranet/capm/data/rast8.shp /home/sig/ortho/tt8/*.png"
+
+NOTE: il est possible d'insérer ces "Shapefiles" dans la base de données. Pour ce faire:
+
+lancer "shp2pgsql <chemin vers le .shp> <nom de la table à créer> | psql <vos options PG habituelles>"
+
+Il faut ensuite remplacer - dans la table admin_svg.theme - le chemin vers 
+le .shp par le nom de la table (complet, i.e. préfixé par le schema). A partir de là,
+le script de creation de .map (http://<serveur>/creation_map/) vous generera un .map
+indépendant du fichier .shp (et du même coup de l'emplaçement de Gismeaux sur le disque).
