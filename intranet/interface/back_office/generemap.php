@@ -48,10 +48,14 @@ return $nom;
 $libappli="select application.libelle_appli from admin_svg.application where idapplication='".$_SESSION['appli']."'";
 $lib_appli=tab_result($pgx,$libappli);
 
+$liblar="select (xma::real-xmi::real) as lar from admin_svg.commune where idcommune='".$_SESSION['code_insee']."'";
+$lar=tab_result($pgx,$liblar);
+$coef_echelle=$lar[0]['lar']*2.32;
+
 $mapcotation="LAYER \n";
 $mapcotation.="CONNECTIONTYPE postgis \n";
 $mapcotation.="NAME \"cotation\" group \"cotation\" \n";
-$mapcotation.="CONNECTION \"".$db_params."\" \n";
+$mapcotation.="CONNECTION \"user=postgres dbname=meaux\" \n";
 $mapcotation.="DATA \"the_geom FROM admin_svg.temp_cotation using unique the_geom using SRID=-1\" \n";
 $mapcotation.="STATUS on \n";
 $mapcotation.="TYPE line \n";
@@ -85,17 +89,19 @@ $map.="SIZE 3100 2600 \n";
 $map.="UNITS meters \n";
 $map.="IMAGECOLOR 255 255 255 \n";
 $map.="FONTSET\"fonts/fontset.txt\" \n";
-$map.="IMAGETYPE jpeg \n";
+$map.="IMAGETYPE png \n";
 $map.="OUTPUTFORMAT \n";
-$map.="NAME jpeg \n";
-$map.="DRIVER \"GD/JPEG\" \n";
-$map.="MIMETYPE \"image/jpeg\" \n";
+$map.="NAME png \n";
+$map.="DRIVER \"GD/PNG\" \n";
+$map.="MIMETYPE \"image/png\" \n";
 $map.="IMAGEMODE RGB \n";
-$map.="EXTENSION \"jpg\" \n";
+$map.="EXTENSION \"png\" \n";
+$map.="FORMATOPTION \"INTERLACE=OFF\" \n";
+$map.="FORMATOPTION \"QUALITY=100\" \n";
 $map.="END \n";
 $map.="WEB \n";
 	$map.="TEMPLATE capm_svg.php \n";
-	$map.="IMAGEPATH \"$fs_root/tmp/\" \n";
+	$map.="IMAGEPATH \"/home/sig/intranet/tmp/\" \n";
 	$map.="IMAGEURL \"/tmp/\" \n";
 $map.="END \n";
 
@@ -241,7 +247,7 @@ $map.="POINTS 1 1 END \n";
 $map.="FILLED TRUE \n";
 $map.="END \n";
 
-$req2="select appthe.idtheme,theme.libelle_them as nom_theme,theme.schema,theme.tabl,appthe.idappthe,col_theme.colonn,admin_svg.v_fixe(col_theme.valeur_texte),theme.raster as raster,style.fill as style_fill,style.symbole as style_symbole,style.opacity  as style_opacity,style.font_size  as style_fontsize,style.stroke_rgb  as style_stroke,appthe.objprincipal,appthe.objrecherche from admin_svg.appthe join admin_svg.theme on appthe.idtheme=theme.idtheme join admin_svg.application on appthe.idapplication=application.idapplication left outer join  admin_svg.col_theme on appthe.idappthe=col_theme.idappthe left outer join admin_svg.style on appthe.idtheme=style.idtheme where appthe.idapplication=".$_SESSION['appli']." group by appthe.idtheme,theme.libelle_them,appthe.ordre,theme.schema,theme.tabl,col_theme.colonn,admin_svg.v_fixe(col_theme.valeur_texte),theme.raster,style.fill,style.symbole,style.opacity,style.font_size,style.stroke_rgb,appthe.idappthe,appthe.objprincipal,appthe.objrecherche order by appthe.ordre desc";
+$req2="select appthe.idtheme,theme.libelle_them as nom_theme,theme.schema,theme.tabl,appthe.idappthe,col_theme.colonn,admin_svg.v_fixe(col_theme.valeur_texte),theme.raster as raster,style.fill as style_fill,style.symbole as style_symbole,style.opacity  as style_opacity,style.font_size  as style_fontsize,style.stroke_rgb  as style_stroke,style.stroke_width,appthe.objprincipal,appthe.objrecherche,theme.groupe,sinul(appthe.zoommin::character varying,theme.zoommin::character varying) as zoommin,sinul(appthe.zoommax::character varying,theme.zoommax::character varying) as zoommax from admin_svg.appthe join admin_svg.theme on appthe.idtheme=theme.idtheme join admin_svg.application on appthe.idapplication=application.idapplication left outer join  admin_svg.col_theme on appthe.idappthe=col_theme.idappthe left outer join admin_svg.style on appthe.idtheme=style.idtheme where appthe.idapplication=".$_SESSION['appli']." group by appthe.idtheme,theme.libelle_them,appthe.ordre,theme.schema,theme.tabl,col_theme.colonn,admin_svg.v_fixe(col_theme.valeur_texte),theme.raster,style.fill,style.symbole,style.opacity,style.font_size,style.stroke_rgb,appthe.idappthe,appthe.objprincipal,appthe.objrecherche,theme.groupe,appthe.zoommin,theme.zoommin,appthe.zoommax,theme.zoommax,style.stroke_width order by appthe.ordre desc";
 
 $cou=tab_result($pgx,$req2);
 
@@ -284,7 +290,7 @@ $type="polygon";
 $mapp="mappolygone";
 }
 
-$req1="select distinct (col_theme.intitule_legende) as intitule_legende,col_theme.valeur_texte,col_theme.valeur_mini,col_theme.valeur_maxi,col_theme.fill,col_theme.stroke_rgb,col_theme.symbole,col_theme.font_size,col_theme.font_familly,col_theme.opacity,col_theme.ordre from admin_svg.appthe join admin_svg.col_theme on appthe.idappthe=col_theme.idappthe join admin_svg.theme on appthe.idtheme=theme.idtheme where appthe.idapplication=".$appli." and appthe.idtheme='".$cou[$c]['idtheme']."'";
+$req1="select distinct (col_theme.intitule_legende) as intitule_legende,col_theme.valeur_texte,col_theme.valeur_mini,col_theme.valeur_maxi,col_theme.fill,col_theme.stroke_rgb,col_theme.stroke_width,col_theme.symbole,col_theme.font_size,col_theme.font_familly,col_theme.opacity,col_theme.ordre from admin_svg.appthe join admin_svg.col_theme on appthe.idappthe=col_theme.idappthe join admin_svg.theme on appthe.idtheme=theme.idtheme where appthe.idapplication=".$appli." and appthe.idtheme='".$cou[$c]['idtheme']."'";
 
 	$couch=tab_result($pgx,$req1);
 	//$d="select * from admin_svg.col_sel where idtheme='".$cou[0]['idtheme']."'";
@@ -301,11 +307,11 @@ $req1="select distinct (col_theme.intitule_legende) as intitule_legende,col_them
 			$maprecherche.="CONNECTION \"user=postgres dbname=meaux\" \n";
 			if($clause=="")
 			{
-			$maprecherche.="DATA \"".$col[0]['appel']." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." using unique ".$col[0]['appel']." using SRID=-1\" \n";
+			$maprecherche.="DATA \"".str_replace(" ","",$col[0]['appel'])." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." using unique ".str_replace(" ","",$col[0]['appel'])." using SRID=-1\" \n";
 			}
 			else
 			{
-			$maprecherche.="DATA \"".$col[0]['appel']." from (select ".$col[0]['appel']." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." where ".$clause." and ".$cou[$c]['tabl'].".code_insee like '%insee%%') as neo using unique ".$col[0]['appel']." using SRID=-1\" \n";
+			$maprecherche.="DATA \"".str_replace(" ","",$col[0]['appel'])." from (select ".str_replace(" ","",$col[0]['appel'])." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." where ".$clause." and ".$cou[$c]['tabl'].".code_insee like '%insee%%') as neo using unique ".str_replace(" ","",$col[0]['appel'])." using SRID=-1\" \n";
 			}
 			$maprecherche.="STATUS on \n";
 			$maprecherche.="TYPE ".$type." \n";
@@ -335,18 +341,18 @@ $req1="select distinct (col_theme.intitule_legende) as intitule_legende,col_them
 			$mapprincipal.="LAYER \n";
 	$mapprincipal.="CONNECTIONTYPE postgis \n";
 	$mapprincipal.="NAME \"".str_replace(" ","_",$couch[$r]['intitule_legende'])."\" group \"".str_replace(" ","_",$cou[$c]['nom_theme'])."\" \n";
-	$mapprincipal.="CONNECTION \"".$db_params."\" \n";
+	$mapprincipal.="CONNECTION \"user=postgres dbname=meaux\" \n";
 	if($clause=="")
 	{
-	$mapprincipal.="DATA \"".$col[0]['appel']." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." using unique ".$col[0]['appel']." using SRID=-1\" \n";
+	$mapprincipal.="DATA \"".str_replace(" ","",$col[0]['appel'])." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." using unique ".str_replace(" ","",$col[0]['appel'])." using SRID=-1\" \n";
 	}
 	else
 	{
-	$mapprincipal.="DATA \"".$col[0]['appel']." from (select ".$col[0]['appel']." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." where ".$clause." and ".$cou[$c]['tabl'].".code_insee like '%insee%%') as neo using unique ".$col[0]['appel']." using SRID=-1\" \n";
+	$mapprincipal.="DATA \"".str_replace(" ","",$col[0]['appel'])." from (select ".str_replace(" ","",$col[0]['appel'])." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." where ".$clause." and ".$cou[$c]['tabl'].".code_insee like '%insee%%') as neo using unique ".str_replace(" ","",$col[0]['appel'])." using SRID=-1\" \n";
 	}
 	$mapprincipal.="STATUS on \n";
 	$mapprincipal.="TYPE ".$type." \n";
-    if($clause=="")
+    if($clause=="" && $cou[$c]['schema']!="bd_topo")
 	{
     $mapprincipal.="FILTER \"code_insee like '%insee%%' or code_insee is null\" \n";
 	}
@@ -360,20 +366,20 @@ $req1="select distinct (col_theme.intitule_legende) as intitule_legende,col_them
 			$$mapp.="LAYER \n";
 	$$mapp.="CONNECTIONTYPE postgis \n";
 	$$mapp.="NAME \"".str_replace(" ","_",$couch[$r]['intitule_legende'])."\" group \"".str_replace(" ","_",$cou[$c]['nom_theme'])."\" \n";
-	$$mapp.="CONNECTION \"".$db_params."\" \n";
+	$$mapp.="CONNECTION \"user=postgres dbname=meaux\" \n";
 	if($clause=="")
 	{
-	$$mapp.="DATA \"".$col[0]['appel']." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." using unique ".$col[0]['appel']." using SRID=-1\" \n";
+	$$mapp.="DATA \"".str_replace(" ","",$col[0]['appel'])." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." using unique ".str_replace(" ","",$col[0]['appel'])." using SRID=-1\" \n";
 	}
 	else
 	{
-	$$mapp.="DATA \"".$col[0]['appel']." from (select ".$col[0]['appel']." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." where ".$clause." and ".$cou[$c]['tabl'].".code_insee like '%insee%%') as neo using unique ".$col[0]['appel']." using SRID=-1\" \n";
+	$$mapp.="DATA \"".str_replace(" ","",$col[0]['appel'])." from (select ".str_replace(" ","",$col[0]['appel'])." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." where ".$clause." and ".$cou[$c]['tabl'].".code_insee like '%insee%%') as neo using unique ".str_replace(" ","",$col[0]['appel'])." using SRID=-1\" \n";
 	}
 	$$mapp.="STATUS on \n";
 	if($type=="point")
 	{
 	$$mapp.="TYPE annotation \n";
-	if($clause=="")
+	if($clause==""  && $cou[$c]['schema']!="bd_topo")
 	{
     $$mapp.="FILTER \"code_insee like '%insee%%' or code_insee is null\" \n";
 	}
@@ -386,7 +392,7 @@ $req1="select distinct (col_theme.intitule_legende) as intitule_legende,col_them
 		}
 		else
 		{
-		$$mapp.="EXPRESSION ([".$cou[$c]['colonn']."] > ".$couch[$r]['valeur_mini']." AND [".$cou[$c]['colonn']."] <= ".$couch[$r]['valeur_maxi'].") \n";
+		$$mapp.="EXPRESSION ([".$cou[$c]['colonn']."] >= ".$couch[$r]['valeur_mini']." AND [".$cou[$c]['colonn']."] <= ".$couch[$r]['valeur_maxi'].") \n";
 		}
 		$$mapp.="text ('".$couch[$r]['symbole']."') \n";
 		}
@@ -417,7 +423,7 @@ $req1="select distinct (col_theme.intitule_legende) as intitule_legende,col_them
 	else
 	{
 	$$mapp.="TYPE ".$type." \n";
-    if($clause=="")
+    if($clause==""  && $cou[$c]['schema']!="bd_topo")
 	{
     $$mapp.="FILTER \"code_insee like '%insee%%' or code_insee is null\" \n";
 	}
@@ -428,7 +434,7 @@ $req1="select distinct (col_theme.intitule_legende) as intitule_legende,col_them
 		}
 		else
 		{
-		$$mapp.="EXPRESSION ([".$cou[$c]['colonn']."] > ".$couch[$r]['valeur_mini']." AND [".$cou[$c]['colonn']."] <= ".$couch[$r]['valeur_maxi'].") \n";
+		$$mapp.="EXPRESSION ([".$cou[$c]['colonn']."] >= ".$couch[$r]['valeur_mini']." AND [".$cou[$c]['colonn']."] <= ".$couch[$r]['valeur_maxi'].") \n";
 		}
 		if($couch[$r]['fill']!='' && $couch[$r]['fill']!='none' )
 		{
@@ -437,6 +443,11 @@ $req1="select distinct (col_theme.intitule_legende) as intitule_legende,col_them
 		if($couch[$r]['stroke_rgb']!='' && $couch[$r]['stroke_rgb']!='none' )
 		{
 		$$mapp.="OUTLINECOLOR ".str_replace(","," ",$couch[$r]['stroke_rgb'])." \n";
+		if($type=="line")
+		{
+		$$mapp.="symbol \"circle\" \n";
+		$$mapp.="SIZE ".$couch[$r]['stroke_width']." \n";
+		}
 		}
 				
 	$$mapp.="END \n";
@@ -455,14 +466,14 @@ $$mapp.="END \n \n";
 			$maprecherche.="LAYER \n";
 			$maprecherche.="CONNECTIONTYPE postgis \n";
 			$maprecherche.="NAME \"".str_replace(" ","_",$cou[$c]['nom_theme'])."\" group \"".str_replace(" ","_",$cou[$c]['nom_theme'])."\" \n";
-			$maprecherche.="CONNECTION \"".$db_params."\" \n";
+			$maprecherche.="CONNECTION \"user=postgres dbname=meaux\" \n";
 			if($clause=="")
 			{
-			$maprecherche.="DATA \"".$col[0]['appel']." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." using unique ".$col[0]['appel']." using SRID=-1\" \n";
+			$maprecherche.="DATA \"".str_replace(" ","",$col[0]['appel'])." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." using unique ".str_replace(" ","",$col[0]['appel'])." using SRID=-1\" \n";
 			}
 			else
 			{
-			$maprecherche.="DATA \"".$col[0]['appel']." from (select ".$col[0]['appel']." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." where ".$clause." and ".$cou[$c]['tabl'].".code_insee like '%insee%%') as neo using unique ".$col[0]['appel']." using SRID=-1\" \n";
+			$maprecherche.="DATA \"".str_replace(" ","",$col[0]['appel'])." from (select ".str_replace(" ","",$col[0]['appel'])." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." where ".$clause." and ".$cou[$c]['tabl'].".code_insee like '%insee%%') as neo using unique ".str_replace(" ","",$col[0]['appel'])." using SRID=-1\" \n";
 			}
 			$maprecherche.="STATUS on \n";
 			$maprecherche.="TYPE ".$type." \n";
@@ -491,45 +502,50 @@ $$mapp.="END \n \n";
 			$mapprincipal.="LAYER \n";
 			$mapprincipal.="CONNECTIONTYPE postgis \n";
 			$mapprincipal.="NAME \"".str_replace(" ","_",$cou[$c]['nom_theme'])."\" group \"".str_replace(" ","_",$cou[$c]['nom_theme'])."\" \n";
-			$mapprincipal.="CONNECTION \"".$db_params."\" \n";
+			$mapprincipal.="CONNECTION \"user=postgres dbname=meaux\" \n";
 			if($clause=="")
 			{
-			$mapprincipal.="DATA \"".$col[0]['appel']." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." using unique ".$col[0]['appel']." using SRID=-1\" \n";
+			$mapprincipal.="DATA \"".str_replace(" ","",$col[0]['appel'])." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." using unique ".str_replace(" ","",$col[0]['appel'])." using SRID=-1\" \n";
 			}
 			else
 			{
-			$mapprincipal.="DATA \"".$col[0]['appel']." from (select ".$col[0]['appel']." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." where ".$clause." and ".$cou[$c]['tabl'].".code_insee like '%insee%%') as neo using unique ".$col[0]['appel']." using SRID=-1\" \n";
+			$mapprincipal.="DATA \"".str_replace(" ","",$col[0]['appel'])." from (select ".str_replace(" ","",$col[0]['appel'])." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." where ".$clause." and ".$cou[$c]['tabl'].".code_insee like '%insee%%') as neo using unique ".str_replace(" ","",$col[0]['appel'])." using SRID=-1\" \n";
 			}
 			$mapprincipal.="STATUS on \n";
 			$mapprincipal.="TYPE ".$type." \n";
-			if($clause=="")
+			if($clause==""  && $cou[$c]['schema']!="bd_topo")
 			{
     		$mapprincipal.="FILTER \"code_insee like '%insee%%' or code_insee is null\" \n";
 			}
 			$mapprincipal.="CLASS \n";
 		//$map.="EXPRESSION ('[constructi]' eq 'Bati dur') \n";
 			$mapprincipal.="OUTLINECOLOR ".str_replace(","," ",$cou[$c]['style_stroke'])." \n";
+			if($type=="line")
+			{
+			$mapprincipal.="symbol \"circle\" \n";
+			$mapprincipal.="SIZE ".$cou[$c]['stroke_width']." \n";
+			}
 			$mapprincipal.="END \n";
 			$mapprincipal.="END \n \n";
 			}
 		$$mapp.="LAYER \n";
 	$$mapp.="CONNECTIONTYPE postgis \n";
 	$$mapp.="NAME \"".str_replace(" ","_",$cou[$c]['nom_theme'])."\" group \"".str_replace(" ","_",$cou[$c]['nom_theme'])."\" \n";
-	$$mapp.="CONNECTION \"".$db_params."\" \n";
+	$$mapp.="CONNECTION \"user=postgres dbname=meaux\" \n";
 	if($clause=="")
 	{
-	$$mapp.="DATA \"".$col[0]['appel']." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." using unique ".$col[0]['appel']." using SRID=-1\" \n";
+	$$mapp.="DATA \"".str_replace(" ","",$col[0]['appel'])." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." using unique ".str_replace(" ","",$col[0]['appel'])." using SRID=-1\" \n";
 	}
 	else
 	{
-	$$mapp.="DATA \"".$col[0]['appel']." from (select ".$col[0]['appel']." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." where ".$clause." and ".$cou[$c]['tabl'].".code_insee like '%insee%%') as neo using unique ".$col[0]['appel']." using SRID=-1\" \n";
+	$$mapp.="DATA \"".str_replace(" ","",$col[0]['appel'])." from (select ".str_replace(" ","",$col[0]['appel'])." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." where ".$clause." and ".$cou[$c]['tabl'].".code_insee like '%insee%%') as neo using unique ".str_replace(" ","",$col[0]['appel'])." using SRID=-1\" \n";
 	}
 	$$mapp.="STATUS on \n";
 	
 	if($cou[$c]['style_symbole'] !="")
 	{
 	$$mapp.="TYPE annotation \n";
-	if($clause=="")
+	if($clause==""  && $cou[$c]['schema']!="bd_topo")
 	{
     $$mapp.="FILTER \"code_insee like '%insee%%' or code_insee is null\" \n";
 	}
@@ -551,7 +567,7 @@ $$mapp.="END \n \n";
 	elseif($cou[$c]['style_fontsize'] !="" && $cou[$c]['style_symbole'] =="")
 	{
 	$$mapp.="TYPE annotation \n";
-	if($clause=="")
+	if($clause==""  && $cou[$c]['schema']!="bd_topo")
 	{
     $$mapp.="FILTER \"code_insee like '%insee%%' or code_insee is null\" \n";
 	}
@@ -573,7 +589,7 @@ $$mapp.="END \n \n";
 	else
 	{
 	$$mapp.="TYPE ".$type." \n";
-	if($clause=="")
+	if($clause==""  && $cou[$c]['schema']!="bd_topo")
 	{
     $$mapp.="FILTER \"code_insee like '%insee%%' or code_insee is null\" \n";
 	}
@@ -586,6 +602,11 @@ $$mapp.="END \n \n";
 		if($cou[$c]['style_stroke']!='' && $cou[$c]['style_stroke']!='none' )
 		{
 		$$mapp.="OUTLINECOLOR ".str_replace(","," ",$cou[$c]['style_stroke'])." \n";
+		if($type=="line")
+		{
+		$$mapp.="symbol \"circle\" \n";
+		$$mapp.="SIZE ".$cou[$c]['stroke_width']." \n";
+		}
 		}
 	$$mapp.="END \n";
 	if($cou[$c]['style_opacity']!='' && $cou[$c]['style_opactity']!='none' )
@@ -597,32 +618,22 @@ $$mapp.="END \n \n";
 	}
 	else
 	{
-		$raster = $cou[$c]['raster'];
-		$name = str_replace(" ","_",$cou[$c]['nom_theme']);
-		if ($raster[0] == '/')
-		{
-			$tileindex ="TILEINDEX \"".$raster."\" \n";
-			$mapraster ="";
-		}
-		else
-		{
-			$tileindex ="TILEINDEX \"".$name."idx\" \n";
-			$mapraster = "LAYER \n"; 
-			$mapraster .= "NAME \"".$name."idx\" \n";
-			$mapraster .= "STATUS on \n";
-			$mapraster .= "TYPE polygon \n";
-			$mapraster .= "CONNECTIONTYPE postgis \n";
-			$mapraster .= "CONNECTION \"$db_params\" \n";
-			$mapraster .= "DATA \"the_geom from ".$raster." using unique the_geom using SRID=-1\" \n";
-			$mapraster .= "END \n \n";
-		}
-		$mapraster.="LAYER \n";
-		$mapraster.="NAME \"".$name."\" group \"".str_replace(" ","_",$cou[$c]['nom_theme'])."\" \n";
-		$mapraster.="STATUS on \n";
-		$mapraster.="TYPE raster \n";		
-		$mapraster.=$tileindex;
-		$mapraster.="TILEITEM \"location\" \n";
-		$mapraster.="END \n \n";
+	$mapraster.="LAYER \n";
+	if($cou[$c]['groupe']!="")
+	{
+	$mapraster.="NAME \"".str_replace(" ","_",$cou[$c]['nom_theme'])."\" group \"".str_replace(" ","_",$cou[$c]['groupe'])."\" \n";
+	}
+	else
+	{
+	$mapraster.="NAME \"".str_replace(" ","_",$cou[$c]['nom_theme'])."\" group \"".str_replace(" ","_",$cou[$c]['nom_theme'])."\" \n";
+	}
+	$mapraster.="STATUS on \n";
+	$mapraster.="TYPE raster \n";
+	$mapraster.="MAXSCALE ".ceil($coef_echelle*100/$cou[$c]['zoommin'])." \n";
+ 	 $mapraster.="MINSCALE ".floor($coef_echelle*100/$cou[$c]['zoommax'])." \n";
+   	$mapraster.="TILEINDEX \"".$cou[$c]['raster']."\" \n";
+	$mapraster.="TILEITEM \"location\" \n";
+	$mapraster.="END \n \n";
 	}
 
 }

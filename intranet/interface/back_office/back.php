@@ -845,9 +845,12 @@ $data.="<g id=\"gestion_modif_couche\" visibility=\"hidden\" class=\"fillfonce\"
 <text id=\"r_crea_table\" pointer-events=\"none\" x=\"346\" y=\"130\" text-anchor=\"start\" font-size=\"8\"> </text>
 <rect id=\"rec_table\" width=\"10\" height=\"11\" x=\"420\" y=\"122\" onclick=\"appel_deroulant(evt,'r_crea_table','table')\"/>
 </g>
-<text pointer-events=\"none\" x=\"250\" y=\"150\" text-anchor=\"end\" font-size=\"8\">Shapefile</text>
-<rect width=\"150\" height=\"10\" x=\"255\" y=\"142.5\" class=\"defaut\" onclick=\"entre_dim(evt,'r_crea_shp')\"/>
-<text id=\"r_crea_shp\" pointer-events=\"none\" x=\"330\" y=\"150\" text-anchor=\"middle\" font-size=\"8\"> </text>
+<text pointer-events=\"none\" x=\"200\" y=\"150\" text-anchor=\"end\" font-size=\"8\">Shapefile</text>
+<rect width=\"150\" height=\"10\" x=\"205\" y=\"142.5\" class=\"defaut\" onclick=\"entre_dim(evt,'r_crea_shp')\"/>
+<text id=\"r_crea_shp\" pointer-events=\"none\" x=\"380\" y=\"150\" text-anchor=\"middle\" font-size=\"8\"> </text>
+<text pointer-events=\"none\" x=\"390\" y=\"150\" text-anchor=\"end\" font-size=\"8\">Groupe</text>
+<rect width=\"70\" height=\"10\" x=\"395\" y=\"142.5\" class=\"defaut\" onclick=\"entre_dim(evt,'r_crea_groupe')\"/>
+<text id=\"r_crea_groupe\" pointer-events=\"none\" x=\"430\" y=\"150\" text-anchor=\"middle\" font-size=\"8\"> </text>
 <text pointer-events=\"none\" x=\"275\" y=\"170\" text-anchor=\"end\" font-size=\"8\">Vu partielle</text>
 <rect width=\"10\" height=\"10\" x=\"290\" y=\"162.5\" class=\"defaut\" onclick=\"bascule(evt,'crea_partiel')\"/>
 <text id=\"crea_partiel\" x=\"290\" y=\"172.5\" class=\"fillfonce\" pointer-events=\"none\" style=\"font-size:12px;font-family:fontsvg;visibility:hidden\">b</text>
@@ -864,22 +867,22 @@ $data.="<g id=\"gestion_modif_couche\" visibility=\"hidden\" class=\"fillfonce\"
 <rect width=\"25\" height=\"10\" x=\"405\" y=\"182.5\" class=\"defaut\" onclick=\"entre_dim(evt,'r_crea_zmr')\"/>
 <text id=\"r_crea_zmr\" pointer-events=\"none\" x=\"417.5\" y=\"190\" text-anchor=\"middle\" font-size=\"8\"> </text>
 <g id=\"g_ref\" opacity=\"0.2\" pointer-events=\"none\">
-<text x=\"240\" y=\"210\" text-anchor=\"end\" font-size=\"8\" >Colonne r&#x00E9;f&#x00E9;rence</text>
-<rect id=\"rect_r_crea_ref\" width=\"50\" height=\"10\" x=\"245\" y=\"202.5\" class=\"defaut\" onclick=\"entre_dim(evt,'r_crea_ref')\"/>
-<text id=\"r_crea_ref\" pointer-events=\"none\" x=\"246\" y=\"210\" text-anchor=\"start\" font-size=\"8\"> </text>
-<rect width=\"10\" height=\"11\" x=\"295\" y=\"202\" onclick=\"appel_deroulant(evt,'r_crea_ref')\"/>
+<text x=\"230\" y=\"210\" text-anchor=\"end\" font-size=\"8\" >Colonne r&#x00E9;f&#x00E9;rence</text>
+<rect id=\"rect_r_crea_ref\" width=\"50\" height=\"10\" x=\"235\" y=\"202.5\" class=\"defaut\" onclick=\"entre_dim(evt,'r_crea_ref')\"/>
+<text id=\"r_crea_ref\" pointer-events=\"none\" x=\"236\" y=\"210\" text-anchor=\"start\" font-size=\"8\"> </text>
+<rect width=\"10\" height=\"11\" x=\"285\" y=\"202\" onclick=\"appel_deroulant(evt,'r_crea_ref')\"/>
 </g>
 <g id=\"g_geom\" opacity=\"0.2\" pointer-events=\"none\">
-<text x=\"385\" y=\"210\" text-anchor=\"end\" font-size=\"8\" >Colonne g&#x00E9;om&#x00E9;trique</text>
-<rect id=\"rect_r_crea_geom\" width=\"50\" height=\"10\" x=\"390\" y=\"202.5\" class=\"defaut\" onclick=\"entre_dim(evt,'r_crea_geom')\"/>
-<text id=\"r_crea_geom\" pointer-events=\"none\" x=\"391\" y=\"210\" text-anchor=\"start\" font-size=\"8\"> </text>
-<rect width=\"10\" height=\"11\" x=\"440\" y=\"202\" onclick=\"appel_deroulant(evt,'r_crea_geom')\"/>
+<text x=\"375\" y=\"210\" text-anchor=\"end\" font-size=\"8\" >Colonne g&#x00E9;om&#x00E9;trique</text>
+<rect id=\"rect_r_crea_geom\" width=\"80\" height=\"10\" x=\"380\" y=\"202.5\" class=\"defaut\" onclick=\"entre_dim(evt,'r_crea_geom')\"/>
+<text id=\"r_crea_geom\" pointer-events=\"none\" x=\"381\" y=\"210\" text-anchor=\"start\" font-size=\"8\"> </text>
+<rect width=\"10\" height=\"11\" x=\"460\" y=\"202\" onclick=\"appel_req('r_crea_geom')\"/>
 </g>
 <g id=\"g_lib\" opacity=\"0.2\" pointer-events=\"none\">
 <text x=\"240\" y=\"230\" text-anchor=\"end\" font-size=\"8\" >Colonne libell&#x00E9;</text>
 <rect id=\"rect_r_crea_lib\" width=\"190\" height=\"10\" x=\"245\" y=\"222.5\" class=\"defaut\" onclick=\"entre_dim(evt,'r_crea_lib')\"/>
 <text id=\"r_crea_lib\" pointer-events=\"none\" x=\"246\" y=\"230\" text-anchor=\"start\" font-size=\"8\"> </text>
-<rect width=\"10\" height=\"11\" x=\"435\" y=\"222\" onclick=\"appel_deroulant(evt,'r_crea_lib')\"/>
+<rect width=\"10\" height=\"11\" x=\"435\" y=\"222\" onclick=\"appel_req('r_crea_lib')\"/>
 </g>
 <text x=\"175\" y=\"250\" text-anchor=\"start\" font-size=\"8\" >Clause</text>
 <rect id=\"rect_r_crea_clause\" width=\"280\" height=\"50\" x=\"175\" y=\"255\" class=\"defaut\" onclick=\"entre_dim(evt,'r_crea_clause')\"/>
@@ -893,7 +896,7 @@ $data.="<g id=\"gestion_modif_couche\" visibility=\"hidden\" class=\"fillfonce\"
 <rect id=\"contour_gestion_thematique\" width=\"312\" height=\"300\" x=\"160\" y=\"66\" class=\"defaut\"/> 
 <rect width=\"311\" height=\"18\" x=\"160.5\" y=\"66.5\" class=\"fillclair\"/>
 <text pointer-events=\"none\" x=\"316\" y=\"80\" text-anchor=\"middle\" >Cr&#x00E9;ation d&#x00B4;une th&#x00E8;matique</text>
-<a><text x=\"175\" y=\"110\" id=\"txtcolonne\" text-anchor=\"start\" font-size=\"8\" onclick=\"appel_req()\" onmouseover=\"switchColor(evt,'fill','red','','')\" onmouseout=\"switchColor(evt,'fill','url(#survol)','','')\">Colonne</text></a>
+<a><text x=\"175\" y=\"110\" id=\"txtcolonne\" text-anchor=\"start\" font-size=\"8\" onclick=\"appel_req('r_requete')\" onmouseover=\"switchColor(evt,'fill','red','','')\" onmouseout=\"switchColor(evt,'fill','url(#survol)','','')\">Colonne</text></a>
 <rect id=\"rect_r_requete\" width=\"280\" height=\"50\" x=\"175\" y=\"115\" class=\"defaut\" onclick=\"entre_dim(evt,'r_requete')\"/>
 <text pointer-events=\"none\" x=\"176\" y=\"125\" text-anchor=\"start\" font-size=\"8\"><textPath xlink:href=\"#chemin_requete\" id=\"r_requete\"> </textPath></text>
 <a id=\"li_soumettre\"><rect id=\"sousmettre_gestion_thematique\" x=\"320\" y=\"170\" rx=\"1.5\" ry=\"1.5\" width=\"50\" height=\"15\" class=\"fillclair\" onclick=\"sousmettre_thematique()\" onmouseover=\"switchColor(evt,'fill','white','','')\" onmouseout=\"switchColor(evt,'fill','url(#hors)','','')\"/></a>
@@ -1035,9 +1038,12 @@ $data.="<g id=\"gestion_modif_couche\" visibility=\"hidden\" class=\"fillfonce\"
 <rect id=\"rect_r_mod_table\" width=\"75\" height=\"10\" x=\"345\" y=\"122.5\" class=\"defaut\" onclick=\"entre_dim(evt,'r_mod_table')\"/>
 <text id=\"r_mod_table\" pointer-events=\"none\" x=\"346\" y=\"130\" text-anchor=\"start\" font-size=\"8\"> </text>
 <rect width=\"10\" height=\"11\" x=\"420\" y=\"122\" onclick=\"appel_deroulant(evt,'r_mod_table','table')\"/>
-<text pointer-events=\"none\" x=\"250\" y=\"150\" text-anchor=\"end\" font-size=\"8\">Shapefile</text>
-<rect width=\"150\" height=\"10\" x=\"255\" y=\"142.5\" class=\"defaut\" onclick=\"entre_dim(evt,'r_mod_shp')\"/>
-<text id=\"r_mod_shp\" pointer-events=\"none\" x=\"330\" y=\"150\" text-anchor=\"middle\" font-size=\"8\"> </text>
+<text pointer-events=\"none\" x=\"200\" y=\"150\" text-anchor=\"end\" font-size=\"8\">Shapefile</text>
+<rect width=\"150\" height=\"10\" x=\"205\" y=\"142.5\" class=\"defaut\" onclick=\"entre_dim(evt,'r_mod_shp')\"/>
+<text id=\"r_mod_shp\" pointer-events=\"none\" x=\"280\" y=\"150\" text-anchor=\"middle\" font-size=\"8\"> </text>
+<text pointer-events=\"none\" x=\"390\" y=\"150\" text-anchor=\"end\" font-size=\"8\">Groupe</text>
+<rect width=\"70\" height=\"10\" x=\"395\" y=\"142.5\" class=\"defaut\" onclick=\"entre_dim(evt,'r_mod_groupe')\"/>
+<text id=\"r_mod_groupe\" pointer-events=\"none\" x=\"430\" y=\"150\" text-anchor=\"middle\" font-size=\"8\"> </text>
 <text pointer-events=\"none\" x=\"275\" y=\"170\" text-anchor=\"end\" font-size=\"8\">Vu partielle</text>
 <rect width=\"10\" height=\"10\" x=\"290\" y=\"162.5\" class=\"defaut\" onclick=\"bascule(evt,'mod_partiel')\"/>
 <text id=\"mod_partiel\" x=\"290\" y=\"172.5\" class=\"fillfonce\" pointer-events=\"none\" style=\"font-size:12px;font-family:fontsvg;visibility:hidden\">b</text>
@@ -1053,18 +1059,18 @@ $data.="<g id=\"gestion_modif_couche\" visibility=\"hidden\" class=\"fillfonce\"
 <text pointer-events=\"none\" x=\"400\" y=\"190\" text-anchor=\"end\" font-size=\"8\">Zoommax_raster</text>
 <rect width=\"25\" height=\"10\" x=\"405\" y=\"182.5\" class=\"defaut\" onclick=\"entre_dim(evt,'r_mod_zmr')\"/>
 <text id=\"r_mod_zmr\" pointer-events=\"none\" x=\"417.5\" y=\"190\" text-anchor=\"middle\" font-size=\"8\"> </text>
-<text x=\"240\" y=\"210\" text-anchor=\"end\" font-size=\"8\" >Colonne r&#x00E9;f&#x00E9;rence</text>
-<rect id=\"rect_r_mod_ref\" width=\"50\" height=\"10\" x=\"245\" y=\"202.5\" class=\"defaut\" onclick=\"entre_dim(evt,'r_mod_ref')\"/>
-<text id=\"r_mod_ref\" pointer-events=\"none\" x=\"246\" y=\"210\" text-anchor=\"start\" font-size=\"8\"> </text>
-<rect width=\"10\" height=\"11\" x=\"295\" y=\"202\" onclick=\"appel_deroulant(evt,'r_mod_ref')\"/>
-<text x=\"385\" y=\"210\" text-anchor=\"end\" font-size=\"8\" >Colonne g&#x00E9;om&#x00E9;trique</text>
-<rect id=\"rect_r_mod_geom\" width=\"50\" height=\"10\" x=\"390\" y=\"202.5\" class=\"defaut\" onclick=\"entre_dim(evt,'r_mod_geom')\"/>
-<text id=\"r_mod_geom\" pointer-events=\"none\" x=\"391\" y=\"210\" text-anchor=\"start\" font-size=\"8\"> </text>
-<rect width=\"10\" height=\"11\" x=\"440\" y=\"202\" onclick=\"appel_deroulant(evt,'r_mod_geom')\"/>
+<text x=\"230\" y=\"210\" text-anchor=\"end\" font-size=\"8\" >Colonne r&#x00E9;f&#x00E9;rence</text>
+<rect id=\"rect_r_mod_ref\" width=\"50\" height=\"10\" x=\"235\" y=\"202.5\" class=\"defaut\" onclick=\"entre_dim(evt,'r_mod_ref')\"/>
+<text id=\"r_mod_ref\" pointer-events=\"none\" x=\"236\" y=\"210\" text-anchor=\"start\" font-size=\"8\"> </text>
+<rect width=\"10\" height=\"11\" x=\"285\" y=\"202\" onclick=\"appel_deroulant(evt,'r_mod_ref')\"/>
+<text x=\"375\" y=\"210\" text-anchor=\"end\" font-size=\"8\" >Colonne g&#x00E9;om&#x00E9;trique</text>
+<rect id=\"rect_r_mod_geom\" width=\"80\" height=\"10\" x=\"380\" y=\"202.5\" class=\"defaut\" onclick=\"entre_dim(evt,'r_mod_geom')\"/>
+<text id=\"r_mod_geom\" pointer-events=\"none\" x=\"381\" y=\"210\" text-anchor=\"start\" font-size=\"8\"> </text>
+<rect width=\"10\" height=\"11\" x=\"460\" y=\"202\" onclick=\"appel_req('r_mod_geom')\"/>
 <text x=\"240\" y=\"230\" text-anchor=\"end\" font-size=\"8\" >Colonne libell&#x00E9;</text>
 <rect id=\"rect_r_mod_lib\" width=\"190\" height=\"10\" x=\"245\" y=\"222.5\" class=\"defaut\" onclick=\"entre_dim(evt,'r_mod_lib')\"/>
 <text id=\"r_mod_lib\" pointer-events=\"none\" x=\"246\" y=\"230\" text-anchor=\"start\" font-size=\"8\"> </text>
-<rect width=\"10\" height=\"11\" x=\"435\" y=\"222\" onclick=\"appel_deroulant(evt,'r_mod_lib')\"/>
+<rect width=\"10\" height=\"11\" x=\"435\" y=\"222\" onclick=\"appel_req('r_mod_lib')\"/>
 <text x=\"175\" y=\"250\" text-anchor=\"start\" font-size=\"8\" >Clause</text>
 <rect id=\"rect_r_mod_clause\" width=\"280\" height=\"50\" x=\"175\" y=\"255\" class=\"defaut\" onclick=\"entre_dim(evt,'r_mod_clause')\"/>
 <text pointer-events=\"none\" x=\"176\" y=\"265\" text-anchor=\"start\" font-size=\"8\"><textPath xlink:href=\"#chemin_clause\" id=\"r_mod_clause\"> </textPath></text>
@@ -1094,12 +1100,15 @@ $data.="<g id=\"gestion_modif_couche\" visibility=\"hidden\" class=\"fillfonce\"
 <text pointer-events=\"none\" font-size=\"10\" text-anchor=\"middle\" x=\"281\" y=\"182.5\">*</text>
 <rect id=\"divise_thematique\" x=\"301\" y=\"170\" rx=\"1.5\" ry=\"1.5\" width=\"20\" height=\"15\" class=\"fillclair\" onclick=\"divise_thema()\" onmouseover=\"switchColor(evt,'fill','white','','')\" onmouseout=\"switchColor(evt,'fill','url(#hors)','','')\"/>
 <text pointer-events=\"none\" font-size=\"10\" text-anchor=\"middle\" x=\"311\" y=\"182.5\">/</text>
-<rect id=\"condate_thematique\" x=\"331\" y=\"170\" rx=\"1.5\" ry=\"1.5\" width=\"20\" height=\"15\" class=\"fillclair\" onclick=\"concate_thema()\" onmouseover=\"switchColor(evt,'fill','white','','')\" onmouseout=\"switchColor(evt,'fill','url(#hors)','','')\"/>
+<rect id=\"concate_thematique\" x=\"331\" y=\"170\" rx=\"1.5\" ry=\"1.5\" width=\"20\" height=\"15\" class=\"fillclair\" onclick=\"concate_thema()\" onmouseover=\"switchColor(evt,'fill','white','','')\" onmouseout=\"switchColor(evt,'fill','url(#hors)','','')\"/>
 <text pointer-events=\"none\" font-size=\"10\" text-anchor=\"middle\" x=\"341\" y=\"182.5\">||</text>
 <rect id=\"x_thematique\" x=\"361\" y=\"170\" rx=\"1.5\" ry=\"1.5\" width=\"20\" height=\"15\" class=\"fillclair\" onclick=\"x_thema()\" onmouseover=\"switchColor(evt,'fill','white','','')\" onmouseout=\"switchColor(evt,'fill','url(#hors)','','')\"/>
 <text pointer-events=\"none\" font-size=\"10\" text-anchor=\"middle\" x=\"371\" y=\"182.5\">X</text>
 <rect id=\"y_thematique\" x=\"391\" y=\"170\" rx=\"1.5\" ry=\"1.5\" width=\"20\" height=\"15\" class=\"fillclair\" onclick=\"y_thema()\" onmouseover=\"switchColor(evt,'fill','white','','')\" onmouseout=\"switchColor(evt,'fill','url(#hors)','','')\"/>
 <text pointer-events=\"none\" font-size=\"10\" text-anchor=\"middle\" x=\"401\" y=\"182.5\">Y</text>
+<rect id=\"centre_thematique\" x=\"211\" y=\"190\" rx=\"1.5\" ry=\"1.5\" width=\"60\" height=\"15\" class=\"fillclair\" onclick=\"centre_thema()\" onmouseover=\"switchColor(evt,'fill','white','','')\" onmouseout=\"switchColor(evt,'fill','url(#hors)','','')\"/>
+<text pointer-events=\"none\" font-size=\"10\" text-anchor=\"middle\" x=\"241\" y=\"202.5\">Centre</text>
+
 
 <rect id=\"ferme_requete_thematique\" x=\"230.5\" y=\"220\" rx=\"1.5\" ry=\"1.5\" width=\"50\" height=\"15\" class=\"fillclair\" onclick=\"ferme_fenetre(evt,'requete_thematique')\" onmouseover=\"switchColor(evt,'fill','white','','')\" onmouseout=\"switchColor(evt,'fill','url(#hors)','','')\"/>
 <text pointer-events=\"none\" text-anchor=\"middle\" x=\"255.5\" y=\"232.5\">Fermer</text>
@@ -1155,8 +1164,18 @@ $data.="<g id=\"gestion_modif_couche\" visibility=\"hidden\" class=\"fillfonce\"
 <text pointer-events=\"none\" text-anchor=\"middle\" x=\"325\" y=\"242.5\">Valider</text>
 </g>
 <g id=\"deroul\" style=\"visibility:hidden\" class=\"defaut\">
-<rect id=\"rect_deroul\" width=\"100\" height=\"100\" x=\"280\" y=\"200\"/>
-</g>";
+
+<svg id=\"rect_deroul\"  x=\"645\" y=\"279\" height=\"305\" width=\"148\" viewBox=\"636 279 148 305\">
+<rect id=\"rect_de\" width=\"645\" height=\"279\" x=\"0\" y=\"0\"/>		
+<rect id=\"rect_de1\" width=\"10\" height=\"279\" x=\"0\" y=\"0\"/>		
+		<g id=\"curseurderoul\">
+    	<rect id=\"scroll_cursor_deroul\" pointer-events=\"visible\" class=\"fillclair\" width=\"10\" height=\"281\" x=\"772\" y=\"291\" onmouseup=\"liste_glisse_click(evt,'false')\" onmousedown=\"liste_glisse_click(evt,'true')\" onmousemove=\"liste_glisse(evt,'scroll_cursor_deroul')\" onmouseout=\"liste_glisse_click(evt,'false')\"/>
+		</g>
+		<g id=\"tderoul\" >
+		</g>
+		</svg></g>";
+//<rect id=\"rect_deroul\" width=\"100\" height=\"100\" x=\"280\" y=\"200\"/>
+//</g>";
 $data.="<g id=\"message\" visibility=\"hidden\" class=\"fillfonce\" font-size=\"14\" opacity=\"0.8\">
 <rect id=\"idcont\" width=\"292\" height=\"100\" x=\"170\" y=\"66\" class=\"defaut\"/> 
 <rect width=\"292\" height=\"18\" x=\"170\" y=\"66\" class=\"fillclair\"/>
