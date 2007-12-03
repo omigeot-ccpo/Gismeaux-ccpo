@@ -97,7 +97,7 @@ $contenu=file($url);
 		$image=$conte1[0];
 		
 		$textq.="<g id='".$_GET['layer']."'>\n";
-		$textq.="<image id='ima' x='". $_GET["x"]."' y='". $_GET["y"]."' width='". $_GET["lar"]."' height='". $_GET["hau"]."'  visibility='visible' xlink:href='../../tmp/".$image.".jpg'></image>";
+		$textq.="<image id='ima' x='". $_GET["x"]."' y='". $_GET["y"]."' width='". $_GET["lar"]."' height='". $_GET["hau"]."'  visibility='visible' xlink:href='../../tmp/".$image.".png'></image>";
 		
 		error_reporting ($erreur);
 $textq.="</g>\n";

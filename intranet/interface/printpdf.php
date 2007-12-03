@@ -542,7 +542,7 @@ pg_exec($pgx,$sql);
 //création page
 $pdf->AddFont('font1','','font1.php');
   $pdf->AddPage();
-$pdf->RotatedImage('../tmp/'.$tex[0].'.jpg',$posiximage,$posiyimage,$larimage,$hauimage,$angle);
+$pdf->RotatedImage('../tmp/'.$tex[0].'.png',$posiximage,$posiyimage,$larimage,$hauimage,$angle);
 $pdf->SetFont('font1','',$sizerosa);
 //echo $logo.",".$posixlogo.",".$posiylogo.",".$larlogo.",".$haulogo.",".$angle;
 $pdf->RotatedText($posixrosa,$posiyrosa,'a',$angle);
