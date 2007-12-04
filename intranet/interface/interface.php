@@ -81,7 +81,41 @@ $symbol="";
 $textsymbol="";
 $extraction="";
 //$req2="select theme.libelle_them as nom_theme,theme.schema,theme.tabl,appthe.idappthe,col_theme.colonn,admin_svg.v_fixe(col_theme.valeur_texte),appthe.raster,sinul(appthe.zoommin::character varying,theme.zoommin::character varying) as zoommin,sinul(appthe.zoommax::character varying,theme.zoommax::character varying) as zoommax,sinul(appthe.zoommaxraster::character varying,theme.zoommax_raster::character varying) as zoommax_raster,theme.raster as testraster,application.zoom_min as zoom_min_appli,application.zoom_max as zoom_max_appli,application.zoom_ouverture as zoom_ouverture_appli,theme.partiel,theme.vu_initial,style.fill as style_fill,style.symbole as style_symbole,style.opacity  as style_opacity,style.font_size  as style_fontsize,style.stroke_rgb  as style_stroke,application.btn_polygo,application.libelle_btn_polygo from admin_svg.appthe join admin_svg.theme on appthe.idtheme=theme.idtheme join admin_svg.application on appthe.idapplication=application.idapplication left outer join  admin_svg.col_theme on appthe.idappthe=col_theme.idappthe left outer join admin_svg.style on appthe.idtheme=style.idtheme where appthe.idapplication=".$_SESSION['appli']." group by theme.libelle_them,appthe.ordre,theme.schema,theme.tabl,col_theme.colonn,admin_svg.v_fixe(col_theme.valeur_texte),appthe.raster,theme.zoommin,appthe.zoommin,theme.zoommax,appthe.zoommax,theme.zoommax_raster,appthe.zoommaxraster,theme.raster,application.zoom_min,application.zoom_max,application.zoom_ouverture,theme.partiel,theme.vu_initial,style.fill,style.symbole,style.opacity,style.font_size,style.stroke_rgb,appthe.idappthe,application.btn_polygo,application.libelle_btn_polygo order by appthe.ordre asc";
-$req2="select theme.idtheme,theme.libelle_them as nom_theme,theme.schema,theme.tabl,appthe.idappthe,col_theme.colonn,admin_svg.v_fixe(col_theme.valeur_texte),appthe.raster,sinul(appthe.zoommin::character varying,theme.zoommin::character varying) as zoommin,sinul(appthe.zoommax::character varying,theme.zoommax::character varying) as zoommax,sinul(appthe.zoommaxraster::character varying,theme.zoommax_raster::character varying) as zoommax_raster,theme.raster as testraster,application.zoom_min as zoom_min_appli,application.zoom_max as zoom_max_appli,application.zoom_ouverture as zoom_ouverture_appli,sinul(appthe.partiel,theme.partiel) as partiel,sinul(appthe.vu_initial,theme.vu_initial) as vu_initial,style.idstyle,style.fill as style_fill,style.symbole as style_symbole,style.opacity  as style_opacity,style.font_size  as style_fontsize,style.stroke_rgb  as style_stroke,style.stroke_width  as style_strokewidth,application.btn_polygo,application.libelle_btn_polygo from admin_svg.appthe join admin_svg.theme on appthe.idtheme=theme.idtheme join admin_svg.application on appthe.idapplication=application.idapplication left outer join  admin_svg.col_theme on appthe.idappthe=col_theme.idappthe left outer join admin_svg.style on appthe.idtheme=style.idtheme where appthe.idapplication=".$_SESSION['appli']." group by theme.idtheme,theme.libelle_them,appthe.ordre,theme.schema,theme.tabl,col_theme.colonn,admin_svg.v_fixe(col_theme.valeur_texte),appthe.raster,theme.zoommin,appthe.zoommin,theme.zoommax,appthe.zoommax,theme.zoommax_raster,appthe.zoommaxraster,theme.raster,application.zoom_min,application.zoom_max,application.zoom_ouverture,appthe.partiel,theme.partiel,appthe.vu_initial,theme.vu_initial,style.idstyle,style.fill,style.symbole,style.opacity,style.font_size,style.stroke_rgb,style.stroke_width,appthe.idappthe,application.btn_polygo,application.libelle_btn_polygo order by appthe.ordre asc";
+$req="select appthe.zoommax,appthe.zoommin,appthe.idtheme from admin_svg.appthe join admin_svg.theme on appthe.idtheme=theme.idtheme where theme.groupe in(select theme.groupe from admin_svg.theme group by theme.groupe having count(theme.groupe)>1) and appthe.idapplication=".$_SESSION['appli']." and theme.groupe<>'' order by appthe.idtheme asc";
+$grou=tab_result($pgx,$req);
+$zoom_groupe_max=0;
+$zoom_groupe_min=10000;
+$id_groupe="";
+if(count($grou)>1)
+{
+for ($c=0;$c<count($grou);$c++)
+{
+if($grou[$c]['zoommax']>$zoom_groupe_max)
+{
+$zoom_groupe_max=$grou[$c]['zoommax'];
+}
+if($zoom_groupe_min>$grou[$c]['zoommin'])
+{
+$zoom_groupe_min=$grou[$c]['zoommin'];
+}
+if($c==0)
+{
+$id_selec_groupe=$grou[$c]['idtheme'];
+}
+if($c>0)
+{
+$id_groupe.=$grou[$c]['idtheme'].",";
+}
+}
+
+$id_groupe=substr($id_groupe,0,strlen($id_groupe)-1);
+}
+$req2="select theme.idtheme,theme.libelle_them as nom_theme,theme.schema,theme.tabl,appthe.idappthe,col_theme.colonn,admin_svg.v_fixe(col_theme.valeur_texte),appthe.raster,sinul(appthe.zoommin::character varying,theme.zoommin::character varying) as zoommin,sinul(appthe.zoommax::character varying,theme.zoommax::character varying) as zoommax,sinul(appthe.zoommaxraster::character varying,theme.zoommax_raster::character varying) as zoommax_raster,theme.raster as testraster,application.zoom_min as zoom_min_appli,application.zoom_max as zoom_max_appli,application.zoom_ouverture as zoom_ouverture_appli,sinul(appthe.partiel,theme.partiel) as partiel,sinul(appthe.vu_initial,theme.vu_initial) as vu_initial,style.idstyle,style.fill as style_fill,style.symbole as style_symbole,style.opacity  as style_opacity,style.font_size  as style_fontsize,style.stroke_rgb  as style_stroke,style.stroke_width  as style_strokewidth,application.btn_polygo,application.libelle_btn_polygo,theme.groupe from admin_svg.appthe join admin_svg.theme on appthe.idtheme=theme.idtheme join admin_svg.application on appthe.idapplication=application.idapplication left outer join  admin_svg.col_theme on appthe.idappthe=col_theme.idappthe left outer join admin_svg.style on appthe.idtheme=style.idtheme where appthe.idapplication=".$_SESSION['appli'];
+if($id_groupe!="")
+{
+$req2.=" and appthe.idtheme not in(".$id_groupe.")";
+}
+$req2.=" group by theme.idtheme,theme.libelle_them,appthe.ordre,theme.schema,theme.tabl,col_theme.colonn,admin_svg.v_fixe(col_theme.valeur_texte),appthe.raster,theme.zoommin,appthe.zoommin,theme.zoommax,appthe.zoommax,theme.zoommax_raster,appthe.zoommaxraster,theme.raster,application.zoom_min,application.zoom_max,application.zoom_ouverture,appthe.partiel,theme.partiel,appthe.vu_initial,theme.vu_initial,style.idstyle,style.fill,style.symbole,style.opacity,style.font_size,style.stroke_rgb,style.stroke_width,appthe.idappthe,application.btn_polygo,application.libelle_btn_polygo,theme.groupe order by appthe.ordre asc";
 $cou=tab_result($pgx,$req2);
 $zoommin=$cou[0]['zoom_min_appli'];
 $zoommax=$cou[0]['zoom_max_appli'];
@@ -192,7 +226,15 @@ $req1="select distinct (col_theme.intitule_legende) as intitule_legende,col_them
 	}
 	else
 	{
+	if($cou[$c]['idtheme']==$id_selec_groupe)
+	{
+	$leg=$cou[$c]['idappthe'].".".$cou[$c]['groupe'];
+	}
+	else
+	{
 	$leg=$cou[$c]['idappthe'].".".$cou[$c]['nom_theme'];
+	}
+	
 		if($cou[$c]['testraster']=='')
 		{
 		$typ='';
@@ -261,9 +303,26 @@ elseif($cou[$c]['style_fontsize']=="")
 	}
 }
 }
-$legende.="<text id=\"text".$z."\" x=\"674\" y=\"".($y+8)."\" class=\"fillfonce\">".$cou[$c]['nom_theme']."</text>\n";
+if($cou[$c]['idtheme']==$id_selec_groupe)
+	{
+	$legende.="<text id=\"text".$z."\" x=\"674\" y=\"".($y+8)."\" class=\"fillfonce\">".$cou[$c]['groupe']."</text>\n";
+	$lay.="controllay[".$c."]=new ylayer(".$zoom_groupe_min.",".$zoom_groupe_max.",'".$typ."');";
+	}
+	else
+	{
+		if($cou[$c]['groupe']!="")
+		{
+		$legende.="<text id=\"text".$z."\" x=\"674\" y=\"".($y+8)."\" class=\"fillfonce\">".$cou[$c]['groupe']."</text>\n";
+		}
+		else
+		{
+		$legende.="<text id=\"text".$z."\" x=\"674\" y=\"".($y+8)."\" class=\"fillfonce\">".$cou[$c]['nom_theme']."</text>\n";
+		}
+	$lay.="controllay[".$c."]=new ylayer(".$cou[$c]['zoommin'].",".$cou[$c]['zoommax'].",'".$typ."');";
+	}
+
 //$legende.="<text id=\"text".$z."\" x=\"662\" y=\"".($y+8)."\" class=\"fillfonce\">".$cou[$c]['nom_theme']."</text>\n";
-$lay.="controllay[".$c."]=new ylayer(".$cou[$c]['zoommin'].",".$cou[$c]['zoommax'].",'".$typ."');";
+
 	if(count($couch)>0)
 	{
 		$legende.="<rect id=\"deroul".$z."\" x=\"640\" y=\"".($y+1)."\" width=\"6\" height=\"6\" onmouseover=\"switchColor(evt,'fill','red','','')\" onmouseout=\"switchColor(evt,'fill','white','','')\" onclick=\"Javascript:derouler(evt,".$z.",".count($couch).")\"/>\n";

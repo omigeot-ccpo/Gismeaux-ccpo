@@ -48,6 +48,7 @@ $_SESSION['boitex'] =& $_GET['x'];
 $_SESSION['boitey'] =& $_GET['y'];
 $_SESSION['boitelarg'] =& $_GET['lar'];
 $_SESSION['boitehaut'] =& $_GET['hau'];
+$countlayer=1;
 include("../connexion/deb.php");
 $placeid=explode(",",$_GET['parce']);
 //$str2=$_SERVER['HTTP_RAW_POST_DATA'];
@@ -55,12 +56,64 @@ $xm=$_GET['x'] + $_GET['xini'];
 $xma=($_GET['x']+$_GET['lar']) + $_GET['xini'];
 $yma= $_GET['yini'] - $_GET['y'];
 $ym= $_GET['yini'] - ($_GET['y']+$_GET['hau']);
-$str1 ="<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?>";
-$str1 .="<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.0//EN\" \"http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd\">";
-$str1 .="<svg  x='0' y='0' width='620' height='620' viewBox='0 0 620 620'>\n";
-$str1 .="<svg  x='0' y='0' width='620' height='520' viewBox='".$_GET['x']." ".$_GET['y']." ".$_GET['lar']." ".$_GET['hau']."' xmlns:sodipodi='http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd' xmlns:inkscape='http://www.inkscape.org/namespaces/inkscape' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns='http://www.w3.org/2000/svg'>\n";
-$str1 .="<defs>";
-$str1 .="<marker id='debut_mesure' markerWidth='5' markerHeight='10' orient='auto' refX='0' refY='5'><path pointer-events='none' fill='none' stroke='red' d='M 5 7.5 0 5 5 2.5' /></marker><marker id='fin_mesure' markerWidth='5' markerHeight='10' orient='auto' refX='5' refY='5'><path pointer-events='none' fill='none' stroke='red' d='M 0 7.5 5 5 0 2.5' /></marker>";
+$str1="<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?>";
+$str1.="<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.0//EN\" \"http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd\">";
+$str1.="<svg 
+   xmlns:dc=\"http://purl.org/dc/elements/1.1/\"
+   xmlns:cc=\"http://web.resource.org/cc/\"
+   xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"
+   xmlns:svg=\"http://www.w3.org/2000/svg\"
+   xmlns=\"http://www.w3.org/2000/svg\"
+   xmlns:xlink=\"http://www.w3.org/1999/xlink\"
+   xmlns:sodipodi=\"http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd\"
+   xmlns:inkscape=\"http://www.inkscape.org/namespaces/inkscape\"
+   inkscape:output_extension=\"org.inkscape.output.svg.inkscape\"
+   id=\"svg2\">";
+$str1.="<sodipodi:namedview
+     inkscape:current-layer=\"layer1\"/>";
+$str1.="<svg  id=\"svg6\" x=\"0\" y=\"0\" width=\"620\" height=\"520\" viewBox=\"".$_GET['x']." ".$_GET['y']." ".$_GET['lar']." ".$_GET['hau']."\">\n";
+$str1.="<metadata
+       id=\"metadata8\">
+      <rdf:RDF>
+        <cc:Work
+           rdf:about=\"\">
+          <dc:format>image/svg+xml</dc:format>
+          <dc:type
+             rdf:resource=\"http://purl.org/dc/dcmitype/StillImage\" />
+        </cc:Work>
+      </rdf:RDF>
+    </metadata>";
+$str1.="<defs>";
+$str1.="   <marker
+         id=\"debut_mesure\"
+         markerWidth=\"5\"
+         markerHeight=\"10\"
+         orient=\"auto\"
+         refX=\"0\"
+         refY=\"5\">
+        <path
+           pointer-events=\"none\"
+           fill=\"none\"
+           stroke=\"red\"
+           d=\"M 5 7.5 0 5 5 2.5\"
+           id=\"path13\" />
+      </marker>
+      <marker
+         id=\"fin_mesure\"
+         markerWidth=\"5\"
+         markerHeight=\"10\"
+         orient=\"auto\"
+         refX=\"5\"
+         refY=\"5\">
+        <path
+           pointer-events=\"none\"
+           fill=\"none\"
+           stroke=\"red\"
+           d=\"M 0 7.5 5 5 0 2.5\"
+           id=\"path16\" />
+      </marker>";
+
+
 $textq="";
 	if ($_GET['raster']!=''){
 	$raster=str_replace("chr(224)","à",$_GET['raster']);
@@ -114,10 +167,14 @@ $url="http://".$serv."/cgi-bin/mapserv?map=".$fs_root."/capm/".$application.".ma
 		$conte1=explode('.',$image[4]);
 		$image=$conte1[0];
 	error_reporting ($erreur);
-		$str1 .="<pattern id=\"imag\" height=\"".$_GET['hau']."\" width=\"".$_GET['lar']."\" patternUnits=\"userSpaceOnUse\" inkscape:collect=\"always\" patternTransform=\"translate(".$_GET['x'].",".$_GET['y'].")\">";
-$str1 .="<image height='".$_GET['hau']."'  width='".$_GET['lar']."' sodipodi:absref='c:\\carte\\".$image.".jpg' xlink:href='c:\\carte\\".$image.".jpg' /></pattern>";
-		$textq.="<g>\n";
-		$textq.="<rect y='".$_GET['y']."' x='".$_GET['x']."' height='".$_GET['hau']."' width='".$_GET['lar']."' style='fill:url(#imag);stroke:none'/>";
+		//$str1 .="<pattern id=\"imag\" height=\"".$_GET['hau']."\" width=\"".$_GET['lar']."\" patternUnits=\"userSpaceOnUse\" inkscape:collect=\"always\" patternTransform=\"translate(".$_GET['x'].",".$_GET['y'].")\">";
+//$str1 .="<image height='".$_GET['hau']."'  width='".$_GET['lar']."' sodipodi:absref='c:\\carte\\".$image.".jpg' xlink:href='c:\\carte\\".$image.".jpg' /></pattern>";
+		$textq.="<g inkscape:groupmode=\"layer\"
+     id=\"layer".$countlayer."\"
+     inkscape:label=\"raster\">\n";
+	 $countlayer=$countlayer+1;
+	 $textq.="<image y='".$_GET['y']."' x='".$_GET['x']."' height='".$_GET['hau']."' width='".$_GET['lar']."' sodipodi:absref='".$image.".jpg' xlink:href='".$image.".jpg' />";
+		//$textq.="<rect y='".$_GET['y']."' x='".$_GET['x']."' height='".$_GET['hau']."' width='".$_GET['lar']."' style='fill:url(#imag);stroke:none'/>";
 		$textq.="</g>\n";
 }
 echo $_GET['svg'];
@@ -157,7 +214,7 @@ for($i=0;$i<count($ras);$i++)
 }	
 //$rast="'".$rast."'";
 //$rast=str_replace(",","','",$rast);
-$sql="select appthe.idappthe,appthe.ordre,theme.schema,theme.tabl,col_theme.colonn,col_theme.valeur_mini,col_theme.valeur_maxi,col_theme.valeur_texte,sinul(col_theme.fill, style.fill) as fill,sinul(col_theme.stroke_rgb, style.stroke_rgb) as stroke_rgb,sinul(col_theme.symbole,style.symbole) as symbole,sinul(col_theme.opacity,style.opacity) as opacity,sinul(col_theme.font_familly,style.font_familly) as font_familly,sinul(col_theme.font_size,style.font_size) as font_size,appthe.mouseover,appthe.mouseout,appthe.click,appthe.idtheme,theme.partiel,sinul(col_theme.stroke_width,style.stroke_width) as stroke_width from admin_svg.appthe join admin_svg.theme on appthe.idtheme=theme.idtheme left outer join  admin_svg.col_theme on appthe.idappthe=col_theme.idappthe left outer join  admin_svg.style on appthe.idtheme=style.idtheme where appthe.idapplication=".$_SESSION['appli']." group by appthe.idappthe,appthe.ordre,theme.schema,theme.tabl,col_theme.colonn,col_theme.valeur_mini,col_theme.valeur_maxi,col_theme.valeur_texte,sinul(col_theme.fill, style.fill),sinul(col_theme.stroke_rgb, style.stroke_rgb),sinul(col_theme.symbole,style.symbole),sinul(col_theme.opacity,style.opacity),sinul(col_theme.font_familly,style.font_familly),sinul(col_theme.font_size,style.font_size),appthe.mouseover,appthe.mouseout,appthe.click,appthe.idtheme,theme.partiel,sinul(col_theme.stroke_width,style.stroke_width) order by appthe.ordre desc";
+$sql="select theme.libelle_them,appthe.idappthe,appthe.ordre,theme.schema,theme.tabl,col_theme.colonn,col_theme.valeur_mini,col_theme.valeur_maxi,col_theme.valeur_texte,sinul(col_theme.fill, style.fill) as fill,sinul(col_theme.stroke_rgb, style.stroke_rgb) as stroke_rgb,sinul(col_theme.symbole,style.symbole) as symbole,sinul(col_theme.opacity,style.opacity) as opacity,sinul(col_theme.font_familly,style.font_familly) as font_familly,sinul(col_theme.font_size,style.font_size) as font_size,appthe.mouseover,appthe.mouseout,appthe.click,appthe.idtheme,theme.partiel,sinul(col_theme.stroke_width,style.stroke_width) as stroke_width from admin_svg.appthe join admin_svg.theme on appthe.idtheme=theme.idtheme left outer join  admin_svg.col_theme on appthe.idappthe=col_theme.idappthe left outer join  admin_svg.style on appthe.idtheme=style.idtheme where appthe.idapplication=".$_SESSION['appli']." group by theme.libelle_them,appthe.idappthe,appthe.ordre,theme.schema,theme.tabl,col_theme.colonn,col_theme.valeur_mini,col_theme.valeur_maxi,col_theme.valeur_texte,sinul(col_theme.fill, style.fill),sinul(col_theme.stroke_rgb, style.stroke_rgb),sinul(col_theme.symbole,style.symbole),sinul(col_theme.opacity,style.opacity),sinul(col_theme.font_familly,style.font_familly),sinul(col_theme.font_size,style.font_size),appthe.mouseover,appthe.mouseout,appthe.click,appthe.idtheme,theme.partiel,sinul(col_theme.stroke_width,style.stroke_width) order by appthe.ordre desc";
 $cou=tab_result($pgx,$sql);
 //$essai="";
 for ($l=0;$l<count($cou);$l++){
@@ -277,10 +334,21 @@ if($type_geo=="texte" && $rotation=="false")
 {
 $styl.="text-anchor:middle;";
 }
-$textq.="<g style=\"".$styl."\" ";
+if($cou[$l]['valeur_texte']=='')
+{
+$label=$cou[$l]['libelle_them'];
+}
+else
+{
+$label=$cou[$l]['valeur_texte'];
+}
+	 
+$textq.="<g inkscape:groupmode=\"layer\"
+     id=\"layer".$countlayer."\"
+     inkscape:label=\"".$label."\" style=\"".$styl."\" ";
 
 $textq.=">\n";
-	
+$countlayer=$countlayer+1;	
 	if($type_geo=="symbole")
 				{
 				for ($e=0;$e<count($res);$e++)
@@ -322,10 +390,15 @@ $textq.="</g>";
 }
 }
 }
-$str3="<rect y='".($_GET['y']-600)."' x='".($_GET['x']-1200)."' height='".($_GET['hau']+600)."' width='1200' style='fill:white;stroke:none'/>";
+$str3="<g inkscape:groupmode=\"layer\"
+     id=\"layer".$countlayer."\"
+     inkscape:label=\"bordure\" style='fill:white;stroke:none'>";
+$countlayer=$countlayer+1;	 
+$str3.="<rect y='".($_GET['y']-600)."' x='".($_GET['x']-1200)."' height='".($_GET['hau']+600)."' width='1200' />";
 $str3.="<rect y='".($_GET['y']-600)."' x='".($_GET['x']+$_GET['lar'])."' height='".($_GET['hau']+600)."' width='1200' style='fill:white;stroke:none'/>";
 $str3.="<rect y='".($_GET['y']-600)."' x='".($_GET['x']-1200)."' height='600' width='".($_GET['lar']+1800)."' style='fill:white;stroke:none'/>";
 $str3.="<rect y='".($_GET['y']+$_GET['hau'])."' x='".($_GET['x']-600)."' height='600' width='".($_GET['lar']+1800)."' style='fill:white;stroke:none'/>";
+$str3.="</g>";
 $str3.="</svg>";
 $str3.="<rect style='fill:white;stroke:blue' width='90' height='18' x='50' y='546'/>";
 $str3.="<rect y='555' x='50' height='9' width='45' style='fill:blue'/>";
@@ -336,7 +409,9 @@ $str3.="<text id='centre' y='544' x='95' style='stroke:black;text-anchor:middle;
 $str3.="<text id='droite' y='544' x='140' style='stroke:black;text-anchor:middle;stroke-width:0.5;font-size:12px;fill-opacity:1'>".$_GET['droite']."</text>";
 //if($_GET['nav']!="0")
 //{
-$dess="<g id=\"dess\" stroke-width=\"0.2\">";
+$dess="<g inkscape:groupmode=\"layer\"
+     id=\"layer".$countlayer."\"
+     inkscape:label=\"cotation\" stroke-width=\"0.2\">";
 $tableau=$_SESSION['cotation'];
 for($ij=0;$ij<count($tableau);$ij++)
 {
