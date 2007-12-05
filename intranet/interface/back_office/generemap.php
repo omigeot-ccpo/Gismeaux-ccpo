@@ -55,7 +55,7 @@ $coef_echelle=$lar[0]['lar']*2.32;
 $mapcotation="LAYER \n";
 $mapcotation.="CONNECTIONTYPE postgis \n";
 $mapcotation.="NAME \"cotation\" group \"cotation\" \n";
-$mapcotation.="CONNECTION \"user=postgres dbname=meaux\" \n";
+$mapcotation.="CONNECTION \"".$db_params."\" \n";
 $mapcotation.="DATA \"the_geom FROM admin_svg.temp_cotation using unique the_geom using SRID=-1\" \n";
 $mapcotation.="STATUS on \n";
 $mapcotation.="TYPE line \n";
@@ -304,7 +304,7 @@ $req1="select distinct (col_theme.intitule_legende) as intitule_legende,col_them
 			$maprecherche.="LAYER \n";
 			$maprecherche.="CONNECTIONTYPE postgis \n";
 			$maprecherche.="NAME \"".str_replace(" ","_",$couch[$r]['intitule_legende'])."\" group \"".str_replace(" ","_",$cou[$c]['nom_theme'])."\" \n";
-			$maprecherche.="CONNECTION \"user=postgres dbname=meaux\" \n";
+			$maprecherche.="CONNECTION \"".$db_params."\" \n";
 			if($clause=="")
 			{
 			$maprecherche.="DATA \"".str_replace(" ","",$col[0]['appel'])." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." using unique ".str_replace(" ","",$col[0]['appel'])." using SRID=-1\" \n";
@@ -341,7 +341,7 @@ $req1="select distinct (col_theme.intitule_legende) as intitule_legende,col_them
 			$mapprincipal.="LAYER \n";
 	$mapprincipal.="CONNECTIONTYPE postgis \n";
 	$mapprincipal.="NAME \"".str_replace(" ","_",$couch[$r]['intitule_legende'])."\" group \"".str_replace(" ","_",$cou[$c]['nom_theme'])."\" \n";
-	$mapprincipal.="CONNECTION \"user=postgres dbname=meaux\" \n";
+	$mapprincipal.="CONNECTION \"".$db_params."\" \n";
 	if($clause=="")
 	{
 	$mapprincipal.="DATA \"".str_replace(" ","",$col[0]['appel'])." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." using unique ".str_replace(" ","",$col[0]['appel'])." using SRID=-1\" \n";
@@ -366,7 +366,7 @@ $req1="select distinct (col_theme.intitule_legende) as intitule_legende,col_them
 			$$mapp.="LAYER \n";
 	$$mapp.="CONNECTIONTYPE postgis \n";
 	$$mapp.="NAME \"".str_replace(" ","_",$couch[$r]['intitule_legende'])."\" group \"".str_replace(" ","_",$cou[$c]['nom_theme'])."\" \n";
-	$$mapp.="CONNECTION \"user=postgres dbname=meaux\" \n";
+	$$mapp.="CONNECTION \"".$db_params."\" \n";
 	if($clause=="")
 	{
 	$$mapp.="DATA \"".str_replace(" ","",$col[0]['appel'])." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." using unique ".str_replace(" ","",$col[0]['appel'])." using SRID=-1\" \n";
@@ -466,7 +466,7 @@ $$mapp.="END \n \n";
 			$maprecherche.="LAYER \n";
 			$maprecherche.="CONNECTIONTYPE postgis \n";
 			$maprecherche.="NAME \"".str_replace(" ","_",$cou[$c]['nom_theme'])."\" group \"".str_replace(" ","_",$cou[$c]['nom_theme'])."\" \n";
-			$maprecherche.="CONNECTION \"user=postgres dbname=meaux\" \n";
+			$maprecherche.="CONNECTION \"".$db_params."\" \n";
 			if($clause=="")
 			{
 			$maprecherche.="DATA \"".str_replace(" ","",$col[0]['appel'])." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." using unique ".str_replace(" ","",$col[0]['appel'])." using SRID=-1\" \n";
@@ -502,7 +502,7 @@ $$mapp.="END \n \n";
 			$mapprincipal.="LAYER \n";
 			$mapprincipal.="CONNECTIONTYPE postgis \n";
 			$mapprincipal.="NAME \"".str_replace(" ","_",$cou[$c]['nom_theme'])."\" group \"".str_replace(" ","_",$cou[$c]['nom_theme'])."\" \n";
-			$mapprincipal.="CONNECTION \"user=postgres dbname=meaux\" \n";
+			$mapprincipal.="CONNECTION \"".$db_params."\" \n";
 			if($clause=="")
 			{
 			$mapprincipal.="DATA \"".str_replace(" ","",$col[0]['appel'])." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." using unique ".str_replace(" ","",$col[0]['appel'])." using SRID=-1\" \n";
@@ -531,7 +531,7 @@ $$mapp.="END \n \n";
 		$$mapp.="LAYER \n";
 	$$mapp.="CONNECTIONTYPE postgis \n";
 	$$mapp.="NAME \"".str_replace(" ","_",$cou[$c]['nom_theme'])."\" group \"".str_replace(" ","_",$cou[$c]['nom_theme'])."\" \n";
-	$$mapp.="CONNECTION \"user=postgres dbname=meaux\" \n";
+	$$mapp.="CONNECTION \"".$db_params."\" \n";
 	if($clause=="")
 	{
 	$$mapp.="DATA \"".str_replace(" ","",$col[0]['appel'])." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." using unique ".str_replace(" ","",$col[0]['appel'])." using SRID=-1\" \n";
@@ -613,28 +613,48 @@ $$mapp.="END \n \n";
 		{
 		$$mapp.="TRANSPARENCY ".($cou[$c]['style_opacity']*100)." \n";
 		}
-$$mapp.="END \n \n";
-}
+	$$mapp.="END \n \n";
+	}
 	}
 	else
-	{
-	$mapraster.="LAYER \n";
-	if($cou[$c]['groupe']!="")
-	{
-	$mapraster.="NAME \"".str_replace(" ","_",$cou[$c]['nom_theme'])."\" group \"".str_replace(" ","_",$cou[$c]['groupe'])."\" \n";
-	}
-	else
-	{
-	$mapraster.="NAME \"".str_replace(" ","_",$cou[$c]['nom_theme'])."\" group \"".str_replace(" ","_",$cou[$c]['nom_theme'])."\" \n";
-	}
-	$mapraster.="STATUS on \n";
-	$mapraster.="TYPE raster \n";
-	$mapraster.="MAXSCALE ".ceil($coef_echelle*100/$cou[$c]['zoommin'])." \n";
- 	 $mapraster.="MINSCALE ".floor($coef_echelle*100/$cou[$c]['zoommax'])." \n";
-   	$mapraster.="TILEINDEX \"".$cou[$c]['raster']."\" \n";
-	$mapraster.="TILEITEM \"location\" \n";
-	$mapraster.="END \n \n";
-	}
+	  {
+	    $raster = $cou[$c]['raster'];
+	    $name = str_replace(" ","_",$cou[$c]['nom_theme']);
+	    if ($raster[0] == '/')
+	      {
+		$tileindex ="TILEINDEX \"".$raster."\" \n";
+		$mapraster ="";
+	      }
+	    else
+	      {
+		$tileindex ="TILEINDEX \"".$name."idx\" \n";
+		$mapraster = "LAYER \n"; 
+		$mapraster .= "NAME \"".$name."idx\" \n";
+		$mapraster .= "STATUS on \n";
+		$mapraster .= "TYPE polygon \n";
+		$mapraster .= "CONNECTIONTYPE postgis \n";
+		$mapraster .= "CONNECTION \"$db_params\" \n";
+		$mapraster .= "DATA \"the_geom from ".$raster." using unique the_geom using SRID=-1\" \n";
+		$mapraster .= "END \n \n";
+	      }
+	    
+	    $mapraster.="LAYER \n";
+	    if($cou[$c]['groupe']!="")
+	      {
+		$mapraster.="NAME \"".$name."\" group \"".str_replace(" ","_",$cou[$c]['groupe'])."\" \n";
+	      }
+	    else
+	      {
+		$mapraster.="NAME \"".$name."\" group \"".str_replace(" ","_",$cou[$c]['nom_theme'])."\" \n";
+	      }
+	    $mapraster.="STATUS on \n";
+	    $mapraster.="TYPE raster \n";
+	    $mapraster.="MAXSCALE ".ceil($coef_echelle*100/$cou[$c]['zoommin'])." \n";
+	    $mapraster.="MINSCALE ".floor($coef_echelle*100/$cou[$c]['zoommax'])." \n";
+	    $mapraster.= $tileindex;
+	    $mapraster.="TILEITEM \"location\" \n";
+	    $mapraster.="END \n \n";
+	  }
 
 }
 
