@@ -31,22 +31,22 @@ sécurité de leurs systèmes et ou de leurs données et, plus généralement,
 Le fait que vous puissiez accéder à cet en-tête signifie que vous avez 
 pris connaissance de la licence CeCILL-C, et que vous en avez accepté les 
 termes.*/
-$ora=pg_connect("dbname=meaux host=localhost user=postgres");
-if ($util){
+include("../connexion/deb.php");
+if ($_GET["util"]){
  	$q2="select idapplication from admin_svg.application";
-	$r2=pg_exec($ora,$q2);
+	$r2=pg_exec($pgx,$q2);
 	$num=pg_numrows($r2);
-	$ins="delete from admin_svg.apputi where idutilisateur='".$util."'";
-	$aa=pg_exec($ora,$ins);$j=1;
+	$ins="delete from admin_svg.apputi where idutilisateur='".$_GET["util"]."'";
+	$aa=pg_exec($pgx,$ins);$j=1;
 	for ($i=0; $i<$num; $i++){
 		$tes2 = pg_fetch_array($r2);
-		if (${$tes2["idapplication"]}=='0'){
-			$in2="insert into admin_svg.apputi (idutilisateur,idapplication,ordre) values('".$util."','".$tes2["idapplication"]."','".$j."')";
-			$a2=pg_exec($ora,$in2); $j++;
+		if (array_key_exists("'".$tes2["idapplication"]."'",$_GET["app"])){echo $j.';';
+			$in2="insert into admin_svg.apputi (idutilisateur,idapplication,ordre) values('".$_GET["util"]."','".$tes2["idapplication"]."','".$j."')";
+			$a2=pg_exec($pgx,$in2); $j++;
 		}
 	} 
-	$ident=$util; 
-}
+	$ident=$_GET["util"]; 
+}else{$ident=$_GET["ident"];}
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -62,17 +62,17 @@ if ($util){
 <?php 
 $quer="select * from admin_svg.application where idapplication in (select idapplication from admin_svg.apputi where idutilisateur='".$ident."')";
 $que2="select * from admin_svg.application where idapplication not in (select idapplication from admin_svg.apputi where idutilisateur='".$ident."')";
-$tab=pg_exec($ora,$quer);
-$ta2=pg_exec($ora,$que2);
+$tab=pg_exec($pgx,$quer);
+$ta2=pg_exec($pgx,$que2);
 $num2=pg_numrows($tab);
 $num3=pg_numrows($ta2);
 for ($i=0; $i<$num2; $i++){
 	$ff[$i]=pg_fetch_array($tab, $i);
-   echo '<tr><td><input name="'.$ff[$i]['idapplication'].'" type="checkbox" value="0" onchange="if(this.value==\'0\'){this.value=\'1\';}else{this.value=\'0\';}" checked></td><td>'.$ff[$i]['libelle_appli'].'</td><td>'.$ff[$i]['url'].'</td><td>'.$ff[$i]['divers'].'</td></tr>'; 
+   echo '<tr><td><input name="app[\''.$ff[$i]['idapplication'].'\']" type="checkbox" value="0" onchange="if(this.value==\'0\'){this.value=\'1\';}else{this.value=\'0\';}" checked></td><td>'.$ff[$i]['libelle_appli'].'</td><td>'.$ff[$i]['url'].'</td><td>'.$ff[$i]['divers'].'</td></tr>'; 
  }
  for ($i=0; $i<$num3; $i++){
 	$ff[$i]=pg_fetch_array($ta2, $i);
-   echo '<tr><td><input name="'.$ff[$i]['idapplication'].'" type="checkbox" value="1" onchange="if(this.value==\'0\'){this.value=\'1\';}else{this.value=\'0\';}"></td><td>'.$ff[$i]['libelle_appli'].'</td><td>'.$ff[$i]['url'].'</td><td>'.$ff[$i]['divers'].'</td></tr>'; 
+   echo '<tr><td><input name="app[\''.$ff[$i]['idapplication'].'\']" type="checkbox" value="1" onchange="if(this.value==\'0\'){this.value=\'1\';}else{this.value=\'0\';}"></td><td>'.$ff[$i]['libelle_appli'].'</td><td>'.$ff[$i]['url'].'</td><td>'.$ff[$i]['divers'].'</td></tr>'; 
  }
  ?>
 </table>

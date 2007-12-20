@@ -32,12 +32,12 @@ Le fait que vous puissiez accéder à cet en-tête signifie que vous avez
 pris connaissance de la licence CeCILL-C, et que vous en avez accepté les 
 termes.*/
 session_start();
-if (! $PHP_AUTH_USER || ! $PHP_AUTH_PW){
+if (! $_SERVER["PHP_AUTH_USER"] || ! $_SERVER["PHP_AUTH_PW"]){
 	header("WWW-authenticate: Basic realm=\"Veuillez vous identifier\"");
 	header('HTTP/1.0 401 Unauthorized');
 	//header('status: 401 Unauthorized');
 }else{
-$ora=pg_connect("dbname=meaux host=localhost user=postgres");
+$ora=pg_connect("dbname=dbname host=localhost user=postgres");
 if ($act=="sup"){
 	$quer="delete from admin_svg.utilisateur where idutilisateur='".$ide."'";
 	pg_exec($ora,$quer);
