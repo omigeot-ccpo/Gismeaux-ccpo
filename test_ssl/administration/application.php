@@ -40,7 +40,7 @@ if ($_GET["util"]){
 	$aa=pg_exec($pgx,$ins);$j=1;
 	for ($i=0; $i<$num; $i++){
 		$tes2 = pg_fetch_array($r2);
-		if (array_key_exists("'".$tes2["idapplication"]."'",$_GET["app"])){echo $j.';';
+		if (array_key_exists("'".$tes2["idapplication"]."'",$_GET["app"])){
 			$in2="insert into admin_svg.apputi (idutilisateur,idapplication,ordre) values('".$_GET["util"]."','".$tes2["idapplication"]."','".$j."')";
 			$a2=pg_exec($pgx,$in2); $j++;
 		}
