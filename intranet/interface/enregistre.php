@@ -31,7 +31,7 @@ sécurité de leurs systèmes et ou de leurs données et, plus généralement,
 Le fait que vous puissiez accéder à cet en-tête signifie que vous avez 
 pris connaissance de la licence CeCILL-C, et que vous en avez accepté les 
 termes.*/
-header("Content-type: image/svg+xml");
+set_time_limit(0);
 if($SERVER_PORT!=443)
 {
 ini_set('session.gc_maxlifetime', 3600);
@@ -50,12 +50,14 @@ $_SESSION['boitelarg'] =& $_GET['lar'];
 $_SESSION['boitehaut'] =& $_GET['hau'];
 $countlayer=1;
 include("../connexion/deb.php");
+$serv=$_SERVER["SERVER_NAME"];
 $placeid=explode(",",$_GET['parce']);
-//$str2=$_SERVER['HTTP_RAW_POST_DATA'];
 $xm=$_GET['x'] + $_GET['xini'];
 $xma=($_GET['x']+$_GET['lar']) + $_GET['xini'];
 $yma= $_GET['yini'] - $_GET['y'];
 $ym= $_GET['yini'] - ($_GET['y']+$_GET['hau']);
+$filename = "../tmp/".$_GET['nom'].".svg";
+$myFile = fopen($filename, "w");  
 $str1="<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?>";
 $str1.="<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.0//EN\" \"http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd\">";
 $str1.="<svg 
@@ -111,8 +113,8 @@ $str1.="   <marker
            stroke=\"red\"
            d=\"M 0 7.5 5 5 0 2.5\"
            id=\"path16\" />
-      </marker>";
-
+      </marker></defs>";
+fputs($myFile, $str1);
 
 $textq="";
 	if ($_GET['raster']!=''){
@@ -141,19 +143,16 @@ $raster=str_replace("chr(95)","_",$raster);
 $app=tab_result($pgx,$sql_app);
 $application=$app[0]['libelle_appli'];
 $application=str_replace(" ","_",$application);
-		//$serv="126.2.0.101"; //mettre pays pour slinsig01 ou l'ip pour le serveur de test
-		//$serv=$HTTP_HOST;
-		//$serv="pays";
-		//$serv=$_SERVER["SERVER_ADDR"];
-		$serv=$_SERVER["SERVER_NAME"];
+		
+		
 if(substr($_SESSION['code_insee'], -3)=='000')
 	{
 				
-$url="http://".$serv."/cgi-bin/mapserv?map=".$fs_root."/capm/".$application.".map&map_imagetype=jpeg&insee=".substr($_SESSION['code_insee'],0,3)."&layer=".$raster."&minx=".$xm."&miny=".$ym."&maxx=".$xma."&maxy=".$yma."&mapsize=1240%201040&parce=('')";
+$url="http://".$serv."/cgi-bin/mapserv?map=".$fs_root."capm/".$application.".map&map_imagetype=jpeg&insee=".substr($_SESSION['code_insee'],0,3)."&layer=".$raster."&minx=".$xm."&miny=".$ym."&maxx=".$xma."&maxy=".$yma."&mapsize=1240%201040&parce=('')";
 }
 else
 {
-$url="http://".$serv."/cgi-bin/mapserv?map=".$fs_root."/capm/".$application.".map&map_imagetype=jpeg&insee=".$_SESSION['code_insee']."&layer=".$raster."&minx=".$xm."&miny=".$ym."&maxx=".$xma."&maxy=".$yma."&mapsize=1240%201040&parce=('')";
+$url="http://".$serv."/cgi-bin/mapserv?map=".$fs_root."capm/".$application.".map&map_imagetype=jpeg&insee=".$_SESSION['code_insee']."&layer=".$raster."&minx=".$xm."&miny=".$ym."&maxx=".$xma."&maxy=".$yma."&mapsize=1240%201040&parce=('')";
 }
 		$contenu=file($url);
        		while (list($ligne,$cont)=each($contenu)){
@@ -161,30 +160,23 @@ $url="http://".$serv."/cgi-bin/mapserv?map=".$fs_root."/capm/".$application.".ma
 		}
 		$texte=$numligne[$ms_dbg_line];
 		$image=explode('/',$texte);
-		$fp = fopen("../tmp/".$_GET['nom'].".tmp", "w");
-		fwrite($fp,$image[4]);
-		fclose ($fp);
 		$conte1=explode('.',$image[4]);
 		$image=$conte1[0];
+		
 	error_reporting ($erreur);
-		//$str1 .="<pattern id=\"imag\" height=\"".$_GET['hau']."\" width=\"".$_GET['lar']."\" patternUnits=\"userSpaceOnUse\" inkscape:collect=\"always\" patternTransform=\"translate(".$_GET['x'].",".$_GET['y'].")\">";
-//$str1 .="<image height='".$_GET['hau']."'  width='".$_GET['lar']."' sodipodi:absref='c:\\carte\\".$image.".jpg' xlink:href='c:\\carte\\".$image.".jpg' /></pattern>";
 		$textq.="<g inkscape:groupmode=\"layer\"
      id=\"layer".$countlayer."\"
      inkscape:label=\"raster\">\n";
 	 $countlayer=$countlayer+1;
 	 $textq.="<image y='".$_GET['y']."' x='".$_GET['x']."' height='".$_GET['hau']."' width='".$_GET['lar']."' sodipodi:absref='".$image.".jpg' xlink:href='".$image.".jpg' />";
-		//$textq.="<rect y='".$_GET['y']."' x='".$_GET['x']."' height='".$_GET['hau']."' width='".$_GET['lar']."' style='fill:url(#imag);stroke:none'/>";
 		$textq.="</g>\n";
+		fputs($myFile, $textq);
 }
-echo $_GET['svg'];
+
 if($_GET['svg']!="")
 {
 $rast=$_GET['svg'];
-/*if($nav=="2")
-{
-$rast=utf8_decode($svg);
-}*/
+
 if($_GET['nav']!="0")
 {
 $rast=str_replace("chr(224)","à",$_GET['svg']);
@@ -212,15 +204,14 @@ for($i=0;$i<count($ras);$i++)
 	$rast[$i]=$ra[1];
 	$id[$i]=$ra[0];
 }	
-//$rast="'".$rast."'";
-//$rast=str_replace(",","','",$rast);
+
 $sql="select theme.libelle_them,appthe.idappthe,appthe.ordre,theme.schema,theme.tabl,col_theme.colonn,col_theme.valeur_mini,col_theme.valeur_maxi,col_theme.valeur_texte,sinul(col_theme.fill, style.fill) as fill,sinul(col_theme.stroke_rgb, style.stroke_rgb) as stroke_rgb,sinul(col_theme.symbole,style.symbole) as symbole,sinul(col_theme.opacity,style.opacity) as opacity,sinul(col_theme.font_familly,style.font_familly) as font_familly,sinul(col_theme.font_size,style.font_size) as font_size,appthe.mouseover,appthe.mouseout,appthe.click,appthe.idtheme,theme.partiel,sinul(col_theme.stroke_width,style.stroke_width) as stroke_width from admin_svg.appthe join admin_svg.theme on appthe.idtheme=theme.idtheme left outer join  admin_svg.col_theme on appthe.idappthe=col_theme.idappthe left outer join  admin_svg.style on appthe.idtheme=style.idtheme where appthe.idapplication=".$_SESSION['appli']." group by theme.libelle_them,appthe.idappthe,appthe.ordre,theme.schema,theme.tabl,col_theme.colonn,col_theme.valeur_mini,col_theme.valeur_maxi,col_theme.valeur_texte,sinul(col_theme.fill, style.fill),sinul(col_theme.stroke_rgb, style.stroke_rgb),sinul(col_theme.symbole,style.symbole),sinul(col_theme.opacity,style.opacity),sinul(col_theme.font_familly,style.font_familly),sinul(col_theme.font_size,style.font_size),appthe.mouseover,appthe.mouseout,appthe.click,appthe.idtheme,theme.partiel,sinul(col_theme.stroke_width,style.stroke_width) order by appthe.ordre desc";
 $cou=tab_result($pgx,$sql);
-//$essai="";
+
 for ($l=0;$l<count($cou);$l++){
 if(in_array($cou[$l]['idappthe'],$id))
 {
-//$essai.=" ".$cou[$l]['idappthe'];
+
 $rotation='false';
 $d="select * from admin_svg.col_sel where idtheme='".$cou[$l]['idtheme']."'";
 		$col=tab_result($pgx,$d);
@@ -241,39 +232,15 @@ $d="select * from admin_svg.col_sel where idtheme='".$cou[$l]['idtheme']."'";
 			}
 		}
 		$f=substr($f,0,-1)." from ".$cou[$l]['schema'].".".$cou[$l]['tabl'];
-		//if ($cou[0]['partiel']==1){
+		
             if (substr($_SESSION['code_insee'], -3) == "000" || $cou[$l]['schema']=="bd_topo"){
                 $f.=" where ".$geometrie." && box'(".$xm.",".$ym.",".$xma.",".$yma.")'";
             }else{
                 $f.=" where (code_insee like '".$_SESSION['code_insee']."%' or code_insee is null) and ".$geometrie." && box'(".$xm.",".$ym.",".$xma.",".$yma.")'";
             }
-       /* }
-		else
-		{
-		 if (substr($_SESSION['code_insee'], -3) == "000"){
-                $f.=" where code_insee like '".substr($_SESSION['code_insee'],0,3)."%'";
-            }else{
-                $f.=" where code_insee = '".$_SESSION['code_insee']."'";
-            }
-		}*/
-		
-		$j="select * from admin_svg.col_where where idtheme='".$cou[$l]['idtheme']."'";
+       $j="select * from admin_svg.col_where where idtheme='".$cou[$l]['idtheme']."'";
 		$whr=tab_result($pgx,$j);
 		if (count($whr)>0){
-			/*if ($cou[0]['partiel']==1)
-			{
-				$f.=" and ";
-			}
-			else
-			{
-				if (substr($_SESSION['code_insee'], -3) == "000"){
-                    $f.=" where code_insee like '".substr($_SESSION['code_insee'],0,3)."%' and ";
-                }else{
-                    $f.=" where code_insee = '".$_SESSION['code_insee']."' and ";
-                }
-			}*/
-			
-			
 			$f.=" and ".str_replace("VALEUR","'".$_SESSION['code_insee']."'",$whr[0]['clause']);
 			}
 		$type_geo="";	
@@ -293,27 +260,13 @@ $d="select * from admin_svg.col_sel where idtheme='".$cou[$l]['idtheme']."'";
 	 
 		if($cou[$l]['valeur_mini']!='')
 		{
-			/*if($cou[$l]['partiel']!=1)
-			{
-			$f.=" where ".$cou[$l]['colonn'].">=".$cou[$l]['valeur_mini']." and ".$cou[$l]['colonn']."<=".$cou[$l]['valeur_maxi'];
-			}
-			else
-			{*/
 			$f.=" and ".$cou[$l]['colonn'].">=".$cou[$l]['valeur_mini']." and ".$cou[$l]['colonn']."<=".$cou[$l]['valeur_maxi'];
-			//}
 		}
 		else
 		{
 			if($cou[$l]['colonn']!='')
 			{
-			/*if($cou[$l]['partiel']!=1)
-			{
-			$f.=" where ".$cou[$l]['colonn']."='".$cou[$l]['valeur_texte']."'";
-			}
-			else
-			{*/
 			$f.=" and ".$cou[$l]['colonn']."='".$cou[$l]['valeur_texte']."'";
-			//}
 			}
 		}
 		$res=tab_result($pgx,$f);
@@ -343,18 +296,19 @@ else
 $label=$cou[$l]['valeur_texte'];
 }
 	 
-$textq.="<g inkscape:groupmode=\"layer\"
+$textq="<g inkscape:groupmode=\"layer\"
      id=\"layer".$countlayer."\"
      inkscape:label=\"".$label."\" style=\"".$styl."\" ";
 
 $textq.=">\n";
+fputs($myFile, $textq);
 $countlayer=$countlayer+1;	
 	if($type_geo=="symbole")
 				{
 				for ($e=0;$e<count($res);$e++)
 					{
-					//$textq.="<use ".$res[$e]['geom']." xlink:href='#".$cou[$l]['symbole']."'/>\n";
-					$textq.="<text ".$res[$e]['geom']." style=\"font-family:svg\">".$cou[$l]['symbole']."</text>\n";
+					$textq="<text ".$res[$e]['geom']." style=\"font-family:svg\">".$cou[$l]['symbole']."</text>\n";
+					fputs($myFile, $textq);
 					}
 				}
 	elseif($type_geo=="texte")
@@ -364,11 +318,13 @@ $countlayer=$countlayer+1;
 					if($rotation=="true")
 					{
 					$posi=explode(" ",$res[$e]['geom']);
-				$textq.="<text ".$res[$e]['geom']." transform='rotate(-".$res[$e]['rotation'].",".substr($posi[0],3,-1).",".substr($posi[1],3,-1).")'>".$res[$e]['ad']."</text>\n";
+				$textq="<text ".$res[$e]['geom']." transform='rotate(-".$res[$e]['rotation'].",".substr($posi[0],3,-1).",".substr($posi[1],3,-1).")'>".$res[$e]['ad']."</text>\n";
+					fputs($myFile, $textq);
 					}
 					else
 					{
-					$textq.="<text ".$res[$e]['geom']." >".$res[$e]['ad']."</text>\n";
+					$textq="<text ".$res[$e]['geom']." >".$res[$e]['ad']."</text>\n";
+					fputs($myFile, $textq);
 					}
 					}
 				}
@@ -378,15 +334,18 @@ $countlayer=$countlayer+1;
 					{
 					if(in_array($res[$e]['ident'],$placeid) && $res[$e]['ident']!='')
 					{
-					$textq.="<path fill='rgb(150,254,150)' fill-opacity='0.7' d='".$res[$e]['geom']."'/>\n";
+					$textq="<path fill='rgb(150,254,150)' fill-opacity='0.7' d='".$res[$e]['geom']."'/>\n";
+					fputs($myFile, $textq);
 					}
 					else
 					{
-					$textq.="<path d='".$res[$e]['geom']."'/>\n";
+					$textq="<path d='".$res[$e]['geom']."'/>\n";
+					fputs($myFile, $textq);
 					}
 					}
 				}
-$textq.="</g>";
+$textq="</g>";
+fputs($myFile, $textq);
 }
 }
 }
@@ -407,8 +366,6 @@ $str3.="<text y='577' x='87' style='stroke:black;stroke-width:0.5;font-size:12px
 $str3.="<text id='gauche' y='544' x='50' style='stroke:black;text-anchor:middle;stroke-width:0.5;font-size:12px;fill-opacity:1'>0</text>";
 $str3.="<text id='centre' y='544' x='95' style='stroke:black;text-anchor:middle;stroke-width:0.5;font-size:12px;fill-opacity:1'>".$_GET['centre']."</text>";
 $str3.="<text id='droite' y='544' x='140' style='stroke:black;text-anchor:middle;stroke-width:0.5;font-size:12px;fill-opacity:1'>".$_GET['droite']."</text>";
-//if($_GET['nav']!="0")
-//{
 $dess="<g inkscape:groupmode=\"layer\"
      id=\"layer".$countlayer."\"
      inkscape:label=\"cotation\" stroke-width=\"0.2\">";
@@ -420,18 +377,14 @@ $dess.="<line id=\"cotation".($ij+1)."\" x1=\"".$coor[0]."\" y1=\"".$coor[1]."\"
 }	
 $dess.="</g>";
 $cota=$dess;
-//}
-//else
-//{
-//$cota=$str2;
-//}
-
-$data=$str1."</defs>".$essai.$textq.$cota.$str3."</svg>";
-$filename = "../tmp/".$_GET['nom'].".svg";
-$myFile = fopen($filename, "w");  
+$data=$cota.$str3."</svg>";
 fputs($myFile, $data);
 fclose($myFile);
-$fp = fopen("../tmp/".$_GET['nom'].".ok", "w");
-fwrite($fp,"ok");
-fclose ($fp);
+$ch_image="";
+if ($_GET['raster']!=''){$ch_image=" ".$fs_root."tmp/".$image.".jpg";}
+$da=date("His");
+exec("mv ".$fs_root."tmp/".$_GET['nom'].".svg ".$fs_root."tmp/carte".$da.".svg");
+exec("zip -j ".$fs_root."tmp/carte".$da.".zip ".$fs_root."tmp/carte".$da.".svg".$ch_image);
+echo $serv;
+//header("Location: http://".$_SERVER['SERVER_NAME']."/tmp/carte".$da.".zip");
 ?> 

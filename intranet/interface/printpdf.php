@@ -226,8 +226,10 @@ $mapsize="";
 $tableau=$_SESSION['cotation'];
 if(is_array($tableau))
 {
+//echo count($tableau)."\n";
 		for($ij=0;$ij<count($tableau);$ij++)
 {
+//echo $ij.">".$tableau[$ij]."\n";
 $coor=explode("|",$tableau[$ij]);
 $x1=$_GET['xini']+$coor[0];
 $y1=$_GET['yini']-$coor[1];
@@ -306,7 +308,7 @@ pg_exec($pgx,$sql);
 //echo $_POST['legende'].",".$_POST['format'];
 if($_POST['legende']==1 || $_POST['legende']==2)
 {
-	$vision=pay;
+	$vision="pay";
 	$angle=90;
 	if($_POST['format']=='A4')
 	{
@@ -548,9 +550,9 @@ $pdf->SetFont('font1','',$sizerosa);
 $pdf->RotatedText($posixrosa,$posiyrosa,'a',$angle);
 if ($logo != "")
    if ($logo[0] != '/') // Si le chemin du logo est relatif, le faire decouler de fs_root
-      $pdf->RotatedImage($fs_root."/".$logo,$posixlogo,$posiylogo,$larlogo,$haulogo,$angle);
-   else
       $pdf->RotatedImage($logo,$posixlogo,$posiylogo,$larlogo,$haulogo,$angle);
+   else
+      $pdf->RotatedImage($fs_root."/".$logo,$posixlogo,$posiylogo,$larlogo,$haulogo,$angle);
 $pdf->SetFont('arial','',$sizetitre);
 $pdf->RotatedCell($angle,$xtitre,$ytitre,$wtitre,$htitre,$_POST['titre'],0,0,'C'); 
 $pdf->SetFont('arial','',$sizeechelle);

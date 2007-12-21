@@ -2405,16 +2405,6 @@ function enregistre()
 	var ladate=new Date()
 	var plus="M" + ladate.getMinutes() + "S" + ladate.getSeconds()
 	nom=sessionid + plus;
-	enregistr(nom);
-	var url="http://" + serveur + "/interface/ouv_zip.php?image=" +image + "&nom=" + nom + '&sessionname=' + sessionname + '&sessionid=' + sessionid;
-		var zer="lienre";
-var param="";
-ouvrepage(url,param,zer)
-	
-}
-function enregistr(x)
-{
-	nomval=x;
 	animation()
 	var nb = layer.length;
 	couche_svg="";
@@ -2464,14 +2454,12 @@ function enregistr(x)
 		}
 		couche_svg=convasc(couche_svg);
 		raster=convasc(raster);
-		postURL("enregistre.php?centre="+centre+"&droite="+droite+"&nom=" +nomval+"&svg="+couche_svg+"&raster="+raster+"&x="+ xnulcorner + "&y=" + ynulcorner + "&lar=" + nWidth  + "&hau=" + nHeight+ "&zoom=" + zoomVal  + "&xini=" + xini + "&yini=" + yini +"&nav="+nav+"&parce="+par+"&sessionname=","",null,"image/xml+svg",null);
-		setTimeout("cache()",6000);
+		var url="enregistre.php?centre="+centre+"&droite="+droite+"&nom=" +nom+"&svg="+couche_svg+"&raster="+raster+"&x="+ xnulcorner + "&y=" + ynulcorner + "&lar=" + nWidth  + "&hau=" + nHeight+ "&zoom=" + zoomVal  + "&xini=" + xini + "&yini=" + yini +"&nav="+nav+"&parce="+par+"&sessionname=";
+		
 	}
 	else
 	{
-	//var st="";
-	//st = construction_svg()
-var nb = varcotations.length;
+	var nb = varcotations.length;
 		for(a=0;a<nb;a++)
 		{
 		getURL("cotation.php?eff=0&num="+a+"&cot="+varcotations[a],callback2);
@@ -2480,11 +2468,13 @@ var nb = varcotations.length;
 		{
 		getURL("cotation.php?eff=1",callback2);	
 		}	
-	//postURL("enregistre.php?centre="+centre+"&droite="+droite+"&nom=" +nomval+"&svg="+couche_svg+"&raster="+raster+"&x="+ xnulcorner + "&y=" + ynulcorner + "&lar=" + nWidth  + "&hau=" + nHeight+ "&zoom=" + zoomVal  + "&xini=" + xini + "&yini=" + yini +"&nav="+nav+"&parce="+par,st,callback,"image/xml+svg",null);
-//alert(couche_svg)
-postURL("enregistre.php?centre="+centre+"&droite="+droite+"&nom=" +nomval+"&svg="+couche_svg+"&raster="+raster+"&x="+ xnulcorner + "&y=" + ynulcorner + "&lar=" + nWidth  + "&hau=" + nHeight+ "&zoom=" + zoomVal  + "&xini=" + xini + "&yini=" + yini +"&nav="+nav+"&parce="+par+"&sessionname=","",null,"image/xml+svg",null);
+
+var url="enregistre.php?centre="+centre+"&droite="+droite+"&nom=" +nom+"&svg="+couche_svg+"&raster="+raster+"&x="+ xnulcorner + "&y=" + ynulcorner + "&lar=" + nWidth  + "&hau=" + nHeight+ "&zoom=" + zoomVal  + "&xini=" + xini + "&yini=" + yini +"&nav="+nav+"&parce="+par+"&sessionname=";
+		}
 		setTimeout("cache()",6000);
-	}
+		var zer="lienre";
+var param="";
+ouvrepage(url,param,zer)
 	
 }
 function callback2(data)
