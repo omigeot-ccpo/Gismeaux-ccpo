@@ -31,24 +31,26 @@ sécurité de leurs systèmes et ou de leurs données et, plus généralement,
 Le fait que vous puissiez accéder à cet en-tête signifie que vous avez 
 pris connaissance de la licence CeCILL-C, et que vous en avez accepté les 
 termes.*/
-if (! $PHP_AUTH_USER || ! $PHP_AUTH_PW){
+session_start();
+if (! $_SERVER["PHP_AUTH_USER"] || ! $_SERVER["PHP_AUTH_PW"]){
 	header('status: 401 Unauthorized');
 	header('HTTP/1.0 401 Unauthorized');
 	header("WWW-authenticate: Basic realm=\"Veuillez vous identifier\"");
 }else{
 	include("../connexion/deb.php");
-	$oten="select * from general.utilisateur2 inner join general.apli_util2 on general.utilisateur2.utcleunik=general.apli_util2.utcleunik where login='".$PHP_AUTH_USER."' and psw='".$PHP_AUTH_PW."' and id_appli='2'";
-	$ot=tab_result($pgx,$oten);
-	if (count($ot)>0) {
-		$commune=$ot[0]['commune'];
+//	$oten="select * from general.utilisateur2 inner join general.apli_util2 on general.utilisateur2.utcleunik=general.apli_util2.utcleunik where login='".$_SERVER["PHP_AUTH_USER"]."' and psw='".$_SERVER["PHP_AUTH_PW"]."' and id_appli='2'";
+//	$ot=tab_result($pgx,$oten);
+//	if (count($ot)>0) {
+		$commune=$_SESSION['code_insee'];
 		$titre='Recherche cadastrale - Fiche batiment';
-		include('./head_cad.php');
+		echo '<link href="https://'.$_SERVER["SERVER_NAME"].'/css/cadastre.css" rel="stylesheet" type="text/css"><body class="body">';
+		include('../head.php');
 		$qbat="SELECT b.INVAR, b.DNUBAT, b.DESCA, b.DNIV, b.DPOR, a.DNUPRO, a.JDATA, a.DTELOC, a.CCOPLC, a.CCONLC, a.DVLTRT,"; 
 		$qbat.="a.CCOAPE, a.CC48LC, a.DLOY48A, a.DNATIC, a.CCHPR, a.JANNAT, a.DNBNIV, a.HMSEM, b.ccosec, b.dnupla, b.dnvoiri, b.dindic,"; 
 		$qbat.="c.nom_voie FROM cadastre.B_DESDGI as a , cadastre.BATIDGI as b , cadastre.voies as c ";
-		$qbat.="WHERE b.INVAR = a.INVAR AND b.ccoriv=c.code_voie AND c.commune=b.commune AND b.invar=".$invar1;
+		$qbat.="WHERE b.INVAR = a.INVAR AND b.ccoriv=c.code_voie AND c.commune=b.commune AND b.invar=".$_GET["invar1"];
 		$row_bat=tab_result($pgx,$qbat);
-		$qbat2="SELECT dnupev FROM cadastre.B_SUBDGI where invar=".$invar1;
+		$qbat2="SELECT dnupev FROM cadastre.B_SUBDGI where invar=".$_GET["invar1"];
 		$row_bat2=tab_result($pgx,$qbat2);
 		$qbat3="Select libape from eco.ape where codeape='".$row_bat[0]['ccoape']."'";
 		$row_bat3=tab_result($pgx,$qbat3);
@@ -173,7 +175,7 @@ if (! $PHP_AUTH_USER || ! $PHP_AUTH_PW){
 		}
 		echo '</table>';
 		include('pied_cad.php');
-	}
+//	}
 }
 ?>
 

@@ -32,7 +32,7 @@ Le fait que vous puissiez accéder à cet en-tête signifie que vous avez
 pris connaissance de la licence CeCILL-C, et que vous en avez accepté les 
 termes.*/
 session_start();
-if (! $PHP_AUTH_USER || ! $PHP_AUTH_PW){
+if (! $_SERVER["PHP_AUTH_USER"] || ! $_SERVER["PHP_AUTH_PW"]){
 	header('status: 401 Unauthorized');
 	header('HTTP/1.0 401 Unauthorized');
 	header("WWW-authenticate: Basic realm=\"Veuillez vous identifier\"");
@@ -45,9 +45,11 @@ if (! $PHP_AUTH_USER || ! $PHP_AUTH_PW){
 //		$commune=$ot[0]['commune'];
         $commune=$_SESSION["code_insee"];
 		$titre='Recherche cadastrale - Fiche parcelle';
-        if (isset($par1)){$ind=substr($_SESSION["code_insee"],3)."000".substr($par1,0,2).str_pad(substr($par1,2),4,'0',STR_PAD_LEFT);}
-		include('./head_cad.php');
+        if (isset($_GET["par1"])){$ind=substr($_SESSION["code_insee"],3)."000".substr($par1,0,2).str_pad(substr($_GET["par1"],2),4,'0',STR_PAD_LEFT);}
+        echo '<link href="https://'.$_SERVER["SERVER_NAME"].'/css/cadastre.css" rel="stylesheet" type="text/css"><body class="body">';
+		include("../head.php");
 		/* Lecture de la fiche parcelle */
+		if (isset($_GET["ind"])){$ind=$_GET["ind"];}
 		$query_Recordset1 = "SELECT ccosec, dnupla, dcntpa, jdatat, gparbat, dnuvoi, dindic, ccoriv, prop1, commune FROM cadastre.parcel WHERE ind = '";
 		$query_Recordset1.= $ind."';";
 		$row_Recordset1 = tab_result($pgx,$query_Recordset1);

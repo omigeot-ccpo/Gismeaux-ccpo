@@ -32,7 +32,7 @@ Le fait que vous puissiez accéder à cet en-tête signifie que vous avez
 pris connaissance de la licence CeCILL-C, et que vous en avez accepté les 
 termes.*/
 session_start();
-if (! $PHP_AUTH_USER || ! $PHP_AUTH_PW){
+if (! $_SERVER["PHP_AUTH_USER"] || ! $_SERVER["PHP_AUTH_PW"]){
 	header('status: 401 Unauthorized');
 	header('HTTP/1.0 401 Unauthorized');
 	header("WWW-authenticate: Basic realm=\"Veuillez vous identifier\"");
@@ -42,20 +42,20 @@ if (! $PHP_AUTH_USER || ! $PHP_AUTH_PW){
 //	$oten="select * from general.utilisateur2 where login='".$PHP_AUTH_USER."' and psw='".$PHP_AUTH_PW."'";
 //	$ot=tab_result($pgx,$oten);
 //	if (count($ot)>0) {
-       if (!isset($commune)){$commune=$_SESSION["code_insee"];}
+       if (isset($_GET["commune"])){$commune=$_GET["commune"];}else{$commune=$_SESSION["code_insee"];}
 //		$commune=$ot[0]['commune'];
-      if ($obj_keys){
-			$comma1="select * from cadastre.parcel where ind in ('".str_replace(",","','",$obj_keys)."')";// and commune like '".$commune."'";
+      if ($_GET["obj_keys"]){
+			$comma1="select * from cadastre.parcel where ind in ('".str_replace(",","','",$_GET["obj_keys"])."')";// and commune like '".$commune."'";
             //echo $comma1;
 		}else{
-			if ($sect!="" and $num==""){
+			if ($_GET["sect"]!="" and $_GET["num"]==""){
 				$comma1="select * from cadastre.parcel where ";
-				$comma1.="ccosec like '".$sect."'";
-			}elseif ($sect!="" and $num!=""){
+				$comma1.="ccosec like '".$_GET["sect"]."'";
+			}elseif ($_GET["sect"]!="" and $_GET["num"]!=""){
 				$comma1="select * from cadastre.parcel where ";
-				$comma1.="par1 like '".$sect.$num."'";
-			}elseif ($pnprop!=""){
-				$comma2="select prop1 from cadastre.propriet where ddenom like '%".$pnprop."%' and commune like '".$commune."'";
+				$comma1.="par1 like '".$_GET["sect"].$_GET["num"]."'";
+			}elseif ($_GET["pnprop"]!=""){
+				$comma2="select prop1 from cadastre.propriet where ddenom like '%".$_GET["pnprop"]."%' and commune like '".$commune."'";
 				$result=tab_result($pgx,$comma2);
 				$comma1="select * from cadastre.parcel where prop1 in('";
 				for ($i=0;$i<count($result);$i++){
@@ -67,13 +67,13 @@ if (! $PHP_AUTH_USER || ! $PHP_AUTH_PW){
 				$comma1.=" and commune like '".$commune."'";
 			}
 		}
-		if ($sect!="" or $num!="" or $pnprop!="" or $obj_keys!=""){
+		if ($_GET["sect"]!="" or $_GET["num"]!="" or $_GET["pnprop"]!="" or $_GET["obj_keys"]!=""){
 			$rowparc=tab_result($pgx,$comma1);
 			$nbr_par=count($rowparc);
 			//	$comm=$rowparc['commune'];
 		}
-		if ($noprop!=""){
-			$comma2="select * from cadastre.propriet where ddenom like '%".$noprop."%' ";
+		if ($_GET["noprop"]!=""){
+			$comma2="select * from cadastre.propriet where ddenom like '%".$_GET["noprop"]."%' ";
 			if ($commune) {
 				$comma2.=" and commune = '".$commune."'";
 			}
@@ -91,7 +91,7 @@ if (! $PHP_AUTH_USER || ! $PHP_AUTH_PW){
 			include('head_cad.php');
 			$presult=count($pprow);
 			if ($presult==0){
-				echo "Critères ne correspondant à aucun éléments de la table ".$obj_keys;
+				echo "Critères ne correspondant à aucun éléments de la table ".$_GET["obj_keys"];
 			}elseif ($presult==1){
 				/* fiche propriétaire */
 				$prop1=$pprow[0]['prop1'];
