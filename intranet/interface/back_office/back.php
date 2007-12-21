@@ -31,11 +31,11 @@ sécurité de leurs systèmes et ou de leurs données et, plus généralement,
 Le fait que vous puissiez accéder à cet en-tête signifie que vous avez 
 pris connaissance de la licence CeCILL-C, et que vous en avez accepté les 
 termes.*/
-if (eregi('MSIE', $HTTP_USER_AGENT))
+if (eregi('MSIE', $_SERVER['HTTP_USER_AGENT']))
 {    
 $nav="0";// Internet Explorer 
 }
-elseif (eregi('Opera', $HTTP_USER_AGENT))
+elseif (eregi('Opera', $_SERVER['HTTP_USER_AGENT']))
 { 
 $nav="1";//opÃ©ra
 }
@@ -140,7 +140,7 @@ for ($c=0;$c<count($cou);$c++)
 $req1="select distinct (col_theme.intitule_legende) as intitule_legende,col_theme.idappthe,col_theme.fill,col_theme.stroke_rgb,col_theme.stroke_width,col_theme.symbole,col_theme.font_size,col_theme.font_familly,col_theme.opacity,col_theme.ordre from admin_svg.appthe join admin_svg.col_theme on appthe.idappthe=col_theme.idappthe join admin_svg.theme on appthe.idtheme=theme.idtheme ";
 	if($cou[$c]['v_fixe']=='1' and $cou[$c]['colonn']<>'')
 	{
-	$req1.=" join ".$cou[$c]['schema'].".".$cou[$c]['tabl']." on col_theme.valeur_texte=".$cou[$c]['tabl'].".".$cou[$c]['colonn']." where 					appthe.idapplication=".$appli." and theme.libelle_them='".$cou[$c]['nom_theme']."'";
+	$req1.=" join ".$cou[$c]['schema'].".".$cou[$c]['tabl']." on col_theme.valeur_texte=".$cou[$c]['tabl'].".".$cou[$c]['colonn']." where 					appthe.idapplication=".$_SESSION['appli']." and theme.libelle_them='".$cou[$c]['nom_theme']."'";
 	if(substr($_SESSION['code_insee'], -3)!='000' && $cou[$c]['schema']!="bd_topo")
 	{
 	$req1.=" and (".$cou[$c]['tabl'].".code_insee like '".$_SESSION['code_insee']."'  or code_insee is null) ";
@@ -150,7 +150,7 @@ $req1="select distinct (col_theme.intitule_legende) as intitule_legende,col_them
 	
 	else
 	{
-	$req1.=" where appthe.idapplication=".$appli." and theme.libelle_them='".$cou[$c]['nom_theme']."' order by col_theme.ordre asc";
+	$req1.=" where appthe.idapplication=".$_SESSION['appli']." and theme.libelle_them='".$cou[$c]['nom_theme']."' order by col_theme.ordre asc";
 	}
 	$couch=tab_result($pgx,$req1);
 	$z=$c+1;
@@ -373,7 +373,7 @@ $data.="cy=".$yc.";\n";
 $data.="intervale=".$intervale.";\n";
 $data.="theZoom=".$zoomouv.";\n";
 $data.="zoomVal=".$zoomouv.";\n";
-$data.="appli=".$appli."; \n";
+$data.="appli=".$_SESSION['appli']."; \n";
 $data.="sessionid='".$sessi."';\n";
 $data.="sessionname='".session_name()."';\n";
 $data.="code_insee=".$_SESSION['code_insee'].";\n";
@@ -381,7 +381,7 @@ $data.="xini=".$vu[0]['xini'].";\n";
 $data.="yini=".$vu[0]['yini'].";\n";
 $data.="largeurini=".$_SESSION['large'].";\n";
 $data.="hauteurini=".$_SESSION['haute'].";\n";
-$data.="serveur='".$HTTP_HOST."';\n";
+$data.="serveur='".$_SERVER['HTTP_HOST']."';\n";
 $data.="zoom_init=100;\n";
 //$data.="";
 $data.="]]></script>

@@ -33,11 +33,11 @@ pris connaissance de la licence CeCILL-C, et que vous en avez accepté les
 termes.*/
 ini_set('session.gc_maxlifetime', 3600);
 session_start();
-if (eregi('MSIE', $HTTP_USER_AGENT))
+if (eregi('MSIE', $_SERVER['HTTP_USER_AGENT']))
 {    
 $nav="0";// Internet Explorer 
 }
-elseif (eregi('Opera', $HTTP_USER_AGENT))
+elseif (eregi('Opera', $_SERVER['HTTP_USER_AGENT']))
 { 
 $nav="1";//opÃ©ra
 }
@@ -63,12 +63,12 @@ $nav="2";//mozilla
 <body>
 <div style="position:absolute;left:300px;top:290px;width:200px;height:200px;">
 <p align="center">Pour utiliser la cartographie</p>
-<p align="center"> Vous devez installer le plugin <a href="http://<?php if($nav==2){echo $HTTP_HOST."/SVGView6.exe";}else
-{echo $HTTP_HOST."/SVGView303.exe";}?>">Adobe SVGviewer</a></p>
+<p align="center"> Vous devez installer le plugin <a href="http://<?php if($nav==2){echo $_SERVER['HTTP_HOST']."/SVGView6.exe";}else
+{echo $_SERVER['HTTP_HOST']."/SVGView303.exe";}?>">Adobe SVGviewer</a></p>
 </div>
 <div>
 <script>
-var stringEmbedsvg='<embed src="http://<?php echo $HTTP_HOST ;?>/interface/back_office/back.php?<?php echo session_name()."=".session_id(); ?>" width="100%" height="100%"  pluginspage="www.adobe.com/svg/install.htm" name="svgmap" type="image/svg+xml" id="svgmeaux"></embed>';
+var stringEmbedsvg='<embed src="http://<?php echo $_SERVER['HTTP_HOST'] ;?>/interface/back_office/back.php?<?php echo session_name()."=".session_id(); ?>" width="100%" height="100%"  pluginspage="www.adobe.com/svg/install.htm" name="svgmap" type="image/svg+xml" id="svgmeaux"></embed>';
 Writeembedsvg(stringEmbedsvg);
 </script>
 </div>

@@ -33,7 +33,7 @@ pris connaissance de la licence CeCILL-C, et que vous en avez accepté les
 termes.*/
 session_start();
 include("../../connexion/deb.php");
-$requete="select libelle_them,schema,tabl,raster,partiel,vu_initial,zoommin,zoommax,zoommax_raster from admin_svg.theme where idtheme=".$_GET["idtheme"];
+$requete="select libelle_them,schema,tabl,raster,partiel,vu_initial,zoommin,zoommax,zoommax_raster,groupe from admin_svg.theme where idtheme=".$_GET["idtheme"];
 $col=tab_result($pgx,$requete);
 $req="select appel,nom_as from admin_svg.col_sel where idtheme=".$_GET["idtheme"];
 $col1=tab_result($pgx,$req);
@@ -54,5 +54,5 @@ for ($z=0;$z<count($col1);$z++)
 }
 $requete="select clause from admin_svg.col_where where idtheme=".$_GET["idtheme"];
 $col2=tab_result($pgx,$requete);
-echo $col[0]['libelle_them']."#".$col[0]['schema']."#".$col[0]['tabl']."#".$col[0]['raster']."#".$col[0]['partiel']."#".$col[0]['vu_initial']."#".$col[0]['zoommin']."#".$col[0]['zoommax']."#".$col[0]['zoommax_raster']."#".$colonneref."#".$colonnegeom."#".$colonnelibelle."#".$col2[0]['clause'];
+echo $col[0]['libelle_them']."#".$col[0]['schema']."#".$col[0]['tabl']."#".$col[0]['raster']."#".$col[0]['partiel']."#".$col[0]['vu_initial']."#".$col[0]['zoommin']."#".$col[0]['zoommax']."#".$col[0]['zoommax_raster']."#".$colonneref."#".$colonnegeom."#".$colonnelibelle."#".$col2[0]['clause']."#".$col[0]['groupe'];
 ?>
