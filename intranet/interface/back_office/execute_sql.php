@@ -36,6 +36,9 @@ include("../../connexion/deb.php");
 if($_GET["requete"])
 {
 $req=stripslashes($_GET["requete"]);
+$req=str_replace("c(plus)","+",$req);
+$req=str_replace("c(2p)",":",$req);
+
 pg_exec($pgx,$req);
 }
 if($_GET["genere"]!='false')

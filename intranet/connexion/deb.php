@@ -5,40 +5,46 @@ sig@meaux.fr
 
 Ce logiciel est un programme informatique fournissant une interface cartographique WEB communale. 
 
-Ce logiciel est régi par la licence CeCILL-C soumise au droit français et
+Ce logiciel est rï¿½gi par la licence CeCILL-C soumise au droit franï¿½ais et
 respectant les principes de diffusion des logiciels libres. Vous pouvez
 utiliser, modifier et/ou redistribuer ce programme sous les conditions
-de la licence CeCILL-C telle que diffusée par le CEA, le CNRS et l'INRIA 
+de la licence CeCILL-C telle que diffusï¿½e par le CEA, le CNRS et l'INRIA 
 sur le site "http://www.cecill.info".
 
-En contrepartie de l'accessibilité au code source et des droits de copie,
-de modification et de redistribution accordés par cette licence, il n'est
-offert aux utilisateurs qu'une garantie limitée.  Pour les mêmes raisons,
-seule une responsabilité restreinte pèse sur l'auteur du programme,  le
-titulaire des droits patrimoniaux et les concédants successifs.
+En contrepartie de l'accessibilitï¿½ au code source et des droits de copie,
+de modification et de redistribution accordï¿½s par cette licence, il n'est
+offert aux utilisateurs qu'une garantie limitï¿½e.  Pour les mï¿½mes raisons,
+seule une responsabilitï¿½ restreinte pï¿½se sur l'auteur du programme,  le
+titulaire des droits patrimoniaux et les concï¿½dants successifs.
 
-A cet égard  l'attention de l'utilisateur est attirée sur les risques
-associés au chargement,  à l'utilisation,  à la modification et/ou au
-développement et à la reproduction du logiciel par l'utilisateur étant 
-donné sa spécificité de logiciel libre, qui peut le rendre complexe à 
-manipuler et qui le réserve donc à des développeurs et des professionnels
-avertis possédant  des connaissances  informatiques approfondies.  Les
-utilisateurs sont donc invités à charger  et  tester  l'adéquation  du
-logiciel à leurs besoins dans des conditions permettant d'assurer la
-sécurité de leurs systèmes et ou de leurs données et, plus généralement, 
-à l'utiliser et l'exploiter dans les mêmes conditions de sécurité. 
+A cet ï¿½gard  l'attention de l'utilisateur est attirï¿½e sur les risques
+associï¿½s au chargement,  ï¿½ l'utilisation,  ï¿½ la modification et/ou au
+dï¿½veloppement et ï¿½ la reproduction du logiciel par l'utilisateur ï¿½tant 
+donnï¿½ sa spï¿½cificitï¿½ de logiciel libre, qui peut le rendre complexe ï¿½ 
+manipuler et qui le rï¿½serve donc ï¿½ des dï¿½veloppeurs et des professionnels
+avertis possï¿½dant  des connaissances  informatiques approfondies.  Les
+utilisateurs sont donc invitï¿½s ï¿½ charger  et  tester  l'adï¿½quation  du
+logiciel ï¿½ leurs besoins dans des conditions permettant d'assurer la
+sï¿½curitï¿½ de leurs systï¿½mes et ou de leurs donnï¿½es et, plus gï¿½nï¿½ralement, 
+ï¿½ l'utiliser et l'exploiter dans les mï¿½mes conditions de sï¿½curitï¿½. 
 
-Le fait que vous puissiez accéder à cet en-tête signifie que vous avez 
-pris connaissance de la licence CeCILL-C, et que vous en avez accepté les 
+Le fait que vous puissiez accï¿½der ï¿½ cet en-tï¿½te signifie que vous avez 
+pris connaissance de la licence CeCILL-C, et que vous en avez acceptï¿½ les 
 termes.*/
+$fs_root=$_SERVER["DOCUMENT_ROOT"]."/";
+include($fs_root."interface/config.php");
 // Quelques reglages (omigeot) 
-$db_host = "localhost";
-$db_name = "basepg";
-$db_user = "userpg";
-$db_passwd = "passpg";
-$db_params = "dbname=".$db_name." host=".$db_host." user=".$db_user." password=".$db_passwd;
-$ms_dbg_line = 1;
-$fs_root = "/home/sig/gismeaux/intranet";
+/*$db_host = "localhost";
+$db_name = "meaux";
+$db_user = "postgres";
+$db_passwd = "postgres";*/
+$db_params="dbname=".$db_name." host=".$db_host." user=".$db_user;
+if($db_passwd!="")
+{
+$db_params.=" password=".$db_passwd;
+}
+//$ms_dbg_line = 0;
+//$fs_root = "/home/sig/gis/intranet/";
 // Fin des reglages
 
 $pgx=pg_connect($db_params);
@@ -104,7 +110,7 @@ function moix($mm){
 	if ($mm=='01'){
 		return "janvier";
 	}elseif ($mm=='02'){
-		return "fï¿½rier";
+		return "février";
 	}elseif ($mm=='03'){
 		return "mars";
 	}elseif ($mm=='04'){
@@ -124,7 +130,7 @@ function moix($mm){
 	}elseif ($mm=='11'){
 		return "novembre";
 	}elseif ($mm=='12'){
-		return "dï¿½embre";
+		return "décembre";
 	}
 }
 ?>

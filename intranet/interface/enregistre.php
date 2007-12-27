@@ -31,6 +31,7 @@ sécurité de leurs systèmes et ou de leurs données et, plus généralement,
 Le fait que vous puissiez accéder à cet en-tête signifie que vous avez 
 pris connaissance de la licence CeCILL-C, et que vous en avez accepté les 
 termes.*/
+ini_set("memory_limit" , "24M");
 set_time_limit(0);
 if($SERVER_PORT!=443)
 {
@@ -385,6 +386,5 @@ if ($_GET['raster']!=''){$ch_image=" ".$fs_root."tmp/".$image.".jpg";}
 $da=date("His");
 exec("mv ".$fs_root."tmp/".$_GET['nom'].".svg ".$fs_root."tmp/carte".$da.".svg");
 exec("zip -j ".$fs_root."tmp/carte".$da.".zip ".$fs_root."tmp/carte".$da.".svg".$ch_image);
-echo $serv;
-//header("Location: http://".$_SERVER['SERVER_NAME']."/tmp/carte".$da.".zip");
+header("Location: http://".$_SERVER['SERVER_NAME']."/tmp/carte".$da.".zip");
 ?> 
