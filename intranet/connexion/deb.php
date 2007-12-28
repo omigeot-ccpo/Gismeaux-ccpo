@@ -106,6 +106,33 @@ function datesql2dmy($ch){
          return "&nbsp;";
      }
 }
+function datedmy2sql($ch){
+	ereg("([0-9]{2})([[:punct:]]{1})([0-9]{2})([[:punct:]]{1})([0-9]{4})",$ch,$regs);
+	if (($regs[5]!='')){
+		return "'".$regs[5]."-".$regs[3]."-".$regs[1]."'";
+	}else{
+		return "null";
+	}
+}
+function kot($ch){
+	return ereg_replace("'","''",$ch);
+	
+}
+function ifloat($ch){
+	ereg_replace(".",",",$ch);
+	if ($ch==""){
+		return "0";
+	}else{
+		return $ch;
+	}
+}
+function iint($ch){
+	if ($ch==""){
+		return "null";
+	}else{
+		return $ch;
+	}
+}
 function moix($mm){
 	if ($mm=='01'){
 		return "janvier";

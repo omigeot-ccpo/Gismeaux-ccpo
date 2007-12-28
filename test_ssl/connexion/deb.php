@@ -32,13 +32,13 @@ Le fait que vous puissiez acc�der � cet en-t�te signifie que vous avez
 pris connaissance de la licence CeCILL-C, et que vous en avez accept� les 
 termes.*/
 // Quelques reglages (omigeot) 
-$db_host = "localhost";
-$db_name = "meaux";
-$db_user = "postgres";
-$db_passwd = "postgres";
-$db_params = "dbname=".$db_name." host=".$db_host." user=".$db_user." password=".$db_passwd;
-$ms_dbg_line = 0;
-$fs_root = "/home/sig/gis/intranet/";
+$fs_root=$_SERVER["DOCUMENT_ROOT"]."/";
+include($fs_root."interface/config.php");
+$db_params="dbname=".$db_name." host=".$db_host." user=".$db_user;
+if($db_passwd!="")
+{
+$db_params.=" password=".$db_passwd;
+}
 // Fin des reglages
 
 $pgx=pg_connect($db_params);
