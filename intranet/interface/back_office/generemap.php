@@ -290,7 +290,7 @@ $type="polygon";
 $mapp="mappolygone";
 }
 
-$req1="select distinct (col_theme.intitule_legende) as intitule_legende,col_theme.valeur_texte,col_theme.valeur_mini,col_theme.valeur_maxi,col_theme.fill,col_theme.stroke_rgb,col_theme.stroke_width,col_theme.symbole,col_theme.font_size,col_theme.font_familly,col_theme.opacity,col_theme.ordre from admin_svg.appthe join admin_svg.col_theme on appthe.idappthe=col_theme.idappthe join admin_svg.theme on appthe.idtheme=theme.idtheme where appthe.idapplication=".$_SESSION['appli']." and appthe.idtheme='".$cou[$c]['idtheme']."'";
+$req1="select distinct (col_theme.intitule_legende) as intitule_legende,col_theme.valeur_texte,col_theme.valeur_mini,col_theme.valeur_maxi,col_theme.fill,col_theme.stroke_rgb,col_theme.stroke_width,col_theme.symbole,col_theme.font_size,col_theme.font_familly,col_theme.opacity,col_theme.ordre from admin_svg.appthe join admin_svg.col_theme on appthe.idappthe=col_theme.idappthe join admin_svg.theme on appthe.idtheme=theme.idtheme where appthe.idapplication=".$_SESSION['appli']." and appthe.idtheme='".$cou[$c]['idtheme']."' order by col_theme.ordre asc";
 
 	$couch=tab_result($pgx,$req1);
 	//$d="select * from admin_svg.col_sel where idtheme='".$cou[0]['idtheme']."'";
