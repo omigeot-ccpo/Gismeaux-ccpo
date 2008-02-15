@@ -296,10 +296,8 @@ else
 $type="polygon";
 $mapp="mappolygone";
 }
-
-$req1="select distinct (col_theme.intitule_legende) as intitule_legende,col_theme.valeur_texte,col_theme.valeur_mini,col_theme.valeur_maxi,col_theme.fill,col_theme.stroke_rgb,col_theme.stroke_width,col_theme.symbole,col_theme.font_size,col_theme.font_familly,col_theme.opacity,col_theme.ordre from admin_svg.appthe join admin_svg.col_theme on appthe.idappthe=col_theme.idappthe join admin_svg.theme on appthe.idtheme=theme.idtheme where appthe.idapplication=".$appli." and appthe.idtheme='".$cou[$c]['idtheme']."'";
-
-	$couch=tab_result($pgx,$req1);
+$req1="select distinct (col_theme.intitule_legende) as intitule_legende,col_theme.valeur_texte,col_theme.valeur_mini,col_theme.valeur_maxi,col_theme.fill,col_theme.stroke_rgb,col_theme.stroke_width,col_theme.symbole,col_theme.font_size,col_theme.font_familly,col_theme.opacity,col_theme.ordre from admin_svg.appthe join admin_svg.col_theme on appthe.idappthe=col_theme.idappthe join admin_svg.theme on appthe.idtheme=theme.idtheme where appthe.idapplication=".$appli." and appthe.idtheme='".$cou[$c]['idtheme']."' order by col_theme.ordre asc";
+	$couch=$DB->tab_result($req1);
 	//$d="select * from admin_svg.col_sel where idtheme='".$cou[0]['idtheme']."'";
 		//$col=tab_result($pgx,$d);
 	if(count($couch)>0)
@@ -395,11 +393,11 @@ $req1="select distinct (col_theme.intitule_legende) as intitule_legende,col_them
 		{
 		if($couch[$r]['valeur_texte']!="" && $couch[$r]['valeur_mini']=="")
 		{
-		$$mapp.="EXPRESSION ('[".$cou[$c]['colonn']."]' eq '".$couch[$r]['valeur_texte']."') \n";
+		$$mapp.="EXPRESSION ('[".str_replace(" ","",$cou[$c]['colonn'])."]' eq '".$couch[$r]['valeur_texte']."') \n";
 		}
 		else
 		{
-		$$mapp.="EXPRESSION ([".$cou[$c]['colonn']."] >= ".$couch[$r]['valeur_mini']." AND [".$cou[$c]['colonn']."] <= ".$couch[$r]['valeur_maxi'].") \n";
+		$$mapp.="EXPRESSION ([".str_replace(" ","",$cou[$c]['colonn'])."] >= ".$couch[$r]['valeur_mini']." AND [".$cou[$c]['colonn']."] <= ".$couch[$r]['valeur_maxi'].") \n";
 		}
 		$$mapp.="text ('".$couch[$r]['symbole']."') \n";
 		}
@@ -437,11 +435,11 @@ $req1="select distinct (col_theme.intitule_legende) as intitule_legende,col_them
 	$$mapp.="CLASS \n";
 		if($couch[$r]['valeur_texte']!="" && $couch[$r]['valeur_mini']=="")
 		{
-		$$mapp.="EXPRESSION ('[".$cou[$c]['colonn']."]' eq '".$couch[$r]['valeur_texte']."') \n";
+		$$mapp.="EXPRESSION ('[".str_replace(" ","",$cou[$c]['colonn'])."]' eq '".$couch[$r]['valeur_texte']."') \n";
 		}
 		else
 		{
-		$$mapp.="EXPRESSION ([".$cou[$c]['colonn']."] >= ".$couch[$r]['valeur_mini']." AND [".$cou[$c]['colonn']."] <= ".$couch[$r]['valeur_maxi'].") \n";
+		$$mapp.="EXPRESSION ([".str_replace(" ","",$cou[$c]['colonn'])."] >= ".$couch[$r]['valeur_mini']." AND [".$cou[$c]['colonn']."] <= ".$couch[$r]['valeur_maxi'].") \n";
 		}
 		if($couch[$r]['fill']!='' && $couch[$r]['fill']!='none' )
 		{
@@ -656,8 +654,8 @@ $$mapp.="END \n \n";
 	      }
 	    $mapraster.="STATUS on \n";
 	    $mapraster.="TYPE raster \n";
-	    $mapraster.="MAXSCALE ".ceil($coef_echelle*100/$cou[$c]['zoommin'])." \n";
-	    $mapraster.="MINSCALE ".floor($coef_echelle*100/$cou[$c]['zoommax'])." \n";
+	    //	    $mapraster.="MAXSCALE ".ceil($coef_echelle*100/$cou[$c]['zoommin'])." \n";
+	    //	    $mapraster.="MINSCALE ".floor($coef_echelle*100/$cou[$c]['zoommax'])." \n";
 	    $mapraster.= $tileindex;
 	    $mapraster.="TILEITEM \"location\" \n";
 	    $mapraster.="END \n \n";

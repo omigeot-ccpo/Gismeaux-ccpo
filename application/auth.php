@@ -36,6 +36,17 @@ define('GIS_ROOT','.');
 include_once(GIS_ROOT . '/inc/common.php');
 gis_session_start();
 
+if (!$_SESSION['count'])
+  $_SESSION['count'] = 1;
+else
+  $_SESSION['count'] += 1;
+
+if ($_SESSION['count'] >= 5)
+  {
+    header('Location: /erreur.php?code=2');
+    die();
+  }
+
 function selectprofile($prof)
 {
   unset($_SESSION['profil']);
@@ -49,7 +60,7 @@ function buildprofiles() // Attention : ici les profils potentiels sont vÃ©rifiÃ
 {
   $profiles = array();
   $profiles[] = new InternetProfile("Visiteur");
-  $profiles[] = new TestingProfile("OM");
+  //  $profiles[] = new TestingProfile("OM");
   $profiles[] = new IntranetProfile();
   $profiles[] = new CertifiedProfile();
   return $profiles;
@@ -70,6 +81,6 @@ if ($_SESSION['profil']->is_identified())
   if ($_SESSION['profil']->is_authentified())
     load_previous();
 
-header('Location: /auth.php');
+header('Location: /auth.php?debug='.$_SESSION['count']);
 
 ?>

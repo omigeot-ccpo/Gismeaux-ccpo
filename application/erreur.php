@@ -31,17 +31,29 @@ sécurité de leurs systèmes et ou de leurs données et, plus généralement,
 Le fait que vous puissiez accéder à cet en-tête signifie que vous avez 
 pris connaissance de la licence CeCILL-C, et que vous en avez accepté les 
 termes.*/
+echo "<html><head>";
+echo "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf8\">";
+echo "<title>Erreur SIG</title>";
+echo "</head><body>";
 
 if ($_GET['code'])
   {
-    if ($_GET['code'] == 1)
-      $err = "Probleme de 'previous'";
-    else
-      $err = "Erreur inconnue";
-    echo "<html><head><title>Erreur GISMEAUX</title></head><body><h1>Une erreur est survenue</h1><p>".$err."</p><p>L'erreur a le code ".$_GET['code']."</p></body></html>";
+    switch($_GET['code'])
+      {
+      case 1:
+	$err = "Problème de 'previous'";
+	break;
+      case 2:
+	$err = "Erreur dans le processus d'authentification. Vérifiez votre mot de passe.";
+	break;
+      default:
+	$err = "Erreur inconnue";
+      }
+    echo "<h1>Une erreur est survenue</h1><p>".$err."</p><p style=\"font-size:0.8em;\">L'erreur a le code ".$_GET['code']."</p>";
   }
  else
-   echo "<html><head><title>Erreur GISMEAUX</title></head><body><h1>Une erreur est survenue</h1><p>L'erreur n'a pas de code.</p></body></html>";
+   echo "<h1>Une erreur est survenue</h1><p>L'erreur n'a pas de code.</p>";
 
+echo "</body></html>";
 
 ?>

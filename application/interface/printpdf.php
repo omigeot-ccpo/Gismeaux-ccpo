@@ -35,11 +35,6 @@ define('GIS_ROOT', '..');
 include_once(GIS_ROOT . '/inc/common.php');
 gis_session_start();
 
-//if (!$_SESSION["user"]->has_right("impression"))
-//  {
-//    die("Forbidden");
-//  }
-
 $xi=$_GET['x'];
 $orientation='P';
 $unit='mm';
@@ -47,13 +42,13 @@ $aph=4; //espace avant paragraphe
 $alig=5; //espace entre ligne
 $acel=2; //espace entre deux ligne dans la meme cellule
 $rastx=explode(";",$_GET['raster']);
-	$raster="";
-	for($i=0;$i<count($rastx);$i++)
-	{
-	$ras=explode(".",$rastx[$i]);
-	$raster.=$ras[1].";";
-	}
-	$raster=substr($raster,0,strlen($raster)-1);
+$raster="";
+for($i=0;$i<count($rastx);$i++)
+  {
+    $ras=explode(".",$rastx[$i]);
+    $raster.=$ras[1].";";
+  }
+$raster=substr($raster,0,strlen($raster)-1);
 
 $raste=str_replace("_"," ",$raster);
 $raste=explode(";",$raste);
@@ -66,148 +61,148 @@ class PDF extends FPDF {
   var $U;
   var $HREF;
   var $angle=0;
-var $extgstates;
+  var $extgstates;
+  
+  function SetAlpha($alpha, $bm='Normal')
+  {
+    // set alpha for stroking (CA) and non-stroking (ca) operations
+    $gs = $this->AddExtGState(array('ca'=>$alpha, 'CA'=>$alpha, 'BM'=>'/'.$bm));
+    $this->SetExtGState($gs);
+  }
+  
+  function AddExtGState($parms)
+  {
+    $n = count($this->extgstates)+1;
+    $this->extgstates[$n]['parms'] = $parms;
+    return $n;
+  }
 
+  function SetExtGState($gs)
+  {
+    $this->_out(sprintf('/GS%d gs', $gs));
+  }
 
-function SetAlpha($alpha, $bm='Normal')
-    {
-        // set alpha for stroking (CA) and non-stroking (ca) operations
-        $gs = $this->AddExtGState(array('ca'=>$alpha, 'CA'=>$alpha, 'BM'=>'/'.$bm));
-        $this->SetExtGState($gs);
-    }
-
-    function AddExtGState($parms)
-    {
-        $n = count($this->extgstates)+1;
-        $this->extgstates[$n]['parms'] = $parms;
-        return $n;
-    }
-
-    function SetExtGState($gs)
-    {
-        $this->_out(sprintf('/GS%d gs', $gs));
-    }
-
-    function _enddoc()
-    {
-        if(!empty($this->extgstates) && $this->PDFVersion<'1.4')
-            $this->PDFVersion='1.4';
-        parent::_enddoc();
-    }
-
-    function _putextgstates()
-    {
-        for ($i = 1; $i <= count($this->extgstates); $i++)
-        {
-            $this->_newobj();
-            $this->extgstates[$i]['n'] = $this->n;
-            $this->_out('<</Type /ExtGState');
-            foreach ($this->extgstates[$i]['parms'] as $k=>$v)
-                $this->_out('/'.$k.' '.$v);
-            $this->_out('>>');
-            $this->_out('endobj');
-        }
-    }
-
-    function _putresourcedict()
-    {
-        parent::_putresourcedict();
-        $this->_out('/ExtGState <<');
-        foreach($this->extgstates as $k=>$extgstate)
-            $this->_out('/GS'.$k.' '.$extgstate['n'].' 0 R');
-        $this->_out('>>');
-    }
-
-    function _putresources()
-    {
-        $this->_putextgstates();
-        parent::_putresources();
-    }
-
-
-function Rotate($angle,$x=-1,$y=-1)
-{
+  function _enddoc()
+  {
+    if(!empty($this->extgstates) && $this->PDFVersion<'1.4')
+      $this->PDFVersion='1.4';
+    parent::_enddoc();
+  }
+  
+  function _putextgstates()
+  {
+    for ($i = 1; $i <= count($this->extgstates); $i++)
+      {
+	$this->_newobj();
+	$this->extgstates[$i]['n'] = $this->n;
+	$this->_out('<</Type /ExtGState');
+	foreach ($this->extgstates[$i]['parms'] as $k=>$v)
+	  $this->_out('/'.$k.' '.$v);
+	$this->_out('>>');
+	$this->_out('endobj');
+      }
+  }
+  
+  function _putresourcedict()
+  {
+    parent::_putresourcedict();
+    $this->_out('/ExtGState <<');
+    foreach($this->extgstates as $k=>$extgstate)
+      $this->_out('/GS'.$k.' '.$extgstate['n'].' 0 R');
+    $this->_out('>>');
+  }
+  
+  function _putresources()
+  {
+    $this->_putextgstates();
+    parent::_putresources();
+  }
+  
+  
+  function Rotate($angle,$x=-1,$y=-1)
+  {
     if($x==-1)
-        $x=$this->x;
+      $x=$this->x;
     if($y==-1)
-        $y=$this->y;
+      $y=$this->y;
     if($this->angle!=0)
-        $this->_out('Q');
+      $this->_out('Q');
     $this->angle=$angle;
     if($angle!=0)
-    {
+      {
         $angle*=M_PI/180;
         $c=cos($angle);
         $s=sin($angle);
         $cx=$x*$this->k;
         $cy=($this->h-$y)*$this->k;
         $this->_out(sprintf('q %.5f %.5f %.5f %.5f %.2f %.2f cm 1 0 0 1 %.2f %.2f cm',$c,$s,-$s,$c,$cx,$cy,-$cx,-$cy));
-    }
-}
-
-function _endpage()
-{
+      }
+  }
+  
+  function _endpage()
+  {
     if($this->angle!=0)
-    {
+      {
         $this->angle=0;
         $this->_out('Q');
-    }
+      }
     parent::_endpage();
-}
-
-function RotatedText($x,$y,$txt,$angle)
-{
+  }
+  
+  function RotatedText($x,$y,$txt,$angle)
+  {
     //Rotation du texte autour de son origine
     $this->Rotate($angle,$x,$y);
     $this->Text($x,$y,$txt);
     $this->Rotate(0);
-}
-
-function RotatedImage($file,$x,$y,$w,$h,$angle)
-{
+  }
+  
+  function RotatedImage($file,$x,$y,$w,$h,$angle)
+  {
     //Rotation de l'image autour du coin supérieur gauche
     $this->Rotate($angle,$x,$y);
     $this->Image($file,$x,$y,$w,$h);
     $this->Rotate(0);
-}
-
-function RotatedCell($angle,$x,$y,$w,$h,$txt,$bor,$ln,$aling)
-{
+  }
+  
+  function RotatedCell($angle,$x,$y,$w,$h,$txt,$bor,$ln,$aling)
+  {
     //Rotation de la celulle autour du coin supérieur gauche
     $this->Rotate($angle,$x,$y);
-	$this->Cell($w,$h,$txt,$bor,$ln,$aling); 
+    $this->Cell($w,$h,$txt,$bor,$ln,$aling); 
     $this->Rotate(0);
-}
-
-  function PutLink($URL,$txt){
-      //Place un hyperlien
-      $this->SetTextColor(0,0,255);
-      $this->SetStyle('U',true);
-      $this->Write(3,$txt,$URL);
-      $this->SetStyle('U',false);
-      $this->SetTextColor(0);
   }
-
+  
+  function PutLink($URL,$txt){
+    //Place un hyperlien
+    $this->SetTextColor(0,0,255);
+    $this->SetStyle('U',true);
+    $this->Write(3,$txt,$URL);
+    $this->SetStyle('U',false);
+    $this->SetTextColor(0);
+  }
+  
   function SetStyle($tag,$enable)
   {
-      //Modifie le style et sélectionne la police correspondante
-      $this->$tag+=($enable ? 1 : -1);
-      $style='';
-      $this->SetFont('times','',11);
-      foreach(array('7','8','9','10','11','12','13','14','24') as $p)
-          if($this->$p>0)
-              $police.=$p;
-      foreach(array('B','I','U') as $s)
-          if($this->$s>0)
-              $style.=$s;
-      $this->SetFont('',$style,$police);
-
+    //Modifie le style et sélectionne la police correspondante
+    $this->$tag+=($enable ? 1 : -1);
+    $style='';
+    $this->SetFont('times','',11);
+    foreach(array('7','8','9','10','11','12','13','14','24') as $p)
+      if($this->$p>0)
+	$police.=$p;
+    foreach(array('B','I','U') as $s)
+      if($this->$s>0)
+	$style.=$s;
+    $this->SetFont('',$style,$police);
+    
   }
 }
 
 $insee = $_SESSION['code_insee'];
+$insee = '770126';
 if (strlen($insee) == 3)
-   $insee = $insee . '000';
+  $insee = $insee . '000';
 $sql="select a.nom,a.logo,a.larg_logo,b.logo as logo_communaute,b.larg_logo as larg_communaute from admin_svg.commune as a left join admin_svg.commune as b on  a.idagglo=b.idcommune where a.idcommune='".$insee."'";
 $retour=$DB->tab_result($sql);
 // omigeot : desormais, on ne verifie plus l'existence du champ "larg_logo", mais celui de logo directement.
@@ -215,15 +210,15 @@ $retour=$DB->tab_result($sql);
 // vers des images situees en dehors de l'arborescence de Gismeaux, les rendant resistantes a la reinstallation
 // de ce dernier.
 if($retour[0]['logo']!="") 
-{
-	$larglogo=($retour[0]['larg_logo']/2.5);
-	$logo=$retour[0]['logo'];
-}
-else
-{
-	$larglogo=($retour[0]['larg_communaute']/2.5);
-	$logo=$retour[0]['logo_communaute'];
-}
+  {
+    $larglogo=($retour[0]['larg_logo']/2.5);
+    $logo=$retour[0]['logo'];
+  }
+ else
+   {
+     $larglogo=($retour[0]['larg_communaute']/2.5);
+     $logo=$retour[0]['logo_communaute'];
+   }
 $xm=$_GET['x'] + $_GET['xini'];
 $xma=($_GET['x']+$_GET['lar']) + $_GET['xini'];
 $yma= $_GET['yini'] - $_GET['y'];
@@ -232,93 +227,91 @@ $mapsize="";
 
 $tableau=$_SESSION['cotation'];
 if(is_array($tableau))
-{
-//echo count($tableau)."\n";
-		for($ij=0;$ij<count($tableau);$ij++)
-{
-//echo $ij.">".$tableau[$ij]."\n";
-$coor=explode("|",$tableau[$ij]);
-$x1=$_GET['xini']+$coor[0];
-$y1=$_GET['yini']-$coor[1];
-$x2=$_GET['xini']+$coor[2];
-$y2=$_GET['yini']-$coor[3];
+  {
+    for($ij=0;$ij<count($tableau);$ij++)
+      {
+	$coor=explode("|",$tableau[$ij]);
+	$x1=$_GET['xini']+$coor[0];
+	$y1=$_GET['yini']-$coor[1];
+	$x2=$_GET['xini']+$coor[2];
+	$y2=$_GET['yini']-$coor[3];
+	
+	$lo=2;
+	
+	$angl="";
+	if($x1<=$x2 && $y2<=$y1)
+	  {
+	    $cosfl=($x2-$x1)/$coor[7];
+	    $anglfl=rad2deg(acos($cosfl));
+	    $dx=$x1+($lo*cos(deg2rad($anglfl+30)));
+	    $dy=$y1-($lo*sin(deg2rad($anglfl+30)));
+	    $dx1=$x1+($lo*cos(deg2rad($anglfl-30)));
+	    $dy1=$y1-($lo*sin(deg2rad($anglfl-30)));
+	    $dx2=$x2+($lo*cos(deg2rad($anglfl+210)));
+	    $dy2=$y2-($lo*sin(deg2rad($anglfl+210)));
+	    $dx3=$x2+($lo*cos(deg2rad($anglfl+150)));
+	    $dy3=$y2-($lo*sin(deg2rad($anglfl+150)));
+	    
+	  }
+	else if($x1<=$x2 && $y2>=$y1)
+	  {
+	    $cosfl=($x2-$x1)/$coor[7];
+	    $anglfl=rad2deg(acos($cosfl));
+	    $dx=$x1+($lo*cos(deg2rad($anglfl+30)));
+	    $dy=$y1+($lo*sin(deg2rad($anglfl+30)));
+	    $dx1=$x1+($lo*cos(deg2rad($anglfl-30)));
+	    $dy1=$y1+($lo*sin(deg2rad($anglfl-30)));
+	    $dx2=$x2+($lo*cos(deg2rad($anglfl+210)));
+	    $dy2=$y2+($lo*sin(deg2rad($anglfl+210)));
+	    $dx3=$x2+($lo*cos(deg2rad($anglfl+150)));
+	    $dy3=$y2+($lo*sin(deg2rad($anglfl+150)));
+	    
+	  }
+	else if($x1>=$x2 && $y2<=$y1)
+	  {
+	    $cosfl=($x2-$x1)/$coor[7];
+	    $anglfl=rad2deg(acos($cosfl));
+	    $dx=$x1+($lo*cos(deg2rad($anglfl+30)));
+	    $dy=$y1-($lo*sin(deg2rad($anglfl+30)));
+	    $dx1=$x1+($lo*cos(deg2rad($anglfl-30)));
+	    $dy1=$y1-($lo*sin(deg2rad($anglfl-30)));
+	    $dx2=$x2+($lo*cos(deg2rad($anglfl+210)));
+	    $dy2=$y2-($lo*sin(deg2rad($anglfl+210)));
+	    $dx3=$x2+($lo*cos(deg2rad($anglfl+150)));
+	    $dy3=$y2-($lo*sin(deg2rad($anglfl+150)));
+	    
+	  }
+	else
+	  {
+	    $cosfl=($x2-$x1)/$coor[7];
+	    $anglfl=rad2deg(acos($cosfl));
+	    $dx=$x1+($lo*cos(deg2rad($anglfl+30)));
+	    $dy=$y1+($lo*sin(deg2rad($anglfl+30)));
+	    $dx1=$x1+($lo*cos(deg2rad($anglfl-30)));
+	    $dy1=$y1+($lo*sin(deg2rad($anglfl-30)));
+	    $dx2=$x2+($lo*cos(deg2rad($anglfl+210)));
+	    $dy2=$y2+($lo*sin(deg2rad($anglfl+210)));
+	    $dx3=$x2+($lo*cos(deg2rad($anglfl+150)));
+	    $dy3=$y2+($lo*sin(deg2rad($anglfl+150)));
+	    
+	  }
+	
+	
+	
+	$polygo=$x1." ".$y1.",".$x2." ".$y2;
+	$sql="insert into admin_svg.temp_cotation (the_geom,valeur,session_temp,type) values(GeometryFromtext('MULTILINESTRING((".$polygo."))',-1),'".$coor[7]."','".session_id()."','line')";
+	$DB->exec($pgx,$sql);
+	$sql="insert into admin_svg.temp_cotation (the_geom,session_temp,type) values(GeometryFromtext('MULTILINESTRING((".$x1." ".$y1.",".$dx." ".$dy."),(".$x1." ".$y1.",".$dx1." ".$dy1."),(".$x2." ".$y2.",".$dx2." ".$dy2."),(".$x2." ".$y2.",".$dx3." ".$dy3."))',-1),'".session_id()."','fleche')";
+	$DB->exec($pgx,$sql);
+      }
+  }
 
-$lo=2;
-
-$angl="";
-if($x1<=$x2 && $y2<=$y1)
-{
-$cosfl=($x2-$x1)/$coor[7];
-$anglfl=rad2deg(acos($cosfl));
-$dx=$x1+($lo*cos(deg2rad($anglfl+30)));
-$dy=$y1-($lo*sin(deg2rad($anglfl+30)));
-$dx1=$x1+($lo*cos(deg2rad($anglfl-30)));
-$dy1=$y1-($lo*sin(deg2rad($anglfl-30)));
-$dx2=$x2+($lo*cos(deg2rad($anglfl+210)));
-$dy2=$y2-($lo*sin(deg2rad($anglfl+210)));
-$dx3=$x2+($lo*cos(deg2rad($anglfl+150)));
-$dy3=$y2-($lo*sin(deg2rad($anglfl+150)));
-
-}
-else if($x1<=$x2 && $y2>=$y1)
-{
-$cosfl=($x2-$x1)/$coor[7];
-$anglfl=rad2deg(acos($cosfl));
-$dx=$x1+($lo*cos(deg2rad($anglfl+30)));
-$dy=$y1+($lo*sin(deg2rad($anglfl+30)));
-$dx1=$x1+($lo*cos(deg2rad($anglfl-30)));
-$dy1=$y1+($lo*sin(deg2rad($anglfl-30)));
-$dx2=$x2+($lo*cos(deg2rad($anglfl+210)));
-$dy2=$y2+($lo*sin(deg2rad($anglfl+210)));
-$dx3=$x2+($lo*cos(deg2rad($anglfl+150)));
-$dy3=$y2+($lo*sin(deg2rad($anglfl+150)));
-
-}
-else if($x1>=$x2 && $y2<=$y1)
-{
-$cosfl=($x2-$x1)/$coor[7];
-$anglfl=rad2deg(acos($cosfl));
-$dx=$x1+($lo*cos(deg2rad($anglfl+30)));
-$dy=$y1-($lo*sin(deg2rad($anglfl+30)));
-$dx1=$x1+($lo*cos(deg2rad($anglfl-30)));
-$dy1=$y1-($lo*sin(deg2rad($anglfl-30)));
-$dx2=$x2+($lo*cos(deg2rad($anglfl+210)));
-$dy2=$y2-($lo*sin(deg2rad($anglfl+210)));
-$dx3=$x2+($lo*cos(deg2rad($anglfl+150)));
-$dy3=$y2-($lo*sin(deg2rad($anglfl+150)));
-
-}
-else
-{
-$cosfl=($x2-$x1)/$coor[7];
-$anglfl=rad2deg(acos($cosfl));
-$dx=$x1+($lo*cos(deg2rad($anglfl+30)));
-$dy=$y1+($lo*sin(deg2rad($anglfl+30)));
-$dx1=$x1+($lo*cos(deg2rad($anglfl-30)));
-$dy1=$y1+($lo*sin(deg2rad($anglfl-30)));
-$dx2=$x2+($lo*cos(deg2rad($anglfl+210)));
-$dy2=$y2+($lo*sin(deg2rad($anglfl+210)));
-$dx3=$x2+($lo*cos(deg2rad($anglfl+150)));
-$dy3=$y2+($lo*sin(deg2rad($anglfl+150)));
-
-}
-
-
-
-$polygo=$x1." ".$y1.",".$x2." ".$y2;
-$sql="insert into admin_svg.temp_cotation (the_geom,valeur,session_temp,type) values(GeometryFromtext('MULTILINESTRING((".$polygo."))',-1),'".$coor[7]."','".session_id()."','line')";
-pg_exec($pgx,$sql);
-$sql="insert into admin_svg.temp_cotation (the_geom,session_temp,type) values(GeometryFromtext('MULTILINESTRING((".$x1." ".$y1.",".$dx." ".$dy."),(".$x1." ".$y1.",".$dx1." ".$dy1."),(".$x2." ".$y2.",".$dx2." ".$dy2."),(".$x2." ".$y2.",".$dx3." ".$dy3."))',-1),'".session_id()."','fleche')";
-pg_exec($pgx,$sql);
-	}
-}
-//echo $_POST['legende'].",".$_POST['format'];
 if($_POST['legende']==1 || $_POST['legende']==2)
-{
-	$vision="pay";
-	$angle=90;
-	if($_POST['format']=='A4')
-	{
+  {
+    $vision="pay";
+    $angle=90;
+    if($_POST['format']=='A4')
+      {
 	$px=20;
 	$py=280;
 	$rect=3;
@@ -343,9 +336,9 @@ if($_POST['legende']==1 || $_POST['legende']==2)
 	$hauimage=184.5;
 	$mapsize='&mapsize=1240%201040';
 	$ratioechelle=2;
-	}
-	elseif($_POST['format']=='A3')
-	{
+      }
+    elseif($_POST['format']=='A3')
+      {
 	$posiximage=15*(29.7/21);
 	$posiyimage=233*(29.7/21);
 	$larimage=220*(29.7/21);
@@ -370,9 +363,9 @@ if($_POST['legende']==1 || $_POST['legende']==2)
 	$sizetitre=25;
 	$mapsize='&mapsize=1753.7%201470.9';
 	$ratioechelle=2;
-	}
-	elseif($_POST['format']=='A2')
-	{
+      }
+    elseif($_POST['format']=='A2')
+      {
 	$posiximage=15*2;
 	$posiyimage=233*2;
 	$larimage=220*2;
@@ -396,9 +389,9 @@ if($_POST['legende']==1 || $_POST['legende']==2)
 	$htitre=10*2;
 	$sizetitre=30;
 	$ratioechelle=4;
-	}
-	elseif($_POST['format']=='A1')
-	{
+      }
+    elseif($_POST['format']=='A1')
+      {
 	$posiximage=15*2*(29.7/21);
 	$posiyimage=233*2*(29.7/21);
 	$larimage=220*2*(29.7/21);
@@ -423,9 +416,9 @@ if($_POST['legende']==1 || $_POST['legende']==2)
 	$sizetitre=35;
 	
 	$ratioechelle=2*(29.7/21);
-	}
-	else
-	{
+      }
+    else
+      {
 	$posiximage=15*4;
 	$posiyimage=233*4;
 	$larimage=220*4;
@@ -449,69 +442,69 @@ if($_POST['legende']==1 || $_POST['legende']==2)
 	$htitre=10*4;
 	$sizetitre=40;
 	$ratioechelle=2;
-	}
-}
-else
-{
-	$vision=por;
-	$angle=0;
-	if($_POST['format']=='A4')
-	{
-	$px=20;
-	$py=200;
-	$rect=3;
-	$sizerosa=40;
-	$sizeechelle=12;
-	$sizetitre=20;
-	$posiximage=17.5;
-	$posiyimage=30;
-	$posixrosa=178;
-	$posiyrosa=172;
-	$posixlogo=5;
-	$posiylogo=10;
-	$larlogo=$larglogo;
-	$haulogo=11;
-	$posixechelle=25;
-	$posiyechelle=185;
-	$xtitre=0;
-	$ytitre=0;
-	$wtitre=180;
-	$htitre=10;
-	$larimage=175;
-	$hauimage=146.77;
-	$mapsize='&mapsize=1240%201040';
-	$ratioechelle=2/0.8;
-	}
-	elseif($_POST['format']=='A3')
-	{
-	$px=20*(29.7/21);
-	$py=200*(29.7/21);
-	$rect=3;
-	$sizerosa=50;
-	$sizeechelle=14;
-	$sizetitre=25;
-	$posixrosa=178*(29.7/21);
-	$posiyrosa=172*(29.7/21);
-	$posixlogo=5*(29.7/21);
-	$posiylogo=10*(29.7/21);
-	$larlogo=$larglogo*(29.7/21);
-	$haulogo=11*(29.7/21);
-	$posixechelle=25*(29.7/21);
-	$posiyechelle=185*(29.7/21);
-	$xtitre=0;
-	$ytitre=0;
-	$wtitre=180*(29.7/21);
-	$htitre=10*(29.7/21);
-	$posiximage=17.5*(29.7/21);
-	$posiximage=17.5*(29.7/21);
-	$posiyimage=30*(29.7/21);
-	$larimage=247.5;
-	$hauimage=207.57;
-	$mapsize='&mapsize=1753.7%201470.9';
-	$ratioechelle=2*1.19;
-	}
-	
-}
+      }
+  }
+ else
+   {
+     $vision="por";
+     $angle=0;
+     if($_POST['format']=='A4')
+       {
+	 $px=20;
+	 $py=200;
+	 $rect=3;
+	 $sizerosa=40;
+	 $sizeechelle=12;
+	 $sizetitre=20;
+	 $posiximage=17.5;
+	 $posiyimage=30;
+	 $posixrosa=178;
+	 $posiyrosa=172;
+	 $posixlogo=5;
+	 $posiylogo=10;
+	 $larlogo=$larglogo;
+	 $haulogo=11;
+	 $posixechelle=25;
+	 $posiyechelle=185;
+	 $xtitre=0;
+	 $ytitre=0;
+	 $wtitre=180;
+	 $htitre=10;
+	 $larimage=175;
+	 $hauimage=146.77;
+	 $mapsize='&mapsize=1240%201040';
+	 $ratioechelle=2/0.8;
+       }
+     elseif($_POST['format']=='A3')
+       {
+	 $px=20*(29.7/21);
+	 $py=200*(29.7/21);
+	 $rect=3;
+	 $sizerosa=50;
+	 $sizeechelle=14;
+	 $sizetitre=25;
+	 $posixrosa=178*(29.7/21);
+	 $posiyrosa=172*(29.7/21);
+	 $posixlogo=5*(29.7/21);
+	 $posiylogo=10*(29.7/21);
+	 $larlogo=$larglogo*(29.7/21);
+	 $haulogo=11*(29.7/21);
+	 $posixechelle=25*(29.7/21);
+	 $posiyechelle=185*(29.7/21);
+	 $xtitre=0;
+	 $ytitre=0;
+	 $wtitre=180*(29.7/21);
+	 $htitre=10*(29.7/21);
+	 $posiximage=17.5*(29.7/21);
+	 $posiximage=17.5*(29.7/21);
+	 $posiyimage=30*(29.7/21);
+	 $larimage=247.5;
+	 $hauimage=207.57;
+	 $mapsize='&mapsize=1753.7%201470.9';
+	 $ratioechelle=2*1.19;
+       }
+     
+   }
 
 if (!$ratioechelle)
   $ratioechelle = 1;
@@ -521,17 +514,17 @@ if (!$_POST['echelle'])
 
 $ech="&mapxy=".($xm+($xma-$xm)/2).'%20'.($ym+($yma-$ym)/2)."&SCALE=".($_POST['echelle'])/$ratioechelle;
 //$raster=str_replace(";","&layer=",$raster);
-	$erreur=error_reporting ();
-	error_reporting (1);
-		$serv=$_SERVER["SERVER_NAME"];
+$erreur=error_reporting ();
+error_reporting (1);
+$serv=$_SERVER["SERVER_NAME"];
 if(substr($_SESSION['code_insee'], -3)=='000')
-	{
-	$code_insee=substr($_SESSION['code_insee'],0,3);
-	}
-	else
-	{
-	$code_insee=$_SESSION['code_insee'];
-	}
+  {
+    $code_insee=substr($_SESSION['code_insee'],0,3);
+  }
+ else
+   {
+     $code_insee=$_SESSION['code_insee'];
+   }
 $_SESSION['appli'] = 2; // Attention, ceci semble nécessaire, la session n'était pas spécialement bien configurée :(
 $sql_app="select supp_chr_spec(libelle_appli) as libelle_appli from admin_svg.application where idapplication=".$_SESSION['appli'];
 $app=$DB->tab_result($sql_app);
@@ -539,6 +532,10 @@ $application=$app[0]['libelle_appli'];
 //$application=str_replace(" ","_",$application);
 
 $url='http://'.$serv.'/cgi-bin/mapserv?map='.$fs_root.'/capm/'.$application.'.map&insee='.$code_insee.'&sess='.session_id().'&parce='.stripslashes($_GET['parce']).'&layer=cotation&layer='.$raster.$ech.$mapsize;
+if ($_SESSION['profil']->getUserName() == 'Olivier Migeot')
+  $url ='http://'.$serv.'/cgi-bin/mapserv?map='.$fs_root.'/capm/'.$application.'.map&idparc=1260000Z0262&insee='.$code_insee.'&sess='.session_id().'&parce='.stripslashes($_GET['parce']).'&layer=cotation&layer='.$raster.$ech.$mapsize;
+
+
 //echo $url;
 $contenu=file($url);
 while (list($ligne,$cont)=each($contenu)){
@@ -546,176 +543,183 @@ while (list($ligne,$cont)=each($contenu)){
  }
 $texte=$numligne[$ms_dbg_line];
 $text = explode("/", $texte);
-		$tex=explode(".",$text[4]);
+$tex=explode(".",$text[4]);
 $sql="delete from admin_svg.temp_cotation where session_temp='".session_id()."'";
-pg_exec($pgx,$sql);
-		
+$DB->exec($sql);
+
 //variable
 //creation du fichier pdf
-  $pdf=new PDF();
-   $pdf->Open();
- $pdf->FPDF($orientation,$unit,$_POST['format']);
+$pdf=new PDF();
+$pdf->Open();
+$pdf->FPDF($orientation,$unit,$_POST['format']);
 //création page
 $pdf->AddFont('font1','','font1.php');
-  $pdf->AddPage();
+$pdf->AddPage();
 $pdf->RotatedImage('../tmp/'.$tex[0].'.png',$posiximage,$posiyimage,$larimage,$hauimage,$angle);
 $pdf->SetFont('font1','',$sizerosa);
 //echo $logo.",".$posixlogo.",".$posiylogo.",".$larlogo.",".$haulogo.",".$angle;
 $pdf->RotatedText($posixrosa,$posiyrosa,'a',$angle);
 if ($logo != "")
-   if ($logo[0] != '/') // Si le chemin du logo est relatif, le faire decouler de fs_root
-      $pdf->RotatedImage($logo,$posixlogo,$posiylogo,$larlogo,$haulogo,$angle);
-   else
-      $pdf->RotatedImage($fs_root."/".$logo,$posixlogo,$posiylogo,$larlogo,$haulogo,$angle);
+  if ($logo[0] != '/') // Si le chemin du logo est relatif, le faire decouler de fs_root
+    $pdf->RotatedImage($logo,$posixlogo,$posiylogo,$larlogo,$haulogo,$angle);
+  else
+    $pdf->RotatedImage($fs_root."/".$logo,$posixlogo,$posiylogo,$larlogo,$haulogo,$angle);
 $pdf->SetFont('arial','',$sizetitre);
 $pdf->RotatedCell($angle,$xtitre,$ytitre,$wtitre,$htitre,$_POST['titre'],0,0,'C'); 
 $pdf->SetFont('arial','',$sizeechelle);
 if($_POST['echelle']==0)
+  {
+    $pdf->RotatedText($posixechelle,$posiyechelle,'Sans échelle',$angle);
+  }
+ else
+   {
+     $pdf->RotatedText($posixechelle,$posiyechelle,'1/'.$_POST['echelle'].' ème',$angle);
+   }
+if ($print_basic_copyright)
 {
-$pdf->RotatedText($posixechelle,$posiyechelle,'Sans échelle',$angle);
+  $pdf->SetFont('arial','',6);
+  $pdf->RotatedText(5, 5, "Les photographies sont propriété de l'IGN, les données cadastrales sont propriété de la DGI. Reproduction interdite.",0);
 }
-else
-{
-$pdf->RotatedText($posixechelle,$posiyechelle,'1/'.$_POST['echelle'].' ème',$angle);
-}
+
 $pdf->SetDrawColor(0);
 $pdf->SetFont('arial','',10);
 if($_POST['legende']==1 || $_POST['legende']==3)
-{
-$legende="";
-
-//$pyy=250;
-$idprov="";
-for($i=0;$i<count($rastx);$i++)
-{
+  {
+    $legende="";
+    
+    //$pyy=250;
+    $idprov="";
+    for($i=0;$i<count($rastx);$i++)
+      {
 	$ra=explode(".",$rastx[$i]);
 	$id=$ra[0];
 	$lib=str_replace("_"," ",$ra[1]);;
 	if($id!="")
-	{
-$req1="select col_theme.intitule_legende as intitule_legende,theme.libelle_them,col_theme.fill,col_theme.symbole,col_theme.opacity,col_theme.ordre,col_theme.stroke_rgb,style.fill as style_fill,style.symbole as style_symbole,style.opacity as style_opacity,style.font_size  as style_fontsize,style.stroke_rgb  as style_stroke from admin_svg.appthe left outer join admin_svg.col_theme on appthe.idappthe=col_theme.idappthe join admin_svg.theme on appthe.idtheme=theme.idtheme left outer join admin_svg.style on appthe.idtheme=style.idtheme where appthe.idappthe=".$id."  and (intitule_legende='".$lib."' or libelle_them='".$lib."')";
-
-	$couch=$DB->tab_result($req1);
-		
-			if($couch[0]['intitule_legende']=="")
-			{
-			$legend=$couch[0]['libelle_them'];
-			if($couch[0]['style_fill']!="" && $couch[0]['style_fill']!="none")
-			{
-			$couleu=$couch[0]['style_fill'];
-			}
-			else
-			{
-			$couleu=$couch[0]['style_stroke'];
-			}
-			if($couch[0]['style_opacity']!=0 && $couch[0]['style_opacity']!="")
-			{
-			$apocit=$couch[0]['style_opacity'];
-			}
-			else
-			{
-			$apocit=1;
-			}
-			}
-			else
-			{
-			$legend=$couch[0]['intitule_legende'];
-			//$couleu=$couch[0]['fill'];
-			if($couch[0]['fill']!="" && $couch[0]['fill']!="none")
-			{
-			$couleu=$couch[0]['fill'];
-			}
-			else
-			{
-			$couleu=$couch[0]['stroke_rgb'];
-			}
-			if($couch[0]['opacity']!=0)
-			{
-			$apocit=$couch[0]['opacity'];
-			}
-			else
-			{
-			$apocit=1;
-			}
-			}
-			
-			if(in_array($legend,$raste) and $couleu!="")
-			{
-			if($idprov!=$id && $idprov!="")
-			{
-			if($vision=="pay")
-			{	
+	  {
+	    $req1="select col_theme.intitule_legende as intitule_legende,theme.libelle_them,col_theme.fill,col_theme.symbole,col_theme.opacity,col_theme.ordre,col_theme.stroke_rgb,style.fill as style_fill,style.symbole as style_symbole,style.opacity as style_opacity,style.font_size  as style_fontsize,style.stroke_rgb  as style_stroke from admin_svg.appthe left outer join admin_svg.col_theme on appthe.idappthe=col_theme.idappthe join admin_svg.theme on appthe.idtheme=theme.idtheme left outer join admin_svg.style on appthe.idtheme=style.idtheme where appthe.idappthe=".$id."  and (intitule_legende='".$lib."' or libelle_them='".$lib."')";
+	    
+	    $couch=$DB->tab_result($req1);
+	    
+	    if($couch[0]['intitule_legende']=="")
+	      {
+		$legend=$couch[0]['libelle_them'];
+		if($couch[0]['style_fill']!="" && $couch[0]['style_fill']!="none")
+		  {
+		    $couleu=$couch[0]['style_fill'];
+		  }
+		else
+		  {
+		    $couleu=$couch[0]['style_stroke'];
+		  }
+		if($couch[0]['style_opacity']!=0 && $couch[0]['style_opacity']!="")
+		  {
+		    $apocit=$couch[0]['style_opacity'];
+		  }
+		else
+		  {
+		    $apocit=1;
+		  }
+	      }
+	    else
+	      {
+		$legend=$couch[0]['intitule_legende'];
+		//$couleu=$couch[0]['fill'];
+		if($couch[0]['fill']!="" && $couch[0]['fill']!="none")
+		  {
+		    $couleu=$couch[0]['fill'];
+		  }
+		else
+		  {
+		    $couleu=$couch[0]['stroke_rgb'];
+		  }
+		if($couch[0]['opacity']!=0)
+		  {
+		    $apocit=$couch[0]['opacity'];
+		  }
+		else
+		  {
+		    $apocit=1;
+		  }
+	      }
+	    
+	    if(in_array($legend,$raste) and $couleu!="")
+	      {
+		if($idprov!=$id && $idprov!="")
+		  {
+		    if($vision=="pay")
+		      {	
 			$px=$px+2;
-			}
-			else
-			{
+		      }
+		    else
+		      {
 			$py=$py+2;
-			}
-			}
-			if($couch[0]['intitule_legende']!="" && $couch[0]['libelle_them']!="" && $idprov!=$id)
-			{
-			if($vision=="pay")
-			{	
+		      }
+		  }
+		if($couch[0]['intitule_legende']!="" && $couch[0]['libelle_them']!="" && $idprov!=$id)
+		  {
+		    if($vision=="pay")
+		      {	
 			$px=$px+3;
 			$pdf->RotatedText($px,$py+3,$couch[0]['libelle_them'],$angle);
-			}
-			else
-			{
+		      }
+		    else
+		      {
 			$py=$py+3;
 			$pdf->RotatedText($px,$py,$couch[0]['libelle_them'],$angle);
-			}
-			
-			$idprov=$id;
-			if($vision=="pay")
-			{
+		      }
+		    
+		    $idprov=$id;
+		    if($vision=="pay")
+		      {
 			$px=$px+2;
-			}
-			else
-			{
+		      }
+		    else
+		      {
 			$py=$py+2;
-			}
-			}
-			
-			$coul = explode(",", $couleu);
-			$pdf->SetAlpha($apocit);
-			$pdf->SetFillColor($coul[0],$coul[1],$coul[2]);
-			$pdf->Rect($px,$py,$rect,$rect,F);
-			$pdf->SetAlpha(1);
-			$pdf->Rect($px,$py,$rect,$rect,D);
-			//$pdf->Text(8,$pyy,$legend);
-			if($vision=="pay")
-			{
-			$pdf->RotatedText($px+3,$py-2,$legend,$angle);
-			}
-			else
-			{
-			$pdf->RotatedText($px+5,$py+3,$legend,$angle);
-			}
-			//$pyy=$pyy+3;
-			if($vision=="pay")
-			{
-			$px=$px+5;
-			}
-			else
-			{
-			$py=$py+5;
-			if($format=='A4' && $py>280)
-			{
+		      }
+		  }
+		
+		$coul = explode(",", $couleu);
+		$pdf->SetAlpha($apocit);
+		$pdf->SetFillColor($coul[0],$coul[1],$coul[2]);
+		$pdf->Rect($px,$py,$rect,$rect,F);
+		$pdf->SetAlpha(1);
+		$pdf->Rect($px,$py,$rect,$rect,D);
+		//$pdf->Text(8,$pyy,$legend);
+		if($vision=="pay")
+		  {
+		    $pdf->RotatedText($px+3,$py-2,$legend,$angle);
+		  }
+		else
+		  {
+		    $pdf->RotatedText($px+5,$py+3,$legend,$angle);
+		  }
+		//$pyy=$pyy+3;
+		if($vision=="pay")
+		  {
+		    $px=$px+5;
+		  }
+		else
+		  {
+		    $py=$py+5;
+		    if($format=='A4' && $py>280)
+		      {
 			$py=200;
 			$px=$px+50;
-			}
-			if($format=='A3' && $py>395)
-			{
+		      }
+		    if($format=='A3' && $py>395)
+		      {
 			$py=200*(29.7/21);
 			$px=$px+50;
-			}
-			}
-			
-			
-			}
+		      }
+		  }
 		
-	}
-}
-}
+		
+	      }
+	    
+	  }
+      }
+  }
 $pdf->Output();
+die();
 ?> 

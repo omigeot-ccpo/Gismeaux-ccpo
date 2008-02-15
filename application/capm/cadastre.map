@@ -165,15 +165,15 @@ STATUS on
 TYPE polygon 
 CONNECTIONTYPE postgis 
 CONNECTION "dbname=sig host=localhost user=sig password=sig" 
-DATA "the_geom from cadastre.ortho using unique the_geom using SRID=-1" 
+DATA "the_geom from cadastre.orthotif using unique the_geom using SRID=-1" 
 END 
  
 LAYER 
 NAME "ortho-photo" group "ortho-photo" 
 STATUS on 
 TYPE raster 
-MAXSCALE 57435 
-MINSCALE 574 
+#MAXSCALE 57435
+#MINSCALE 574
 TILEINDEX "ortho-photoidx" 
 TILEITEM "location" 
 END 
@@ -191,7 +191,7 @@ EXPRESSION ('[constructi]' eq 'Bati dur')
 COLOR 184 84 149 
 END 
 END 
- 
+
 LAYER 
 CONNECTIONTYPE postgis 
 NAME "Bati_leger" group "batiment" 
@@ -205,7 +205,29 @@ EXPRESSION ('[constructi]' eq 'Bati leger')
 COLOR 221 174 205 
 END 
 END 
- 
+
+LAYER
+CONNECTIONTYPE postgis
+NAME "selparcelle" group "parcelle"
+CONNECTION "dbname=sig host=localhost user=sig password=sig" 
+DATA "the_geom from cadastre.parcelle using unique the_geom using SRID=-1" 
+STATUS off
+TYPE polygon 
+FILTER "identifian like '%idparc%'"
+LABELITEM identifian
+CLASS
+LABEL
+TYPE truetype
+FONT "arial"
+COLOR 0 0 0
+SIZE 15
+END
+COLOR 0 255 124
+OUTLINECOLOR 0 0 0
+END
+TRANSPARENCY 24
+END
+
 LAYER 
 CONNECTIONTYPE postgis 
 NAME "parcelle" group "parcelle" 
@@ -262,9 +284,9 @@ text ([texte] [texte2] [texte3] [texte4] [texte5] [texte6] [texte7] [texte8] [te
 label 
 angle auto 
 type truetype 
-font "arial" 
+font "verdanab" 
 position cc 
-size 8 
+size 12
 COLOR 0 0 0 
 END 
 END 
@@ -320,9 +342,9 @@ text ([texte])
 label 
 angle auto 
 type truetype 
-font "arial" 
+font "verdanab" 
 position cc 
-size 8 
+size 12 
 COLOR 0 0 255 
 END 
 END 

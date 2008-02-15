@@ -40,10 +40,11 @@ if (!defined('GIS_ROOT'))
 include_once(GIS_ROOT . '/inc/session.php');
 include_once(GIS_ROOT . '/inc/database.php');
 include_once(GIS_ROOT . '/config/paths.php');
+include_once(GIS_ROOT . '/config/ldap.php');
 include_once(GIS_ROOT . '/inc/user.php');
 include_once(GIS_ROOT . '/inc/profiles.php');
 include_once(GIS_ROOT . '/inc/actions.const.php');
 
 $ms_dbg_line = 0;
-
+$print_basic_copyright = 1;
 ?>

@@ -568,7 +568,7 @@ $data.="</g>
 	<rect id=\"map\" width=\"620\" height=\"520\" x=\"11\" y=\"11\" fill=\"none\" pointer-events=\"none\"/>
 	<rect x=\"380\" y=\"513\" width=\"245\" height=\"14\" class=\"fillclair\" style=\"opacity:0.6\" pointer-events=\"none\"/>
 	<text pointer-events=\"none\" x=\"20\" y=\"515\" class=\"fillfonce\" style=\"font-size:50px;font-family:fontsvg\">a</text>
-	<text pointer-events=\"none\" x=\"385\" y=\"523\" class=\"fillfonce\" font-size=\"8\">Source: direction g&#233;n&#233;rale des imp&#244;ts - cadastre;mise &#224; jour:2007</text>
+	<text pointer-events=\"none\" x=\"385\" y=\"523\" class=\"fillfonce\" font-size=\"8\">Source: Direction G&#233;n&#233;rale des Imp&#244;ts - Cadastre;mise &#224; jour:2007</text>
 	<g id=\"message_box\" visibility=\"hidden\" >
 	<rect x=\"241\" y=\"264\" width=\"160\" height=\"18\" class=\"fillclair\" style=\"opacity:0.6\" pointer-events=\"none\" />
 	<text pointer-events=\"none\" x=\"250\" y=\"277\" font-size=\"15\" class=\"fillfonce\">Veuillez patienter</text>
@@ -599,16 +599,19 @@ $data.="<use x=\"0\" y=\"0\" width=\"".$_SESSION['large']."\" height=\"".$_SESSI
  </g>	
 	
 	</svg>
-	<rect id=\"locamap\" width=\"150\" height=\"126\" x=\"645\" y=\"11\" fill=\"none\" pointer-events=\"none\"/>
-    <g class=\"fillclair\">
+	<rect id=\"locamap\" width=\"150\" height=\"126\" x=\"645\" y=\"11\" fill=\"none\" pointer-events=\"none\"/>";
+if (0)
+  {
+    $data .=    "<g class=\"fillclair\">
 <a id=\"aide\"><use x=\"593\" y=\"545\" xlink:href=\"#boutonvierge\" onmouseover=\"showinfotip(evt,'Aide en ligne')\" onmouseout=\"hideinfotip(evt)\" onclick=\"javascript:aide()\"/></a>
 <text x=\"600\" y=\"560\" font-weight=\"normal\" font-family=\"Arial\" font-size=\"16\" class=\"fillfonce\" pointer-events=\"none\" >?</text>
-<text x=\"596\" y=\"568\" font-weight=\"normal\" font-family=\"Arial\" font-size=\"8\" class=\"fillfonce\" pointer-events=\"none\" >Aide</text></g>
-<g class=\"fillclair\">
-			<a id=\"contacte\"><use x=\"563\" y=\"545\" xlink:href=\"#boutonvierge\" onmouseover=\"showinfotip(evt,'Nous contactez')\" onmouseout=\"hideinfotip(evt)\" onclick=\"javascript:contacte()\" class=\"fillclair\"/></a>
-        	<text x=\"564\" y=\"563\" style=\"font-size:18px;font-family:fontsvg\" class=\"fillfonce\" pointer-events=\"none\">Y</text></g>
-    	<g id=\"zoomin\">
-      		<g id=\"graduation\" class=\"fillclair\">
+<text x=\"596\" y=\"568\" font-weight=\"normal\" font-family=\"Arial\" font-size=\"8\" class=\"fillfonce\" pointer-events=\"none\" >Aide</text></g>";
+  }
+if (0)
+  {
+    $data .= "<g class=\"fillclair\"><a id=\"contacte\"><use x=\"563\" y=\"545\" xlink:href=\"#boutonvierge\" onmouseover=\"showinfotip(evt,'Nous contacter')\" onmouseout=\"hideinfotip(evt)\" onclick=\"javascript:contacte()\" class=\"fillclair\"/></a><text x=\"564\" y=\"563\" style=\"font-size:18px;font-family:fontsvg\" class=\"fillfonce\" pointer-events=\"none\">Y</text></g>";
+  }
+$data .= "<g id=\"zoomin\"><g id=\"graduation\" class=\"fillclair\">
         	<g id=\"moins\"><rect x=\"675\" y=\"185\" width=\"9\" height=\"15\" ry=\"3.7\" rx=\"3\" onmouseover=\"switchColor(evt,'fill','url(clair)','','');\" onmouseout=\"switchColor(evt,'fill','url(#hors)','','')\" onclick=\"Zoomless(evt);\"/>
 			<text x=\"677.5\" y=\"196\" font-size=\"12px\" pointer-events=\"none\" class=\"fillfonce\">-</text></g>
         	<g id=\"plus\"><rect x=\"775.5\" y=\"185\" width=\"9\" height=\"15\" rx=\"3\" ry=\"3.7\" onmouseover=\"switchColor(evt,'fill','url(clair)','','');\" onmouseout=\"switchColor(evt,'fill','url(#hors)','','')\" onclick=\"Zoommore(evt);\"/>			

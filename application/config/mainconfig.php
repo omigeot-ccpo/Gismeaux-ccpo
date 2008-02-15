@@ -50,4 +50,5 @@ $db_params.=" password=".$db_passwd;
 $ms_dbg_line = 0;
 $default_insee = '770000';
 $default_appli = 2;
+
 ?>

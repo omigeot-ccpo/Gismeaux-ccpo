@@ -47,8 +47,10 @@ $_SESSION['prace'] =$_GET["placid"];
 $insee = $_SESSION['profil']->insee;
 $appli = $_SESSION['profil']->appli;
 
+if (!$_SESSION['profil'])
+  die("Erreur");
 if (!$_SESSION['profil']->ok($insee = $insee,$appli = $appli))
-    die("Interdit.");
+  die("Interdit.");
 
 $xm= $_GET["x"]+  $_GET["xini"];
 $xma=($_GET["x"]+ $_GET["lar"]) +  $_GET["xini"];
@@ -76,13 +78,12 @@ if ( $_GET["type"]=='raster')
     
     if(substr($insee, -3)=='000')
       {
-	$url=get_root_url()."/mapserv.php?map=".$fs_root."capm/".$application.".map&insee=".substr($insee,0,3)."&layer[]=".$raster."&minx=".$xm."&miny=".$ym."&maxx=".$xma."&maxy=".$yma."&mapsize=1240%201040&parce=('')";
+	$url=get_root_url()."/mapserv.php?map=".$fs_root."capm/".$application.".map&insee=".substr($insee,0,3)."&layer[]=".$raster."&minx=".$xm."&miny=".$ym."&maxx=".$xma."&maxy=".$yma."&mapsize=900%20755&parce=('')";
       }
     else
       {
-	$url=get_root_url()."/mapserv.php?map=".$fs_root."capm/".$application.".map&insee=".$insee."&layer[]=".$raster."&minx=".$xm."&miny=".$ym."&maxx=".$xma."&maxy=".$yma."&mapsize=1240%201040&parce=('')";
+	$url=get_root_url()."/mapserv.php?map=".$fs_root."capm/".$application.".map&insee=".$insee."&layer[]=".$raster."&minx=".$xm."&miny=".$ym."&maxx=".$xma."&maxy=".$yma."&mapsize=900%20755&parce=('')";
       }	
-    
     $contenu=file($url);
     
     while (list($ligne,$cont)=each($contenu))

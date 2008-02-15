@@ -35,6 +35,7 @@ termes.*/
 define('GIS_ROOT','.');
 include_once(GIS_ROOT . '/inc/common.php');
 
+
 $map = $_GET["map"];
 $insee = $_GET["insee"];
 $layer = $_GET["layer"];
@@ -44,6 +45,7 @@ $maxx = $_GET["maxx"];
 $maxy = $_GET["maxy"];
 $parce = $_GET["parce"];
 $sess = $_GET["sess"];
+$idparc = $_GET["idparc"];
 $digest = $map."/";
         
 $fmap = ms_newMapObj($map);
@@ -62,6 +64,8 @@ for ($l = 0; $l < $fmap->numlayers; $l++)
       $lay->setFilter(str_replace('%insee%',$insee,$lay->getFilter()));
     if ($sess)
       $lay->setFilter(str_replace('%sess%',$sess,$lay->getFilter()));
+    if ($idparc)
+      $lay->setFilter(str_replace('%idparc%',$idparc,$lay->getFilter()));
   }
 foreach ($layer as $l)
 {
@@ -79,7 +83,7 @@ if (!file_exists("/home/sig/gismeaux/application".$name))
     $image_url=$image->saveImage("/home/sig/gismeaux/application".$name);
     //    echo $image_url;
     //rename("/home/sig/gismeaux/application".$image_url,"/home/sig/gismeaux/application/".$name);
-    //passthru('mogrify -type palette -colors 32 /home/sig/gismeaux/application'.$name);
+    passthru('mogrify -colors 32 /home/sig/gismeaux/application'.$name);
   }
 
 echo get_root_url();

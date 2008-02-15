@@ -38,7 +38,6 @@ if (!defined('GIS_ROOT'))
   }
 include_once(GIS_ROOT . '/inc/common.php');
 
-
 // PROFIL DE BASE (CLASSE PARENTE)
 
 class Profile {
@@ -157,7 +156,9 @@ class InternetProfile extends Profile {
 
   function matches()
   {
-    return 1; // Works by default
+    if (!$_SERVER['HTTPS'])
+      return 1; // Works by default
+    return 0;
   }
 }
 
@@ -327,14 +328,37 @@ class IntranetProfile extends Profile {
 
   function is_authentified()
   {
-    $ds=ldap_connect("mercure"); // FIXME param (host)
-    ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
+    global $ldap_host,$ldap_version,$ldap_base_dn,$ldap_uid_attr;
+    $ds=ldap_connect($ldap_host);
+    ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, $ldap_version);
     
     if ($ds)
       {
-	$res = @ldap_bind($ds,'uid='.$this->user.',ou=users,dc=paysdelourcq,dc=fr',$this->pass); // FIXME param (UID et DN)
+	$res = @ldap_bind($ds,$ldap_uid_attr.'='.$this->user.','.$ldap_base_dn,$this->pass);
 	if ($res)
-	  return 1;
+	  {
+	    global $DB;
+	    
+	    
+	    $sr=ldap_search($ds,$ldap_base_dn, $ldap_uid_attr."=".$this->user);
+	    $info = ldap_get_entries($ds,$sr);
+	    
+	    $org = str_replace("'","\\'",$info[0]["o"][0]);
+	    $orgunit = str_replace("'","\\'",$info[0]['ou'][0]);
+	    $query = "SELECT appli, insee FROM admin_svg.profils WHERE org = '".$org."' AND (orgunit = '".$orgunit."' OR orgunit IS NULL) ORDER BY orgunit";
+	    $t = $DB->tab_result($query);
+	    if (count($t) == 0)
+	      {
+		$this->insee = "770000"; // FIXME param
+		$this->appli = 2; // FIXME param
+	      }
+	    else
+	      {
+		$this->insee = $t[0]['insee'];
+		$this->appli = $t[0]['appli'];
+	      }
+	    return 1;
+	  }
       }
     return 0;
   }
@@ -342,7 +366,7 @@ class IntranetProfile extends Profile {
   function matches()
   {
     if ($_SERVER)
-      if ($_SERVER['REMOTE_ADDR'] == '192.168.1.81') // FIXME param (dev ip)
+      if ($_SERVER['REMOTE_ADDR'] == '192.168.1.82') // FIXME param (dev ip)
 	//	if ($_SERVER['HTTPS'])
 	return 1;
     return 0;

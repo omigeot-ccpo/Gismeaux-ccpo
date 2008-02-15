@@ -46,7 +46,6 @@ echo "<body>";
 echo "<p>GISMeaux :: Point d'entrée</p>";
 echo "<p>".$_SERVER['SERVER_SIGNATURE']."</p>";
 echo "<p>Connecté en temps que ".$_SESSION['profil']->getUserName()." via ".$_SESSION['profil']->name."</p>";
-//echo $_SESSION['profil']->ok($insee=42);
 echo count($_SESSION['profil']->roles)." ".$_SESSION['profil']->rolequery;
 
 echo "<p><a href=\"/interface/carto.php\">Cartographie</a></p>";

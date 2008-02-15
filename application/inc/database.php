@@ -181,6 +181,11 @@ class DBpg {
     $l=substr($l,0,-2);
     return $l;
   }
+
+  function exec($query)
+  {
+    @pg_exec($this->con,$query);
+  }
 }
 
 if (!file_exists(GIS_ROOT . "/config/db.local.php"))
