@@ -38,12 +38,9 @@ gis_session_start();
 $insee = $_SESSION['profil']->insee;
 $appli = $_SESSION['profil']->appli;
 
-if (!$_SESSION['profil']->ok($insee = $insee, $appli = $appli))
-  {
-    die("Interdit.");
-    //TODO: Trouver une sortie plus élégante et informative.
-  }
-
+if ((!$_SESSION['profil']->acces_ssl) || !in_array ("cadastre", $_SESSION['profil']->liste_appli)){
+	die("Point d'entrée réglementé.<br> Accès interdit. <br>Veuillez vous connecter via <a href=\"https://".$_SERVER['HTTP_HOST']."\">serveur carto</a><SCRIPT language=javascript>setTimeout(\"window.location.replace('https://".$_SERVER['HTTP_HOST']."')\",5000)</SCRIPT>");
+}
 if (isset($_GET["commune"]))
   {
     $commune=$_GET["commune"];
@@ -55,6 +52,8 @@ if (isset($_GET["commune"]))
 if ($_GET["obj_keys"])
   {
     $comma1="select * from cadastre.parcel where ind in ('".str_replace(",","','",$_GET["obj_keys"])."')";
+    if (substr($insee,3,3) != '000')
+      $comma1 .= " and commune = '".$insee."' "; // Protection contre les manipulations abusives d'URLs.
   }
  else
    {
@@ -113,7 +112,7 @@ elseif ($nbr_par==0)
   $presult=count($pprow);
   if ($presult==0)
     {
-      echo "Critères ne correspondant à aucun éléments de la table ".$_GET["obj_keys"];
+      echo "Crit&egrave;res ne correspondant &agrave; aucun &eacute;l&eacute;ments de la table ".$_GET["obj_keys"];
     }
   elseif ($presult==1)
     {
@@ -144,7 +143,7 @@ elseif ($nbr_par>1)
   $titre='Recherche cadastrale';
   include('head.php');
   echo '<table width="100%" align="center">';
-  echo '<tr><td>Numéro</td><td>Contenance</td><td>adresse</td><td>Propriétaire</td><td>Adresse Propriétaire</td></tr>';
+  echo '<tr><td>Numéro</td><td>Contenance</td><td>adresse</td><td>Propri&eacute;taire</td><td>Adresse Propri&eacute;taire</td></tr>';
   for($k=0;$k<$nbr_par;$k++)
     { 
       $rvoie=$DB->tab_result("select nom_voie from cadastre.voies where code_voie='".$rowparc[$k]['ccoriv']."' and commune ='".$rowparc[$k]['commune']."';" );

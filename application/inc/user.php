@@ -149,8 +149,24 @@ class User {
 
 function check_auth()
 {
-  //  if (!$_SESSION['user'])
-  //    $_SESSION['user'] = new User('Guest');
+  if (!$_SESSION['profil'])
+    die('Acc&egrave;s interdit (code = 1)');
+//  if (!$_SESSION['profil']->roles)
+//    die('Acc&egrave;s interdit (code = 2)');
+//  if (count($_SESSION['profil']->roles) == 0)
+//    die('Acc&egrave;s interdit (code = 3)');
+}
+
+function check_admin_auth()
+{
+  if (!$_SESSION['profil'])
+    die('Acc&egrave;s interdit (code = 1)');
+//  if (!$_SESSION['profil']->roles)
+//    die('Acc&egrave;s interdit (code = 2)');
+//  if (count($_SESSION['profil']->roles) == 0)
+//    die('Acc&egrave;s interdit (code = 3)');
+//  if (!in_array(1,$_SESSION['profil']->roles))
+//    die('Acc&egrave;s interdit (code = 4)');
 }
 
 

@@ -5,56 +5,58 @@ sig@meaux.fr
 
 Ce logiciel est un programme informatique fournissant une interface cartographique WEB communale. 
 
-Ce logiciel est régi par la licence CeCILL-C soumise au droit français et
+Ce logiciel est rÃ©gi par la licence CeCILL-C soumise au droit franÃ§ais et
 respectant les principes de diffusion des logiciels libres. Vous pouvez
 utiliser, modifier et/ou redistribuer ce programme sous les conditions
-de la licence CeCILL-C telle que diffusée par le CEA, le CNRS et l'INRIA 
+de la licence CeCILL-C telle que diffusÃ©e par le CEA, le CNRS et l'INRIA 
 sur le site "http://www.cecill.info".
 
-En contrepartie de l'accessibilité au code source et des droits de copie,
-de modification et de redistribution accordés par cette licence, il n'est
-offert aux utilisateurs qu'une garantie limitée.  Pour les mêmes raisons,
-seule une responsabilité restreinte pèse sur l'auteur du programme,  le
-titulaire des droits patrimoniaux et les concédants successifs.
+En contrepartie de l'accessibilitÃ© au code source et des droits de copie,
+de modification et de redistribution accordÃ©s par cette licence, il n'est
+offert aux utilisateurs qu'une garantie limitÃ©e.  Pour les mÃªmes raisons,
+seule une responsabilitÃ© restreinte pÃ¨se sur l'auteur du programme,  le
+titulaire des droits patrimoniaux et les concÃ©dants successifs.
 
-A cet égard  l'attention de l'utilisateur est attirée sur les risques
-associés au chargement,  à l'utilisation,  à la modification et/ou au
-développement et à la reproduction du logiciel par l'utilisateur étant 
-donné sa spécificité de logiciel libre, qui peut le rendre complexe à 
-manipuler et qui le réserve donc à des développeurs et des professionnels
-avertis possédant  des connaissances  informatiques approfondies.  Les
-utilisateurs sont donc invités à charger  et  tester  l'adéquation  du
-logiciel à leurs besoins dans des conditions permettant d'assurer la
-sécurité de leurs systèmes et ou de leurs données et, plus généralement, 
-à l'utiliser et l'exploiter dans les mêmes conditions de sécurité. 
+A cet Ã©gard  l'attention de l'utilisateur est attirÃ©e sur les risques
+associÃ©s au chargement,  Ã  l'utilisation,  Ã  la modification et/ou au
+dÃ©veloppement et Ã  la reproduction du logiciel par l'utilisateur Ã©tant 
+donnÃ© sa spÃ©cificitÃ© de logiciel libre, qui peut le rendre complexe Ã  
+manipuler et qui le rÃ©serve donc Ã  des dÃ©veloppeurs et des professionnels
+avertis possÃ©dant  des connaissances  informatiques approfondies.  Les
+utilisateurs sont donc invitÃ©s Ã  charger  et  tester  l'adÃ©quation  du
+logiciel Ã  leurs besoins dans des conditions permettant d'assurer la
+sÃ©curitÃ© de leurs systÃ¨mes et ou de leurs donnÃ©es et, plus gÃ©nÃ©ralement, 
+Ã  l'utiliser et l'exploiter dans les mÃªmes conditions de sÃ©curitÃ©. 
 
-Le fait que vous puissiez accéder à cet en-tête signifie que vous avez 
-pris connaissance de la licence CeCILL-C, et que vous en avez accepté les 
+Le fait que vous puissiez accÃ©der Ã  cet en-tÃªte signifie que vous avez 
+pris connaissance de la licence CeCILL-C, et que vous en avez acceptÃ© les 
 termes.*/
 define('GIS_ROOT', '../..');
 include_once(GIS_ROOT . '/inc/common.php');
 gis_session_start();
 
 $insee = $_SESSION['profil']->insee;
+$cominsee = substr($insee,3,3); // Les 3 derniers caractères du code INSEE, pour éviter de les extraire à chaque fois.
 $appli = $_SESSION['profil']->appli;
 
-if (!$_SESSION['profil']->ok($insee = $insee, $appli = $appli))
-  {
-    die("Interdit.");
-    //TODO: Trouver une sortie plus élégante et informative.
-  }
+if ((!$_SESSION['profil']->acces_ssl) || !in_array ("cadastre", $_SESSION['profil']->liste_appli)){
+  die("Point d'entr&eacute;e r&eacute;glement&eacute;.<br> Accès interdit. <br>Veuillez vous connecter via <a href=\"https://".$_SERVER['HTTP_HOST']."\">serveur carto</a><SCRIPT language=javascript>setTimeout(\"window.location.replace('https://".$_SERVER['HTTP_HOST']."')\",3000)</SCRIPT>");
+ }
 
 $commune=$insee;
 $titre='Recherche cadastrale - Fiche parcelle';
 if (isset($_GET["par1"]))
   {
-    $ind=substr($insee,3)."000".substr($par1,0,2).str_pad(substr($_GET["par1"],2),4,'0',STR_PAD_LEFT);
+    $ind=$cominsee."000".substr($par1,0,2).str_pad(substr($_GET["par1"],2),4,'0',STR_PAD_LEFT);
   }
 include("./head.php");
 /* Lecture de la fiche parcelle */
 if (isset($_GET["ind"]))
   {
-    $ind=$_GET["ind"];
+    if ($cominsee != '000')
+      $ind=$cominsee . substr($_GET["ind"],3); // On se protège contre les incursions extra-communales.
+    else
+      $ind = $_GET["ind"];
   }
 $query_Recordset1 = "SELECT ccosec, dnupla, dcntpa, jdatat, gparbat, dnuvoi, dindic, ccoriv, prop1, commune FROM cadastre.parcel WHERE ind = '";
 $query_Recordset1.= $ind."';";
@@ -80,11 +82,11 @@ $row_voie=$DB->tab_result($query_voie);
 echo '<table width="100%"  align="center">';
 if ($row_Recordset1[0]['gparbat']==1)
   {
-    echo '<tr><td colspan="4" align="center" class="tt1">Fiche d\'une parcelle bâtie ';
+    echo '<tr><td colspan="4" align="center" class="tt1">Fiche d\'une parcelle b&acirc;tie ';
   }
  else
    {
-     echo '<tr><td colspan="4" align="center" class="tt1">Fiche d\'une parcelle non bâtie '; 
+     echo '<tr><td colspan="4" align="center" class="tt1">Fiche d\'une parcelle non b&acirc;tie '; 
    }
 echo '</td></tr><tr><td>Section</td>';
 echo '<td>'.$row_Recordset1[0]['ccosec'].'</td><td>Numero</td>';
@@ -92,7 +94,7 @@ echo '<td>'.$row_Recordset1[0]['dnupla'].'</td></tr><tr><td>Adresse</td>';
 echo '<td colspan="3">'.$row_Recordset1[0]['dnuvoi'].$row_Recordset1[0]['dindic'].', '.$row_voie[0]['nom_voie'].'</td>';
 echo '</tr><tr><td>Contenance</td><td>'.$row_Recordset1[0]['dcntpa'].'</td>';
 echo '<td>Date de l\'acte</td><td>'.$row_Recordset1[0]['jdatat'].'</td></tr><tr>';
-echo '<td colspan="4" align="center" class="tt2">Propriétaire</td></tr>';
+echo '<td colspan="4" align="center" class="tt2">Propri&eacute;taire</td></tr>';
 for($q=0;$q<count($row_Recordset2);$q++)
   {
     echo '<tr><td>Nom</td><td colspan="3">'.$row_Recordset2[$q]['ddenom'].'</td>';
@@ -108,7 +110,7 @@ if ($row_Recordset1[0]['gparbat']==1)
     echo '<tr><td colspan="4" align="center" class="tt2">';
     if (substr($row_Recordset1[0]['prop1'],0,1)=='*')
       {
-	echo "Co-propriéaire"; 
+	echo "Co-propri&eacute;taire"; 
       }
     else
       {
@@ -118,13 +120,13 @@ if ($row_Recordset1[0]['gparbat']==1)
     for($s=0;$s<count($row_Recordset3);$s++)
       {
 	echo '<tr class="tt4"><td>';
-	if ($_SESSION['profil']->ok($action="admin")) // FIXME: Perms
+	if (($_SESSION['profil']->droit_appli=='a')||($_SESSION['profil']->droit_appli=='e')||($_SESSION['profil']->droit=='AD')) //($action="admin") FIXME: Perms
 	  {
-	    echo '<a href="fic_bat.php?invar1='.$row_Recordset3[$s]['invar'].'">Batiment : </a>';
+	    echo '<a href="fic_bat.php?invar1='.$row_Recordset3[$s]['invar'].'">B&acirc;timent : </a>';
 	  }
 	else
 	  {
-	    echo 'Batiment : ';
+	    echo 'B&acirc;timent : ';
 	  }
 	echo $row_Recordset3[$s]['dnubat'].'</td>';
 	echo '<td>Escalier : '.$row_Recordset3[$s]['desca'].'</td>';
@@ -150,7 +152,7 @@ if ($row_Recordset1[0]['gparbat']==1)
 		echo " ".$bprow[$d]['ddenom'].'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong> ';
 		if ($bprow[$d]['ccodro'] == "P")
 		  {
-		    echo "Propriétaire";
+		    echo "Propri&eacute;taire";
 		  }
 		elseif ($bprow[$d]['ccodro'] == "U")
 		  {
@@ -158,15 +160,15 @@ if ($row_Recordset1[0]['gparbat']==1)
 		  }
 		elseif ($bprow[$d]['ccodro'] == "N")
 		  {
-		    echo "Nu-propriétaire";
+		    echo "Nu-propri&eacute;taire";
 		  }
 		elseif ($bprow[$d]['ccodro'] == "B")
 		  {
-		    echo "Bailleur à construction";
+		    echo "Bailleur &agrave; construction";
 		  }
 		elseif ($bprow[$d]['ccodro'] == "R")
 		  {
-		    echo "Preneur à construction";
+		    echo "Preneur &agrave; construction";
 		  }
 		elseif ($bprow[$d]['ccodro'] == "F")
 		  {
@@ -182,11 +184,11 @@ if ($row_Recordset1[0]['gparbat']==1)
 		  }
 		elseif ($bprow[$d]['ccodro'] == "V")
 		  {
-		    echo "Bailleur d'un bail à réhabilitation";
+		    echo "Bailleur d'un bail &agrave; r&eacute;habilitation";
 		  }
 		elseif ($bprow[$d]['ccodro'] == "W")
 		  {
-		    echo "Preneur d'un bail à réhabilitation";
+		    echo "Preneur d'un bail &agrave; r&eacute;habilitation";
 		  }
 		elseif ($bprow[$d]['ccodro'] == "A")
 		  {
@@ -194,27 +196,27 @@ if ($row_Recordset1[0]['gparbat']==1)
 		  }
 		elseif ($bprow[$d]['ccodro'] == "E")
 		  {
-		    echo "Emphytéote";
+		    echo "Emphyt&eacute;ote";
 		  }
 		elseif ($bprow[$d]['ccodro'] == "K")
 		  {
-		    echo "Antichrésiste";
+		    echo "Antichr&eacute;siste";
 		  }
 		elseif ($bprow[$d]['ccodro'] == "L")
 		  {
-		    echo "Fonctionnaire logé";
+		    echo "Fonctionnaire log&eacute;";
 		  }
 		elseif ($bprow[$d]['ccodro'] == "G")
 		  {
-		    echo "Gérant, mandataire, gestionnaire";
+		    echo "G&eacute;rant, mandataire, gestionnaire";
 		  }
 		elseif ($bprow[$d]['ccodro'] == "H")
 		  {
-		    echo "Associé d'une transparence fiscale";
+		    echo "Associ&eacute; d'une transparence fiscale";
 		  }
 		elseif ($bprow[$d]['ccodro'] == "S")
 		  {
-		    echo "Syndic de copropriété";
+		    echo "Syndic de copropri&eacute;t&eacute;";
 		  }; 
 		echo '</strong></td></tr><tr><td rowspan="5">Adresse</td>';
 		echo '<td colspan="3">'.$bprow[$d]['dlign3'].'</td></tr><tr>';

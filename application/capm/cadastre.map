@@ -209,30 +209,30 @@ END
 LAYER
 CONNECTIONTYPE postgis
 NAME "selparcelle" group "parcelle"
-CONNECTION "dbname=sig host=localhost user=sig password=sig" 
-DATA "the_geom from cadastre.parcelle using unique the_geom using SRID=-1" 
+CONNECTION "dbname=sig host=localhost user=sig password=sig"
+DATA "the_geom from cadastre.tempparc using unique the_geom using SRID=-1" 
 STATUS off
 TYPE polygon 
-FILTER "identifian like '%idparc%'"
-LABELITEM identifian
+FILTER "session like '%sess%'"
+LABELITEM labeli
 CLASS
 LABEL
 TYPE truetype
 FONT "arial"
 COLOR 0 0 0
-SIZE 15
+SIZE 14
 END
-COLOR 0 255 124
-OUTLINECOLOR 0 0 0
+#COLOR 255 255 255
+OUTLINECOLOR 255 0 0
 END
-TRANSPARENCY 24
+TRANSPARENCY 100
 END
 
 LAYER 
 CONNECTIONTYPE postgis 
 NAME "parcelle" group "parcelle" 
 CONNECTION "dbname=sig host=localhost user=sig password=sig" 
-DATA "the_geom from cadastre.parcelle using unique the_geom using SRID=-1" 
+DATA "the_geom from cadastre.parcelle_commune using unique the_geom using SRID=-1" 
 STATUS on 
 TYPE polygon 
 FILTER "code_insee like '%insee%%' or code_insee is null" 

@@ -157,13 +157,13 @@ class DBpg {
       {
 	die('DB error in tab_result');
       }
-    $resultat = @pg_exec($this->con, $query);
+    $resultat = @pg_query($this->con, $query);
     if (!$resultat){
       echo pg_errormessage();
       echo $query;
       die();
     }
-    $num=pg_numrows($resultat);
+    $num=pg_num_rows($resultat);
     for ($i=0; $i<$num; $i++){
       $arr[$i]=pg_fetch_array($resultat,$i);
     }
@@ -171,8 +171,8 @@ class DBpg {
   }
   
   function list_result($query){
-    $resultat = @pg_exec($this->con, $query);
-    $num=pg_numrows($resultat);
+    $resultat = @pg_query($this->con, $query);
+    $num=pg_num_rows($resultat);
     $l="'";
     for ($i=0; $i<$num; $i++){
       $arr=pg_fetch_array($resultat,$i);
@@ -184,7 +184,13 @@ class DBpg {
 
   function exec($query)
   {
-    @pg_exec($this->con,$query);
+    @pg_query($this->con,$query);
+  }
+  function get_result($query)
+  {
+  @pg_send_query($this->con, $query);
+  $resultat = pg_get_result($this->con);
+  return pg_result_error($resultat);
   }
 }
 

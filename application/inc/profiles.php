@@ -38,6 +38,97 @@ if (!defined('GIS_ROOT'))
   }
 include_once(GIS_ROOT . '/inc/common.php');
 
+function p_identifi(){
+	    echo "<html>";
+	    echo "<head>";
+	    echo "<title>GISMeaux :: Connexion</title>";
+	    echo "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf8\">";
+	    echo "</head>";
+	    
+			echo "<style type=\"text/css\">
+		body.login {background-color: #FFFFFF;}
+
+fieldset.boxlogin{
+	border: 3px solid #5B8BAB;
+	padding-bottom:10px;
+}
+
+legend.boxlogin {
+	color: #005FA9;
+	font-family:\"Trebuchet MS\",Verdana,Geneva,Arial,Helvetica,sans-serif;
+	font-size: 16px;
+	font-weight: 700;
+	background-color: transparent;
+}
+
+table.ident {
+	background-color: #ffffff;
+	/*border: black 2px outset;*/
+}
+
+td.login {
+	color: #005FA9;
+	font-family:\"Trebuchet MS\",Verdana,Geneva,Arial,Helvetica,sans-serif;
+	font-size: 12px;
+	background-color: transparent;
+}
+</style>";
+	    echo "</head>";
+	    echo "<body class=\"login\">";
+		
+		echo "<CENTER>\n";
+	echo "<table>\n";
+	echo "<tr><td align=\"center\">\n";
+	echo "<img src=\"../logo/ihead.png\" alt=\"\" title=\"\"/>";
+	echo "<br><br><br>\n";
+	echo "</td></tr>\n";	
+	echo "<table>\n";
+	
+	echo "<tr><td align=\"center\">\n";
+		echo "<form action=\"auth.php\" method=\"post\">\n";
+		
+		echo "<fieldset class=\"boxlogin\">\n";
+		echo "<legend class=\"boxlogin\">Identification</legend>\n";
+		echo "<TABLE class=\"ident\">\n";
+		echo "<TR>\n";
+		echo "	<TD class=\"login\">Login :</TD>\n";
+		echo "	<TD><INPUT TYPE='text'     NAME='form_user' SIZE=32  VALUE=''></TD>\n";
+		echo "</TR>\n";
+		echo "<TR>\n";
+		echo "	<TD class=\"login\">Mot de Passe :</TD>\n";
+		echo "	<TD><INPUT TYPE='password' NAME='form_pass' SIZE=32  VALUE=''></TD>\n";
+		echo "</TR>\n";
+		echo "</TABLE>\n";
+		echo "</fieldset>\n";
+		
+		echo "<TABLE BORDER='0'>\n";
+		echo "<TR>\n";
+		echo "	<TD COLSPAN='2'><CENTER><INPUT TYPE='submit' VALUE='Connexion'></CENTER></TD>\n";
+		echo "</TR>\n";
+		echo "</TABLE>\n";
+		echo "</FORM>\n";
+	echo "</td></tr>\n";
+	echo "</table>\n";
+	
+	echo "<table width=\"100%\">\n";
+	if ($_GET['authcode']==2)echo "<tr><TD><CENTER>Erreur dans le processus d'authentification. V&eacute;rifiez votre mot de passe.</CENTER></TD></tr>\n";
+	echo "</table>\n";
+	echo "</CENTER>\n";
+		
+
+		/*echo "<body>";
+	    if ($_GET['authcode']==2)echo "Erreur dans le processus d'authentification. Vérifiez votre mot de passe.";
+	    echo "<p><form action=\"auth.php\" method=\"post\"><table>";
+	    echo "<tr><td>Login: </td><td><input type=\"text\" name=\"form_user\" value=\"\" /></td></tr>";
+	    echo "<tr><td>Password: </td><td><input type=\"password\" name=\"form_pass\" value=\"\" /></td></tr>";
+	    echo "<tr><td colspan=2><center><input type=\"submit\" value=\"Connexion\" /></center></td></tr>";
+	    echo "<table></form>";
+	    echo "</p>";*/
+	    echo "</body>";
+	    echo "</html>";
+	    die();
+}
+
 // PROFIL DE BASE (CLASSE PARENTE)
 
 class Profile {
@@ -46,14 +137,24 @@ class Profile {
   var $appli; // Application chargée par défaut -> même remarque que ci-dessus
   var $roles;
   var $rolequery;
+  var $idutilisateur;
+  var $droit;
+  var $droit_appli;//droit de l'utilisateur sur l'application sélectionnnée.
+  var $liste_appli;
+  var $acces_ssl;
   
   function __construct($name)
   {
     $this->name = $name;
-    $this->insee = 770126;
-    $this->appli = 2;
+    $this->insee = 770000;
+    $this->appli = "";
     $this->roles = array();
     $this->rolequery = "";
+    $this->idutilisateur = "";
+    $this->droit = "";
+	$this->droit_appli = "";
+	$this->liste_appli = "";
+    $this->acces_ssl = false;
   }
 
   function matches() // Permet de vérifier si un profil s'applique au cas présent
@@ -61,7 +162,7 @@ class Profile {
     return 0;
   }
 
-  function checkMatch()
+  function checkMatch() // Ne pas dériver
   {
     if ($this->matches())
       $_SESSION['profil'] = $this;
@@ -141,7 +242,16 @@ class InternetProfile extends Profile {
   
   function is_authentified()
   {
-    return 1;
+	$this->insee = "770284";
+	$this->idutilisateur = "124";
+	$this->droit = "";
+	$this->droit_appli = "";
+    
+    $res1 = pg_query($DB->con,"select application.libelle_appli from admin_svg.application inner join admin_svg.apputi on admin_svg.application.idapplication=admin_svg.apputi.idapplication join admin_svg.utilisateur on admin_svg.apputi.idutilisateur=admin_svg.utilisateur.idutilisateur where apputi.idutilisateur='112' order by application.type_appli asc;");
+	$this->liste_appli = pg_fetch_all_columns($res1,0);
+//	$this->liste_appli = array('RU');
+
+	return 1;
   }
 
   function getUserName()
@@ -211,6 +321,8 @@ class CertifiedProfile extends Profile {
 	$this->insee = $t[0]['insee'];
 	$this->appli = $t[0]['appli'];
       }
+    $this->liste_appli[] = "cadastre";
+    $this->acces_ssl=true;
     return 1;
   }
   
@@ -225,6 +337,7 @@ class CertifiedProfile extends Profile {
       if ($_SERVER['HTTPS'])
 	if ($_SERVER['SSL_CLIENT_CERT'])
 	  {
+	    die($_SERVER["SSL_CLIENT_CERT"]);
 	    $cainfo = array();
 	    $cainfo[] = '/etc/apache2/ssl/cacert.pem'; // FIXME param
 	    $this->ssl = openssl_x509_parse($_SERVER["SSL_CLIENT_CERT"]);
@@ -245,7 +358,7 @@ class TestingProfile extends Profile {
 
   function getUserName()
   {
-    return "OM";
+    return "Olivier Migeot";
   }
 
   function is_identified()
@@ -275,7 +388,7 @@ class TestingProfile extends Profile {
 
 ///////////////////////////////////////////
 
-class IntranetProfile extends Profile {
+class IntranetLDAPProfile extends Profile {
   var $user;
   var $pass;
 
@@ -297,23 +410,9 @@ class IntranetProfile extends Profile {
 	  }
 	else // Cette partie correspond à ident() (du moins à sa première phase)
 	  {
-	    echo "<html>";
-	    echo "<head>";
-	    echo "<title>GISMeaux :: Connexion</title>";
-	    echo "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf8\">";
-	    echo "</head>";
-	    echo "<body>";
-	    echo "<p><form action=\"auth.php\" method=\"post\">";
-	    echo "Login: <input type=\"text\" name=\"form_user\" value=\"\" />";
-	    echo "Password: <input type=\"password\" name=\"form_pass\" value=\"\" />";
-	    echo "<input type=\"submit\" value=\"Connexion\" />";
-	    echo "</form>";
-	    echo "</p>";
-	    echo "</body>";
-	    echo "</html>";
-	    die();
+	  	  p_identifi();
 	  }
-      }
+    }
   }
   
   function getUserName()
@@ -373,6 +472,178 @@ class IntranetProfile extends Profile {
 
   }
 
+}
+///////////////////////////////////////////
+
+class IntranetProfile extends Profile {
+  var $user;
+  var $pass;
+
+  function __construct($appli='')
+  {
+    parent::__construct("intranet");
+    $this->appli = $appli;
+  }
+
+  function is_identified()
+  {
+    if (!$this->user)
+      {
+	$this->user = $_POST['form_user'];
+	$this->pass = $_POST['form_pass'];
+	if ($this->user) // Cette partie correspond à auth()
+	  {
+	    return 1;
+	  }
+	else // Cette partie correspond à ident() (du moins à sa première phase)
+	  {
+			p_identifi();
+	  }
+    }
+  }
+  
+  function getUserName()
+  {
+    return $this->user;
+  }
+
+  function ok($insee="",$appli="",$action="")
+  {
+   return 1;
+  }
+
+  function is_authentified()
+  {
+    global $DB;
+
+    $res = $DB->tab_result("SELECT * FROM admin_svg.utilisateur WHERE login = '".$this->user."' AND psw = '".$this->pass."';");
+    
+    if (count($res) == 0)
+      {
+	return 0;
+      }
+    else
+      {
+	$this->insee = $res[0]['idcommune'];
+	$this->idutilisateur = $res[0]['idutilisateur'];
+	$this->droit = $res[0]['droit'];
+	$this->droit_appli = "";
+	$this->acces_ssl = true;
+
+$res1 = pg_query($DB->con,"select application.libelle_appli from admin_svg.application inner join admin_svg.apputi on admin_svg.application.idapplication=admin_svg.apputi.idapplication join admin_svg.utilisateur on admin_svg.apputi.idutilisateur=admin_svg.utilisateur.idutilisateur where apputi.idutilisateur=".$res[0]['idutilisateur']." order by application.type_appli asc;");
+	$this->liste_appli = pg_fetch_all_columns($res1,0);
+
+	$this->roles[] = 2;
+	if ($res[0]['droit'] == 'AD') // FIXME: affiner la gestion des droits
+	  $this->roles[] = 1;
+	return 1;
+      }
+  }
+  
+  function matches()
+  {
+    //if ($_SERVER)
+      if ($_SERVER['HTTPS'])
+    			return 1;
+    	return 0;
+
+  }
+
+}
+
+/////////////////////////////////////////////
+// CertifiedProxyProfile
+//
+// Ce profil fonctionne comme le profil "Certified", mais 
+// lorsque la vérification du certificat et le dialogue
+// SSL sont effectués sur une machine "frontale".
+// Cette machine frontale doit donc transmettre les 
+// requêtes au serveur SIG via mod_proxy, et doit 
+// surtout s'arranger pour faire suivre les en-têtes
+// liées à SSL au moyen de mod_headers. Pour le moment,
+// la seule en-tête véritablement utile est 
+// HTTP_SSL_CLIENT_CERT (équivalente à 
+// SSL_CLIENT_CERT dans le cas "direct").
+
+class CertifiedProxyProfile extends Profile {
+  var $username;
+  var $ssl;
+  var $proxy;
+
+  function __construct($proxy = "192.168.1.23")
+  {
+    parent::__construct("certified-proxy");
+    $this->proxy = $proxy;
+  }
+
+  function getUserName()
+  {
+    return $this->username;
+  }
+
+  function is_identified()
+  {
+    //$this->ssl = openssl_x509_parse($cert);
+    if ($this->ssl)
+      {
+	$this->username = $this->ssl['subject']['CN'];
+	$this->fetch_roles();
+	return 1;
+      }
+    return 0;
+  }
+
+  function is_authentified()
+  {
+    global $DB;
+
+    $org = str_replace("'","\\'",$this->ssl['subject']['O']);
+    $orgunit = str_replace("'","\\'",$this->ssl['subject']['OU']);
+    $query = "SELECT appli, insee FROM admin_svg.profils WHERE org = '".$org."' AND (orgunit = '".$orgunit."' OR orgunit IS NULL) ORDER BY orgunit";
+    $t = $DB->tab_result($query);
+    if (count($t) == 0)
+      {
+	$this->insee = "770000"; // FIXME param
+	$this->appli = 2; // FIXME param
+      }
+    else
+      {
+	$this->insee = $t[0]['insee'];
+	$this->appli = $t[0]['appli'];
+      }
+    $this->liste_appli[] = "cadastre";
+    $this->acces_ssl=true;
+    $_SESSION['previous'] = "https://ssl.paysdelourcq.fr";
+    return 1;
+  }
+  
+  function ok($insee="",$appli=0,$action="")
+  {
+    return 1;
+  }
+
+  function matches()
+  {
+    // Des vérifications supplémentaires pourraient être intéressantes (FORWARDED FOR, etc).
+    if ($_SERVER)
+      if ($_SERVER['REMOTE_ADDR'] == $this->proxy)
+	if ($_SERVER['HTTP_SSL_CLIENT_CERT'])
+	  {
+	    $cert = "-----BEGIN CERTIFICATE-----\n";
+	    $tmp = str_replace("-----BEGIN CERTIFICATE----- ","",$_SERVER['HTTP_SSL_CLIENT_CERT']);
+	    $tmp = str_replace("-----END CERTIFICATE-----","",$tmp);
+	    $cert .= str_replace(" ","\n",$tmp);
+	    $cert .= "-----END CERTIFICATE----- ";
+	    $cainfo = array();
+	    $cainfo[] = '/etc/apache2/ssl/cacert.pem'; // FIXME param
+	    $this->ssl = openssl_x509_parse($cert);
+	    if (openssl_x509_checkpurpose($cert,X509_PURPOSE_SSL_CLIENT,$cainfo))
+	      {
+		return 1;
+	      }
+	  }
+    return 0;
+  }
 }
 
 

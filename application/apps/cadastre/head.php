@@ -49,10 +49,19 @@ if (!$_SESSION['profil']->ok($insee = $insee, $appli = $appli))
 $query_commune="SELECT * FROM admin_svg.commune where idcommune like '".$insee."'";
 $row_commune = $DB->tab_result($query_commune);
 echo '<html><head><title>'.$titre.'</title>';
-echo '<meta http-equiv="Content-Type" content="text/html; charset=utf-8">';
+echo '<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">';
+if (file_exists("../../doc_commune/".$_SESSION["profil"]->insee."/css_extranet/general.css"))
+{
+echo "<link href='../../doc_commune/".$_SESSION["profil"]->insee."/css_extranet/general.css' rel='stylesheet' type='text/css'>";
+}else{
 echo '<link href="./cadastre.css" rel="stylesheet" type="text/css">';
+}
 echo '</head><body class="body"><table width="100%" align="center"><tr>';
-echo '<td width="'.$row_commune[0]['larg_logo'].'"> <img src="'.$row_commune[0]['logo'].'" width="'.$row_commune[0]['larg_logo'].'" height="35" border="0"> ';
+$comlogo = '../'.$row_commune[0]['logo'];
+if (!file_exists($comlogo))
+  $comlogo = $row_commune[0]['logo'];
+  
+echo '<td width="'.$row_commune[0]['larg_logo'].'" align="center"> <img src="'.$comlogo.'" width="'.$row_commune[0]['larg_logo'].'" height="35" border="0"> ';
 if ($row_commune[0]['idcommune']==$row_commune[0]['idagglo'])
   {
     echo '</td><td class="tt3"> '.$row_commune[0]['nom'];
@@ -63,7 +72,12 @@ if ($row_commune[0]['idcommune']==$row_commune[0]['idagglo'])
    }
 $query_agglo="SELECT * FROM admin_svg.commune where idcommune like '".$row_commune[0]['idagglo']."'";
 $row_agglo = $DB->tab_result($query_agglo);
-echo '</td><td width="'.$row_agglo[0]['larg_logo'].'"> <img src="'.$row_agglo[0]['logo'].'" width="'.$row_agglo[0]['larg_logo'].'" height="35" border="0"> ';
+
+$comlogo = '../'.$row_agglo[0]['logo'];
+if (!file_exists($comlogo))
+  $comlogo = $row_agglo[0]['logo'];
+
+echo '</td><td width="'.$row_agglo[0]['larg_logo'].'" align="center"> <img src="'.$comlogo.'" width="'.$row_agglo[0]['larg_logo'].'" height="35" border="0"> ';
 echo '<input name="commune" type="hidden" value="'.$row_commune[0]['idcommune'].'"> <br>';
 echo '</td></tr><tr><td colspan=2>';
 echo '</table>';

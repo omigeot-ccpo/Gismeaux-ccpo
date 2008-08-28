@@ -39,24 +39,20 @@ gis_session_start();
 $insee = $_SESSION['profil']->insee;
 $appli = $_SESSION['profil']->appli;
 
-if (!$_SESSION['profil']->ok($insee = $insee, $appli = $appli,$action = "bati"))
-  {
-    die("Interdit.");
-    //TODO: Trouver une sortie plus élégante et informative.
-  }
-
-
+if (!$_SESSION['profil']->acces_ssl){
+	die("Point d'entr&eacute;e r&eacute;glement&eacute;.<br> Acc�s interdit. <br>Veuillez vous connecter via <a href=\"https://".$_SERVER['HTTP_HOST']."\">serveur carto</a><SCRIPT language=javascript>setTimeout(\"window.location.replace('https://".$_SERVER['HTTP_HOST']."')\",3000)</SCRIPT>");
+}
 
 $commune=$insee;
 $titre='Recherche cadastrale - Fiche batiment';
-echo '<link href="'.get_root_url().'/css/cadastre.css" rel="stylesheet" type="text/css"><body class="body">';
+//echo '<link href="'.get_root_url().'/css/cadastre.css" rel="stylesheet" type="text/css"><body class="body">';
 include('./head.php');
 $qbat="SELECT b.INVAR, b.DNUBAT, b.DESCA, b.DNIV, b.DPOR, a.DNUPRO, a.JDATA, a.DTELOC, a.CCOPLC, a.CCONLC, a.DVLTRT,"; 
 $qbat.="a.CCOAPE, a.CC48LC, a.DLOY48A, a.DNATIC, a.CCHPR, a.JANNAT, a.DNBNIV, a.HMSEM, b.ccosec, b.dnupla, b.dnvoiri, b.dindic,"; 
 $qbat.="c.nom_voie FROM cadastre.B_DESDGI as a , cadastre.BATIDGI as b , cadastre.voies as c ";
-$qbat.="WHERE b.INVAR = a.INVAR AND b.ccoriv=c.code_voie AND c.commune=b.commune AND b.invar=".$_GET["invar1"];
+$qbat.="WHERE b.INVAR = a.INVAR AND b.ccoriv=c.code_voie AND c.commune=b.commune AND b.invar='".$_GET["invar1"]."'";
 $row_bat=$DB->tab_result($qbat);
-$qbat2="SELECT dnupev FROM cadastre.B_SUBDGI where invar=".$_GET["invar1"];
+$qbat2="SELECT dnupev FROM cadastre.B_SUBDGI where invar='".$_GET["invar1"]."'";
 $row_bat2=$DB->tab_result($qbat2);
 //$qbat3="Select libape from eco.ape where codeape='".$row_bat[0]['ccoape']."'";
 //$row_bat3=$DB->tab_result($qbat3);
@@ -71,27 +67,27 @@ for ($i=0;$i<count($row_bat);$i++){
   echo '<td>Niveau : '.$row_bat[$i]['dniv'].'</td>';
   echo '<td>Porte : '.$row_bat[$i]['dpor'].'</td>';
   echo '</tr><tr>';
-  echo '<td colspan="2">Compte propriétaire : '.$row_bat[$i]['dnupro'].'</td>';
+  echo '<td colspan="2">Compte propri&eacute;taire : '.$row_bat[$i]['dnupro'].'</td>';
   echo '<td>Date de l\'acte : '.$row_bat[$i]['jdata'].'</td>';
   echo '<td>Valeur locative : '.$row_bat[$i]['dvltrt'].'</td>';
   echo '</tr><tr><td>';
   $ch_ch=array('1','2','3','4','5','6','7');
-  $ch_rp=array('Maison','Appartement','Dépendances','Local commercial ou industriel','DOM :Maison sans descriptif','Dom :Appartement sans descriptif','Dom :Dépendances sans descriptif');
+  $ch_rp=array('Maison','Appartement','D&eacute;pendances','Local commercial ou industriel','DOM :Maison sans descriptif','Dom :Appartement sans descriptif','Dom :D&eacute;pendances sans descriptif');
   echo str_replace($ch_ch,$ch_rp,$row_bat[$i]['dteloc']).'</td><td>';
   $ch_c2=array('U','V','W','X','Y','Z','R');
-  $ch_r2=array('Chute d\'eau, barrage','Construction sur domaine public','Construction sous domaine public','Voies ferrées dont l\'assise ne forme pas parcelle','Construction sous le domaine cadastré','Construction sur le sol d\'autrui','Construction classée sur le sol d\'autrui');
+  $ch_r2=array('Chute d\'eau, barrage','Construction sur domaine public','Construction sous domaine public','Voies ferr&eacute;es dont l\'assise ne forme pas parcelle','Construction sous le domaine cadastr&eacute;','Construction sur le sol d\'autrui','Construction class&eacute;e sur le sol d\'autrui');
   echo str_replace($ch_c2,$ch_r2,$row_bat[$i]['ccoplc']).'</td><td>';
   $ch_c3=array('MA','AP','DE','LC','CM','CA','CD','CB','ME','MP','SM','AU','CH','U','US','UE','UG','U1','U2','U3','U4','U5','U6','U7','U8','U9');
-  $ch_r3=array('Maison','Appartement','Dépendance bâtie isolée','Local commun','Commerce avec boutique','Commerce sans boutique','Dépendance commerciale','Local divers','Maison exeptionnelle','Maison partagée par une limite territoriale','Sol de construction sur sol d\'autrui','Autoroute','Chantier','Etablissement industriel','Etablissement industriel','Transformateur électrique','Appareil à gaz','Gare','Gare : Triage','Gare : Atelier matériel','Gare : Atelier magasin','Gare : Dépôt','Gare : Dépôt','Gare : Matériel transport','Gare : Entretien','Gare : Station');
+  $ch_r3=array('Maison','Appartement','D&eacute;pendance bâtie isol&eacute;e','Local commun','Commerce avec boutique','Commerce sans boutique','D&eacute;pendance commerciale','Local divers','Maison exeptionnelle','Maison partag&eacute;e par une limite territoriale','Sol de construction sur sol d\'autrui','Autoroute','Chantier','Etablissement industriel','Etablissement industriel','Transformateur &eacute;lectrique','Appareil à gaz','Gare','Gare : Triage','Gare : Atelier mat&eacute;riel','Gare : Atelier magasin','Gare : D&eacute;pôt','Gare : D&eacute;pôt','Gare : Mat&eacute;riel transport','Gare : Entretien','Gare : Station');
   echo str_replace($ch_c3,$ch_r3,$row_bat[$i]['cconlc']).'</td><td>'.$row_bat3[0]['libAPE'].'</td>';
   echo '</tr><tr>';
-  echo '<td>Catégorie loi de 48 : '.$row_bat[$i]['cc48lc'].'</td>';
+  echo '<td>Cat&eacute;gorie loi de 48 : '.$row_bat[$i]['cc48lc'].'</td>';
   echo '<td>Loyer loi de 48 : '.$row_bat[$i]['dloy48a'].'</td>';
   echo '<td>Occupation : ';
   $ch_c4=array('D','V','P','L','T');
-  $ch_r4=array('Habitation principale occupé par le propriétaire','Vacant','Occupé par le propriétaire','Location','Location soumise à TVA');
+  $ch_r4=array('Habitation principale occup&eacute; par le propri&eacute;taire','Vacant','Occup&eacute; par le propri&eacute;taire','Location','Location soumise à TVA');
   echo str_replace($ch_c4,$ch_r4,$row_bat[$i]['dnatic']).'</td><td>'.$row_bat[$i]['cchpr'].'</td></tr><tr>';
-  echo '<td>Année de construction : '.$row_bat[$i]['jannat'].'</td>';
+  echo '<td>Ann&eacute;e de construction : '.$row_bat[$i]['jannat'].'</td>';
   echo '<td>Nombre de niveau : '.$row_bat[$i]['dnbniv'].'</td>';
   echo '<td>HLM ou SEM : '.$row_bat[$i]['hmsem'].'</td>';
   echo '<td></td>';
@@ -113,19 +109,19 @@ for ($i=0;$i<count($row_bat);$i++){
 	  echo '<tr class="th1">';
 	  echo '<th colspan="4">Eléments de confort</th></tr><tr><td>';
 	  if ($row_hab[$j]['geaulc']=='O'){$va="checked";}else{$va="";}
-	  echo '<input '.$va.' type="checkbox"> Présence d\'eau</td><td>';
+	  echo '<input '.$va.' type="checkbox"> Pr&eacute;sence d\'eau</td><td>';
 	  if ($row_hab[$j]['gelelc']=='O'){$va="checked";}else{$va="";}
-	  echo '<input '.$va.' type="checkbox"> Présence d\'électricité</td><td>';
+	  echo '<input '.$va.' type="checkbox"> Pr&eacute;sence d\'&eacute;lectricité</td><td>';
 	  if ($row_hab[$j]['gesclc']=='O'){$va="checked";}else{$va="";}
 	  echo '<input '.$va.' type="checkbox"> Escalier de service</td><td>';
 	  if ($row_hab[$j]['ggazlc']=='O'){$va="checked";}else{$va="";}
-	  echo '<input '.$va.' type="checkbox"> Présence de gaz</td></tr><tr><td>';
+	  echo '<input '.$va.' type="checkbox"> Pr&eacute;sence de gaz</td></tr><tr><td>';
 	  if ($row_hab[$j]['gasclc']=='O'){$va="checked";}else{$va="";}
-	  echo '<input '.$va.' type="checkbox"> Présence d\'ascenseur</td><td>';
+	  echo '<input '.$va.' type="checkbox"> Pr&eacute;sence d\'ascenseur</td><td>';
 	  if ($row_hab[$j]['gchclc']=='O'){$va="checked";}else{$va="";}
 	  echo '<input '.$va.' type="checkbox">Chauffage central</td><td>';
 	  if ($row_hab[$j]['GVORLC']=='O'){$va="checked";}else{$va="";}
-	  echo '<input '.$va.' type="checkbox">Présence de vide ordure</td><td>';
+	  echo '<input '.$va.' type="checkbox">Pr&eacute;sence de vide ordure</td><td>';
 	  if ($row_hab[$j]['gteglc']=='O'){$va="checked";}else{$va="";}
 	  echo '<input '.$va.' type="checkbox">Tout à l\'égout</td></tr><tr>';
 	  echo '<td>'.$row_hab[$j]['dnbbai'].' baignoire(s)</td>';
@@ -141,10 +137,10 @@ for ($i=0;$i<count($row_bat);$i++){
 	  echo '</td></tr><tr><td>'.$row_hab[$j]['dnbann'].' pièces annexes</td>';
 	  echo '<td>soit au total '.$row_hab[$j]['dnbpdc'].' pièces</td><td>de '.$row_hab[$j]['dsupdc'].'m²</td><td></td></tr><tr class="th1">';
 	  $ch_c5=array('0','1','2','3','4','5','6','9');
-	  $ch_r5=array('indéterminé','pierre','meulière','béton','briques','aggloméré','bois','autres');
-	  echo '<th colspan="4">Caractéristique générales</th></tr><tr><td>Matériaux des gros murs : '.str_replace($ch_c4,$ch_r4,$row_hab[$j]['dmatgm']);
-	  echo '</td><td>Matériaux des toitures : '.$row_hab[$j]['dmatto'].' </td>';
-	  echo '<td>Année d\'achèvement : '.$row_hab[$j]['jannat'].' </td>';
+	  $ch_r5=array('ind&eacute;termin&eacute;','pierre','meulière','b&eacute;ton','briques','agglom&eacute;r&eacute;','bois','autres');
+	  echo '<th colspan="4">Caract&eacute;ristique g&eacute;n&eacute;rales</th></tr><tr><td>Mat&eacute;riaux des gros murs : '.str_replace($ch_c4,$ch_r4,$row_hab[$j]['dmatgm']);
+	  echo '</td><td>Mat&eacute;riaux des toitures : '.$row_hab[$j]['dmatto'].' </td>';
+	  echo '<td>Ann&eacute;e d\'achèvement : '.$row_hab[$j]['jannat'].' </td>';
 	  echo '<td>Etat d\'entretien : '.$row_hab[$j]['detent'].' </td></tr>';
 	}
       //<cfinclude template="fic_pro.cfm">
@@ -153,17 +149,17 @@ for ($i=0;$i<count($row_bat);$i++){
       for ($l=0;$l<count($row_pro);$l++){
 	echo '<tr class="th1">';
 	echo '<th colspan="4">Descriptif professionnel</th></tr>';
-	echo '<tr><td>Surface réelle totale : '.$row_pro[$l]['VSURZT'].'m²</td>';
+	echo '<tr><td>Surface r&eacute;elle totale : '.$row_pro[$l]['VSURZT'].'m²</td>';
 	echo '<td></td><td></td><td></td></tr>';
       }
       //<cfinclude template="fic_dep.cfm">
       $q_dep="SELECT * FROM cadastre.B_DEPDGI where invar='".$row_bat[$i]['invar']."' and dnupev='".$row_bat2[$k]['dnupev']."'";
       $row_dep=$DB->tab_result($q_dep);
       for ($m=0;$m<count($row_dep);$m++){
-	echo '<tr class="th1"><th colspan="4">Descriptif de dépendance</th></tr>';
+	echo '<tr class="th1"><th colspan="4">Descriptif de d&eacute;pendance</th></tr>';
 	echo '<tr><td>Surface réelle : '.$row_dep[$m]['DSUDEP'].'m²</td>';
 	$ch_c6=array('GA','CV','GR','TR','GP','GC','BX','PK','CL','BD','BC','RS','TT','PI','PA','CD','DC','JH','PS','SR');
-	$ch_r6=array('Garage','Cave','Grenier','Terrasse','Garage/parking','Grenier/cave','Box','Parking','Cellier','Buanderie','Bûcher','Remise','Toiture-terrasse','Pièce indépendante','Elément de pur agrément','Chambre de domestique','Dépendance de local commun','Jardin d\'hiver','Piscine','Serre');
+	$ch_r6=array('Garage','Cave','Grenier','Terrasse','Garage/parking','Grenier/cave','Box','Parking','Cellier','Buanderie','Bûcher','Remise','Toiture-terrasse','Pièce ind&eacute;pendante','El&eacute;ment de pur agr&eacute;ment','Chambre de domestique','D&eacute;pendance de local commun','Jardin d\'hiver','Piscine','Serre');
 	echo '<td>Nature : '.str_replace($ch_c6,$ch_r6,$row_dep[$m]['CCONAD']).'</td>';
 	echo '<td>Matériaux gros murs :'.$row_dep[$m]['DMATGM'].'</td>';
 	echo '<td>Matériaux toitures : '.$row_dep[$m]['DMATTO'].'</td>';

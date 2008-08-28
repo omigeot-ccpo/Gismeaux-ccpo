@@ -72,7 +72,7 @@ function cartoHeader($title, $mail="sig@meaux.fr", $author="sig-meaux")
   echo "<html><head>";
   echo "<script type=\"text/javascript\" src=\"".GIS_ROOT."/connexion/media.js\"></script>";
   echo "<title>Cartographie :: $title</title>";
-  echo "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">";
+  echo "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">";
   echo "<meta name=\"keywords\" content=\"SVG, Scalable Vector Graphic, SIG, GIS, Mapserver, Postgis, Postgresql, MapInfo, geographie, geomatique, carte, cartographie, map, XML\">";
   echo "<meta name=\"description\" content=\"Carte SVG :: $title\">";
   echo "<meta name=\"Author\" content=\"$author\">";

@@ -41,8 +41,14 @@ function gis_session_start() // Doit être appellée par toute "page" (php) de G
 {
   if(!session_id())
     {
-      ini_set('session.gc_maxlifetime', 3600);
+//      ini_set('session.gc_maxlifetime', 3600);
+ob_start('ob_gzhandler');
+ini_set('session.gc_maxlifetime', 3600);
+//session_start();
+
       @session_start();
+header('Cache-Control: public');
+header("Pragma:");
       if (!$_SESSION["starttime"])
 	$_SESSION["starttime"] = time();
       //      if (!$_SESSION["user"])
@@ -57,32 +63,32 @@ function gis_session_start() // Doit être appellée par toute "page" (php) de G
     }
 }
 
-function get_root_url($http=0,$https=0) // Retourne l'URL de la racine du serveur, sous la forme proto://host:port
-{
-  $res = 'http';
-  if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']=='on')
-    {
-      $res .=  's';
-    }
-  if ($http)
-    $res = "http";
-  if ($https)
-    $res = "https";
-  $res .=  '://';
-  if($_SERVER['SERVER_PORT']!='80')
-    {
-      $res .= $_SERVER['HTTP_HOST'].':'.$_SERVER['SERVER_PORT'];
-    }
-  else
-    {
-      $res .=  $_SERVER['HTTP_HOST'];
-    }
-  return $res;
-}
+// function get_root_url($http=0,$https=0) // Retourne l'URL de la racine du serveur, sous la forme proto://host:port
+// {
+//   $res = 'https';
+//   $ssl = 0;
+//   if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']=='on')
+//     {
+//  //    $res .=  's';
+//       $ssl = 1;
+//     }
+//   $res .=  '://';
+//   if((($_SERVER['SERVER_PORT']!='80') && ($ssl == 0))||(($_SERVER['SERVER_PORT']!='443')&&($ssl == 1)))
+//     {
+//       $res .= $_SERVER['HTTP_HOST'].':'.$_SERVER['SERVER_PORT'];
+//     }
+//   else
+//     {
+//       $res .=  $_SERVER['HTTP_HOST'];
+//     }
+//   return $res;
+// }
 
 function get_full_url($http=0,$https=0) // Retourne l'URL vers la page courante, paramètres inclus.
 {
-  $res = get_root_url($http,$https);
+  $res =  "https://".$_SERVER['HTTP_HOST'];
+  $ssl=1;
+  //$res = get_root_url($http,$https);
   $script_name = '';
   if(isset($_SERVER['REQUEST_URI']))
     {
@@ -96,17 +102,30 @@ function get_full_url($http=0,$https=0) // Retourne l'URL vers la page courante,
 	  $script_name .=  '?'.$_SERVER['QUERY_STRING'];
 	}
     }
-  $res .= $script_name;
+  if ($script_name != '?') $res .= $script_name;
   return $res;
 }
+// function get_full_url(){// prend l'url
+// $url =  $_SERVER['SCRIPT_URI'];$ssl=1;
+// // Parse l'url
+// $base = parse_url($url);
+// // Creation du chemin
+// $chemin = "https://".$base[host].$base[path];
+// return $chemin;
+// }
 
 function gis_init() // Ne doit être appellée QUE depuis les pages "maitresses".
 {
   if (!gis_session_start())
     {
       save_previous();
-      header("Location: /auth.php");
-    }
+    	if ($_GET['authcode'] == '2')
+	  	{
+			header("Location: /auth.php?authcode=".$_GET['authcode']);
+		}else{
+			header("Location: /auth.php");
+		}
+   	}
 }
 
 function save_previous($suffix="")
@@ -127,7 +146,9 @@ function load_previous($suffix="")
 	$prev = $_SESSION['previous'.$suffix];
 	//	unset($_SESSION['previous'.$suffix]);
 	header('Location: '.$prev);
-	die();
+	//header("Location: https://carto284");
+	exit;
+	//die();
       }
   
   header('Location: /erreur.php?code=1');
