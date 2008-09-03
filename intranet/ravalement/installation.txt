@@ -1,4 +1,0 @@
-créer un repertoire ravalement dans le dossier intranet et copier l'ensemble des fichiers et répertoire.
-Ensuite avec phppgadmin ou pgAdminIII exécutez install.sql.
-Une fois la requete sql terminée,copier le fichier Ravalement.map dans le répertoire capm.
-Avec le module administration ajouter l'application aux utilisateurs.  
