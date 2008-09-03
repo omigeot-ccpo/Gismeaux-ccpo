@@ -22,9 +22,15 @@ LAYER
 	CONNECTIONTYPE postgis
 	NAME "commune" group "commune"
 	CONNECTION "user=%user% password=%password% dbname=%dbname% host=%host%"
-	DATA "the_geom from admin_svg.commune using unique the_geom using SRID=-1"
+	DATA "the_geom from admin_svg.commune using unique the_geom"
 	STATUS on
 	TYPE POLYGON
+	PROJECTION 
+	'proj=longlat' 
+	'ellps=WGS84' 
+	'datum=WGS84' 
+	'no_defs' 
+	END 
 	FILTER "idcommune like '%insee%%'"
     CLASS
 		COLOR 228 254 225
@@ -35,9 +41,15 @@ LAYER
 	CONNECTIONTYPE postgis
 	NAME "batiment" group "batiment"
 	CONNECTION "user=%user% password=%password% dbname=%dbname% host=%host%"
-	DATA "the_geom from cadastre.batiment using unique the_geom using SRID=-1"
+	DATA "the_geom from cadastre.batiment using unique the_geom"
 	STATUS on
 	TYPE POLYGON
+	PROJECTION 
+	'proj=longlat' 
+	'ellps=WGS84' 
+	'datum=WGS84' 
+	'no_defs' 
+	END
 	FILTER "code_insee like '%insee%%'"
     CLASS
 		COLOR 184 84 149
@@ -47,9 +59,15 @@ LAYER
 	CONNECTIONTYPE postgis
 	NAME "bati" group "bati"
 	CONNECTION "user=%user% password=%password% dbname=%dbname% host=%host%"
-	DATA "the_geom from bd_topo.batiment using unique the_geom using SRID=-1"
+	DATA "the_geom from bd_topo.batiment using unique the_geom"
 	STATUS on
 	TYPE POLYGON
+	PROJECTION 
+	'proj=longlat' 
+	'ellps=WGS84' 
+	'datum=WGS84' 
+	'no_defs' 
+	END
 	   CLASS
 		COLOR 184 84 149
 	END
@@ -58,9 +76,15 @@ LAYER
 	CONNECTIONTYPE postgis
 	NAME "surface_eau" group "surface_eau"
 	CONNECTION "user=%user% password=%password% dbname=%dbname% host=%host%"
-	DATA "the_geom from bd_topo.surface_eau using unique the_geom using SRID=-1"
+	DATA "the_geom from bd_topo.surface_eau using unique the_geom"
 	STATUS on
 	TYPE POLYGON
+	PROJECTION 
+	'proj=longlat' 
+	'ellps=WGS84' 
+	'datum=WGS84' 
+	'no_defs' 
+	END
     CLASS
 		COLOR 0 0 255
 	END
@@ -69,9 +93,15 @@ LAYER
 	CONNECTIONTYPE postgis
 	NAME "troncon_route" group "troncon_route"
 	CONNECTION "user=%user% password=%password% dbname=%dbname% host=%host%"
-	DATA "the_geom from bd_topo.troncon_route using unique the_geom using SRID=-1"
+	DATA "the_geom from bd_topo.troncon_route using unique the_geom"
 	STATUS on
 	TYPE line
+	PROJECTION 
+	'proj=longlat' 
+	'ellps=WGS84' 
+	'datum=WGS84' 
+	'no_defs' 
+	END
     CLASS
 		EXPRESSION ('[nature]' eq 'Principale')
 		COLOR 0 0 0
@@ -83,9 +113,15 @@ LAYER
 	CONNECTIONTYPE postgis
 	NAME "parcelle" group "parcelle"
 	CONNECTION "user=%user% password=%password% dbname=%dbname% host=%host%"
-	DATA "the_geom from cadastre.parcelle using unique the_geom using SRID=-1"
+	DATA "the_geom from cadastre.parcelle using unique the_geom"
 	STATUS on
 	TYPE POLYGON
+	PROJECTION 
+	'proj=longlat' 
+	'ellps=WGS84' 
+	'datum=WGS84' 
+	'no_defs' 
+	END
     FILTER "code_insee like '%insee%%'"
 	CLASS
 		COLOR 255 128 0
@@ -98,9 +134,15 @@ LAYER
   CONNECTIONTYPE postgis
   NAME "parcelle" group "parcelle"
   CONNECTION "user=%user% password=%password% dbname=%dbname% host=%host%"
-  DATA "the_geom FROM cadastre.parcelle using unique the_geom using SRID=-1"
+  DATA "the_geom FROM cadastre.parcelle using unique the_geom"
   STATUS on
   TYPE polygon
+  PROJECTION 
+	'proj=longlat' 
+	'ellps=WGS84' 
+	'datum=WGS84' 
+	'no_defs' 
+	END
   FILTER "code_insee like '%insee%%'"
    CLASS
      OUTLINECOLOR  0 0 0
