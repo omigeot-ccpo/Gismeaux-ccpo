@@ -5,18 +5,26 @@ peur. Et encore.
 
 Le but initial de cette branche est de tester de nouvelles idées et d'en discuter.
 
+ATTENTION (suite) : Ceci est toujours en travaux puisque l'application doit r�pondre 
+aux attentes de ses utilisateurs!!
+Il est maintenant recommand� de l'utiliser cette ensemble d'applications �tant 
+actuellement en production.
+Toutefois les fichiers install.php et configuration.php sont livr�s en l'�tat (ils 
+nous ont aucune utilit� notre site existant depuis 2004) et donc les retours d'exp�riences 
+seront les bienvenus
+
 PRINCIPALES MODIFICATIONS
 
 * Regroupement des branches "intranet", "internet" et "test_ssl" 
   en une seule branche, nommée "application".
 
-* Rationalisation (en cours) des inclusions. Les fichiers PHP 
+* Rationalisation des inclusions. Les fichiers PHP 
   partagés se trouvent dans /inc, les fichiers appellés à être 
   modifiés à l'installation sont dans /conf.
 
 * Modularisation des routines de base de données. /inc/database.php 
   définit désormais une classe (DBpg) et une variable globale ($DB) 
-  qui embarque les anciennes fonction "tab_result" et assimilées.
+  qui embarque les anciennes fonction "tab_result" et assimil�es.
 
 * Un même entête se trouve désormais au début de tous les 
   fichiers PHP inclus. Celui-ci s'assure que les fichiers 

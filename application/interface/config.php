@@ -31,24 +31,18 @@ sécurité de leurs systèmes et ou de leurs données et, plus généralement,
 Le fait que vous puissiez accéder à cet en-tête signifie que vous avez 
 pris connaissance de la licence CeCILL-C, et que vous en avez accepté les 
 termes.*/
-//$config_serveur_smtp="smtp.mydomain" ;
-$config_serveur_smtp="192.168.200.2" ;
-// Si vous ne maîtriser pas le serveur SMTP ou si, à l'utilisation, vous avez une érreur de connexion au serveur, 
-//  laisser cette variable vide ("")
-
-/**************************************************************************************************************/
-/**************************************************************************************************************/
-//  ENVOI DE MAIL 
-//adresse administrateur
-$adresse_admin="jean-luc.dechamp@meaux.fr;robert.leguay@meaux.fr";
-// sujet du message :
-$config_mail_sujet= "- Problème interface -";
-// corps du message : 
-$config_mail_contenu = " a rencontré un problème avec l'interface cartographique.
+$db_name="meaux" ;
+$db_host="localhost" ;
+$db_user="postgres" ;
+$db_passwd="" ;
+$ms_dbg_line = 0 ;
+$config_serveur_smtp="127.0.0.1" ;
+$adresse_admin="jean-luc.dechamp@meaux.fr;robert.leguay@meaux.fr" ;
+$config_mail_sujet="- Problème interface -" ;
+$config_mail_contenu=" a rencontré un problème avec l'interface cartographique.
 
 Merci de consulter la base d'administration
 
 -------------------------------------------------------------------------------------------------------
-Ceci est un message automatique.";
-
+Ceci est un message automatique." ;
 ?>

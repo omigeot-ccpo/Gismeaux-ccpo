@@ -32,24 +32,24 @@ Le fait que vous puissiez accéder à cet en-tête signifie que vous avez
 pris connaissance de la licence CeCILL-C, et que vous en avez accepté les 
 termes.*/
 
-
 define('GIS_ROOT','.');
 include_once(GIS_ROOT . '/inc/common.php');
 gis_init();
 //check_auth();
 echo "<html>";
 echo "<head>";
-echo "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf8\">";
-echo "<title>GISMeaux :: Entrée</title>";
+echo "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">";
+echo "<title>GISMeaux :: Entr&eacute;e</title>";
 echo "</head>";
 echo "<body>";
-echo "<p>GISMeaux :: Point d'entrée</p>";
-echo "<p>".$_SERVER['SERVER_SIGNATURE']."</p>";
-echo "<p>Connecté en temps que ".$_SESSION['profil']->getUserName()." via ".$_SESSION['profil']->name."</p>";
-echo count($_SESSION['profil']->roles)." ".$_SESSION['profil']->rolequery;
+//echo "<p>GISMeaux :: Point d'entrée</p>";
+//echo "<p>".$_SERVER['SERVER_SIGNATURE']."</p>";
+//echo "<p>Connecté en temps que ".$_SESSION['profil']->appli." via ".$_SESSION['profil']->name."</p>";
+//echo $_SESSION['profil']->droit." ".$_SESSION['profil']->idutilisateur." ".$_SESSION['profil']->insee."<br/>";
+include("./interface/carto.php");
 
-echo "<p><a href=\"/interface/carto.php\">Cartographie</a></p>";
-echo "<p><a href=\"/interface/back_office/\">Back-office</a></p>";
+//echo "<p><a href=\"/interface/carto.php\">Cartographie</a></p>";
+//echo "<p><a href=\"/interface/back_office/\">Back-office</a></p>";
 echo "</body>";
 echo "</html>";
 ?>

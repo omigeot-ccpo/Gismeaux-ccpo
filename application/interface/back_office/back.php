@@ -31,115 +31,105 @@ sécurité de leurs systèmes et ou de leurs données et, plus généralement,
 Le fait que vous puissiez accéder à cet en-tête signifie que vous avez 
 pris connaissance de la licence CeCILL-C, et que vous en avez accepté les 
 termes.*/
-
 define('GIS_ROOT', '../..');
 include_once(GIS_ROOT . '/inc/common.php');
 gis_session_start();
-
-$insee = $_SESSION['profil']->insee;
-$appli = $_SESSION['profil']->appli;
-
-if (!$_SESSION['profil']->ok($insee = $insee,$action = "backoffice"))
-  die("Interdit.");
-
-
 if (eregi('MSIE', $_SERVER['HTTP_USER_AGENT']))
-  {    
-    $nav="0";// Internet Explorer 
-  }
-elseif (eregi('Opera', $_SERVER['HTTP_USER_AGENT']))
-{
-  $nav="1";//opÃ©ra
+{    
+$nav="0";// Internet Explorer 
 }
- else
-   {
-     $nav="2";//mozilla
-   }
-
+elseif (eregi('Opera', $_SERVER['HTTP_USER_AGENT']))
+{ 
+$nav="1";//opÃ©ra
+}
+else
+{
+$nav="2";//mozilla
+}
 $os = "";
 if (ereg("Linux", getenv("HTTP_USER_AGENT"))) 
   $os = "Linux"; 
 $sessi=session_id();
-$reqcom="select (commune.xma::real - commune.xmi::real) as largeur,commune.xmi as xini, (commune.yma::real - commune.ymi::real) as hauteur ,commune.yma as yini, (commune.xmi::real + (commune.xma::real - commune.xmi::real)/2) as xcenter,(commune.ymi::real + (commune.yma::real - commune.ymi::real)/2) as ycentre from admin_svg.commune where commune.idcommune like '".$insee."'";
+//include("../../connexion/deb.php");
+$reqcom="select (commune.xma::real - commune.xmi::real) as largeur,commune.xmi as xini, (commune.yma::real - commune.ymi::real) as hauteur ,commune.yma as yini, (commune.xmi::real + (commune.xma::real - commune.xmi::real)/2) as xcenter,(commune.ymi::real + (commune.yma::real - commune.ymi::real)/2) as ycentre from admin_svg.commune where commune.idcommune like '".$_SESSION["profil"]->insee."'";
 
-$vu=$DB->tab_result($reqcom);
-$_SESSION['large'] =$vu[0]['largeur'];
-$_SESSION['haute'] =$vu[0]['hauteur'];
-$_SESSION['xini'] =& $vu[0]['xini'];
-$_SESSION['yini'] =& $vu[0]['yini'];
-$_SESSION['xcenter'] =& $vu[0]['xcenter'];
-$_SESSION['ycenter'] =& $vu[0]['ycentre'];
-$_SESSION['image'] ="";
-$_SESSION['cotation'] ="";
-
+		$vu=$DB->tab_result($reqcom);
+		$_SESSION['large'] =$vu[0]['largeur'];
+		$_SESSION['haute'] =$vu[0]['hauteur'];
+		$_SESSION['xini'] =& $vu[0]['xini'];
+		$_SESSION['yini'] =& $vu[0]['yini'];
+		$_SESSION['xcenter'] =& $vu[0]['xcenter'];
+		$_SESSION['ycenter'] =& $vu[0]['ycentre'];
+		$_SESSION['image'] ="";
+		$_SESSION['cotation'] ="";
+		
 $legende="";
 $controle="";
 $chaine="";
 $symbol="";
 $textsymbol="";
 $extraction="";
-
-$req2="select theme.idtheme,theme.libelle_them as nom_theme,theme.schema,theme.tabl,appthe.idappthe,col_theme.colonn,admin_svg.v_fixe(col_theme.valeur_texte),appthe.raster,sinul(appthe.zoommin::character varying,theme.zoommin::character varying) as zoommin,sinul(appthe.zoommax::character varying,theme.zoommax::character varying) as zoommax,sinul(appthe.zoommaxraster::character varying,theme.zoommax_raster::character varying) as zoommax_raster,theme.raster as testraster,application.zoom_min as zoom_min_appli,application.zoom_max as zoom_max_appli,application.zoom_ouverture as zoom_ouverture_appli,sinul(appthe.partiel,theme.partiel) as partiel,sinul(appthe.vu_initial,theme.vu_initial) as vu_initial,style.idstyle,style.fill as style_fill,style.symbole as style_symbole,style.opacity  as style_opacity,style.font_size  as style_fontsize,style.stroke_rgb  as style_stroke,style.stroke_width  as style_strokewidth,application.btn_polygo,application.libelle_btn_polygo from admin_svg.appthe join admin_svg.theme on appthe.idtheme=theme.idtheme join admin_svg.application on appthe.idapplication=application.idapplication left outer join  admin_svg.col_theme on appthe.idappthe=col_theme.idappthe left outer join admin_svg.style on appthe.idtheme=style.idtheme where appthe.idapplication=".$appli." group by theme.idtheme,theme.libelle_them,appthe.ordre,theme.schema,theme.tabl,col_theme.colonn,admin_svg.v_fixe(col_theme.valeur_texte),appthe.raster,theme.zoommin,appthe.zoommin,theme.zoommax,appthe.zoommax,theme.zoommax_raster,appthe.zoommaxraster,theme.raster,application.zoom_min,application.zoom_max,application.zoom_ouverture,appthe.partiel,theme.partiel,appthe.vu_initial,theme.vu_initial,style.idstyle,style.fill,style.symbole,style.opacity,style.font_size,style.stroke_rgb,style.stroke_width,appthe.idappthe,application.btn_polygo,application.libelle_btn_polygo order by appthe.ordre asc";
-
+$req2="select theme.idtheme,theme.libelle_them as nom_theme,theme.schema,theme.tabl,appthe.idappthe,col_theme.colonn,admin_svg.v_fixe(col_theme.valeur_texte),appthe.raster,sinul(appthe.zoommin::character varying,theme.zoommin::character varying) as zoommin,sinul(appthe.zoommax::character varying,theme.zoommax::character varying) as zoommax,sinul(appthe.zoommaxraster::character varying,theme.zoommax_raster::character varying) as zoommax_raster,theme.raster as testraster,application.zoom_min as zoom_min_appli,application.zoom_max as zoom_max_appli,application.zoom_ouverture as zoom_ouverture_appli,sinul(appthe.partiel,theme.partiel) as partiel,sinul(appthe.vu_initial,theme.vu_initial) as vu_initial,style.idstyle,style.fill as style_fill,style.symbole as style_symbole,style.opacity  as style_opacity,style.font_size  as style_fontsize,style.stroke_rgb  as style_stroke,style.stroke_width  as style_strokewidth,application.btn_polygo,application.libelle_btn_polygo from admin_svg.appthe join admin_svg.theme on appthe.idtheme=theme.idtheme join admin_svg.application on appthe.idapplication=application.idapplication left outer join  admin_svg.col_theme on appthe.idappthe=col_theme.idappthe left outer join admin_svg.style on appthe.idtheme=style.idtheme where appthe.idapplication='".$_SESSION["appli"]."' group by theme.idtheme,theme.libelle_them,appthe.ordre,theme.schema,theme.tabl,col_theme.colonn,admin_svg.v_fixe(col_theme.valeur_texte),appthe.raster,theme.zoommin,appthe.zoommin,theme.zoommax,appthe.zoommax,theme.zoommax_raster,appthe.zoommaxraster,theme.raster,application.zoom_min,application.zoom_max,application.zoom_ouverture,appthe.partiel,theme.partiel,appthe.vu_initial,theme.vu_initial,style.idstyle,style.fill,style.symbole,style.opacity,style.font_size,style.stroke_rgb,style.stroke_width,appthe.idappthe,application.btn_polygo,application.libelle_btn_polygo order by appthe.ordre asc";
 $cou=$DB->tab_result($req2);
 if($cou[0]['zoom_min_appli']=="")
-  {
-    $sqql="select zoom_min as zoom_min_appli,application.zoom_max as zoom_max_appli,application.zoom_ouverture as zoom_ouverture_appli from admin_svg.application where idapplication=".$appli;
-    $cou1=$DB->tab_result($sqql);
-    $zoommin=$cou1[0]['zoom_min_appli'];
-    $zoommax=$cou1[0]['zoom_max_appli'];
-    $zoomouv=$cou1[0]['zoom_ouverture_appli'];
-  }
- else
-   {
-     $zoommin=$cou[0]['zoom_min_appli'];
-     $zoommax=$cou[0]['zoom_max_appli'];
-     $zoomouv=$cou[0]['zoom_ouverture_appli'];
-   }
+{
+$sqql="select zoom_min as zoom_min_appli,application.zoom_max as zoom_max_appli,application.zoom_ouverture as zoom_ouverture_appli from admin_svg.application where idapplication='".$_SESSION["appli"]."'";
+$cou1=tab_result($pgx,$sqql);
+$zoommin=$cou1[0]['zoom_min_appli'];
+$zoommax=$cou1[0]['zoom_max_appli'];
+$zoomouv=$cou1[0]['zoom_ouverture_appli'];
+}
+else
+{
+$zoommin=$cou[0]['zoom_min_appli'];
+$zoommax=$cou[0]['zoom_max_appli'];
+$zoomouv=$cou[0]['zoom_ouverture_appli'];
+}
 $min=$zoommin;
 $intervale=round(($zoommax-$zoommin)/18);
 $zoommax=$zoommin+(18*$intervale);
 if($_SESSION['zoommm'])
-  {
-    if($_SESSION['zoommm']>=$zoommin)
-      { 
+	{
+	if($_SESSION['zoommm']>=$zoommin)
+	{ 
 	$zo=$_SESSION['zoommm'];
-      }
-    else
-      {
+	}
+	else
+	{
 	$zo=$zoommin;
-      }
-    if($_SESSION['zoommm']>=$zoommax)
-      { 
+	}
+	if($_SESSION['zoommm']>=$zoommax)
+	{ 
 	$zo=$zoommin;
-      }
-    $xc=$_SESSION['cx'];
-    $yc=$_SESSION['cy'];
-  }
- else
-   {
-     $zo=$zoomouv;
-     $xc=0;
-     $yc=0;
-   }
+	}
+	$xc=$_SESSION['cx'];
+	$yc=$_SESSION['cy'];
+	}
+else
+{
+$zo=$zoomouv;
+	$xc=0;
+	$yc=0;
+}
 if($zo!=$zoommin)
-  {
-    $debut=$zoommin;
-    $debut1=$debut+$intervale;
-    for ($i=0;$i<17;$i++)
-      {
-	if ($zo < $debut1 && $zo >= $debut) 
-	  {
-	    $zoomouv=$debut1;
-	  }
-	$debut=$debut+$intervale;
-	$debut1=$debut1+$intervale;
-      }
-  }
- else
-   {
-     $zoomouv=$zoommin;
-   }
+{
+$debut=$zoommin;
+$debut1=$debut+$intervale;
+		for ($i=0;$i<17;$i++)
+		{
+			if ($zo < $debut1 && $zo >= $debut) 
+			{
+			$zoomouv=$debut1;
+			}
+			$debut=$debut+$intervale;
+			$debut1=$debut1+$intervale;
+		}
+
+}
+else
+{
+$zoomouv=$zoommin;
+}
 $posi=688;
 $y=290;
 $tab_layer="var zlayer=new Array;";
@@ -147,190 +137,193 @@ $layer="var layer=new Array;";
 $lay="var controllay=new Array;";
 $j=0;
 for ($c=0;$c<count($cou);$c++)
-  {
-    $req1="select distinct (col_theme.intitule_legende) as intitule_legende,col_theme.idappthe,col_theme.fill,col_theme.stroke_rgb,col_theme.stroke_width,col_theme.symbole,col_theme.font_size,col_theme.font_familly,col_theme.opacity,col_theme.ordre from admin_svg.appthe join admin_svg.col_theme on appthe.idappthe=col_theme.idappthe join admin_svg.theme on appthe.idtheme=theme.idtheme ";
-    if($cou[$c]['v_fixe']=='1' and $cou[$c]['colonn']<>'')
-      {
-	$req1.=" join ".$cou[$c]['schema'].".".$cou[$c]['tabl']." on col_theme.valeur_texte=".$cou[$c]['tabl'].".".$cou[$c]['colonn']." where 					appthe.idapplication=".$appli." and theme.libelle_them='".$cou[$c]['nom_theme']."'";
-	if(substr($insee, -3)!='000' && $cou[$c]['schema']!="bd_topo")
-	  {
-	    $req1.=" and (".$cou[$c]['tabl'].".code_insee like '".$insee."'  or code_insee is null) ";
-	  }
-	$req1.=" order by col_theme.ordre asc";
-      }
-    else
-      {
-	$req1.=" where appthe.idapplication=".$appli." and theme.libelle_them='".$cou[$c]['nom_theme']."' order by col_theme.ordre asc";
-      }
-    $couch=$DB->tab_result($req1);
-    $z=$c+1;
-    $chaine.="<g id='control".$z."' visibility='hidden'>\n";
-    $legende.="<g id='theme".$z."' so=\"".count($couch)."\">\n";
-    $cous="";
-    $leg="";
-    $typ='';
-    if(count($couch)>0)
-      {
-	for ($r=0;$r<count($couch);$r++)
-	  {
-	    $cous.=$z.codalpha($r+1).";";
-	    $leg.=$cou[$c]['idappthe'].".".$couch[$r]['intitule_legende']."|";
-	    if($cou[$c]['testraster']=='')
-	      {
-		$typ='';
-		if($cou[$c]['raster']=='f')
-		  {
-		    $zz=$cou[$c]['zoommin'];
-		  }
-		else
-		  {
-		    $zz=$cou[$c]['zoommax_raster'];
-		  }
-		$tab_layer.="zlayer['".$cou[$c]['idappthe'].".".$couch[$r]['intitule_legende']."']=new glayer('".$z.codalpha($r+1)."','FALSE','','',".$zz.",'".$cou[$c]['partiel']."');";
-		$layer.="layer[$j]='".$cou[$c]['idappthe'].".".$couch[$r]['intitule_legende']."';";
-		$j=$j+1;
-	      }
-	    else
-	      {
-		$typ='raster';
-	      }
-	  }
-	$cous = substr($cous,0,strlen($cous)-1);
-	$leg = substr($leg,0,strlen($leg)-1);
-      }
-    else
-      {
-	$leg=$cou[$c]['idappthe'].".".$cou[$c]['nom_theme'];
-	if($cou[$c]['testraster']=='')
-	  {
-	    $typ='';
-	    if($cou[$c]['zoommax']<$cou[$c]['zoommax_raster'])
-	      {
-		$typ='raster';
-	      }
-	    if($cou[$c]['raster']=='f')
-	      {
-		$zz=$cou[$c]['zoommin'];
-	      }
-	    else
-	      {
-		$zz=$cou[$c]['zoommax_raster'];
-	      }
-	    $tab_layer.="zlayer['".$cou[$c]['idappthe'].".".$cou[$c]['nom_theme']."']=new glayer('".$z."','FALSE','','',".$zz.",'".$cou[$c]['partiel']."');";
-	    $layer.="layer[$j]='".$cou[$c]['idappthe'].".".$cou[$c]['nom_theme']."';";
-	    $j=$j+1;
-	  }
+{
+$req1="select distinct (col_theme.intitule_legende) as intitule_legende,col_theme.idappthe,col_theme.fill,col_theme.stroke_rgb,col_theme.stroke_width,col_theme.symbole,col_theme.font_size,col_theme.font_familly,col_theme.opacity,col_theme.ordre from admin_svg.appthe join admin_svg.col_theme on appthe.idappthe=col_theme.idappthe join admin_svg.theme on appthe.idtheme=theme.idtheme ";
+	if($cou[$c]['v_fixe']=='1' and $cou[$c]['colonn']<>'')
+	{
+	$req1.=" join ".$cou[$c]['schema'].".".$cou[$c]['tabl']." on col_theme.valeur_texte=".$cou[$c]['tabl'].".".$cou[$c]['colonn']." where 					appthe.idapplication='".$_SESSION["appli"]."' and theme.libelle_them='".$cou[$c]['nom_theme']."'";
+	if(substr($_SESSION["profil"]->insee, -3)!='000' && $cou[$c]['schema']!="bd_topo")
+	{
+	$req1.=" and (".$cou[$c]['tabl'].".code_insee like '".$_SESSION["profil"]->insee."'  or code_insee is null) ";
+	 }
+	 $req1.=" order by col_theme.ordre asc";
+	}
+	
 	else
-	  {
-	    $typ='raster';
-	  }
+	{
+	$req1.=" where appthe.idapplication='".$_SESSION["appli"]."' and theme.libelle_them='".$cou[$c]['nom_theme']."' order by col_theme.ordre asc";
+	}
+	$couch=$DB->tab_result($req1);
+	$z=$c+1;
+	$chaine.="<g id='control".$z."' visibility='hidden'>\n";
+	$legende.="<g id='theme".$z."' so=\"".count($couch)."\">\n";
+	$cous="";
+	$leg="";
+	$typ='';
+	if(count($couch)>0)
+		{
+			for ($r=0;$r<count($couch);$r++)
+			{
+			$cous.=$z.codalpha($r+1).";";
+			$leg.=$cou[$c]['idappthe'].".".$couch[$r]['intitule_legende']."|";
+				if($cou[$c]['testraster']=='')
+				{
+				$typ='';
+					if($cou[$c]['raster']=='f')
+					{
+					$zz=$cou[$c]['zoommin'];
+					}
+					else
+					{
+					$zz=$cou[$c]['zoommax_raster'];
+					}
+				$tab_layer.="zlayer['".$cou[$c]['idappthe'].".".$couch[$r]['intitule_legende']."']=new glayer('".$z.codalpha($r+1)."','FALSE','','',".$zz.",'".$cou[$c]['partiel']."');";
+				$layer.="layer[$j]='".$cou[$c]['idappthe'].".".$couch[$r]['intitule_legende']."';";
+				$j=$j+1;
+				}
+				else
+				{
+				$typ='raster';
+				}
+			}
+		$cous = substr($cous,0,strlen($cous)-1);
+		$leg = substr($leg,0,strlen($leg)-1);
+	}
+	else
+	{
+	$leg=$cou[$c]['idappthe'].".".$cou[$c]['nom_theme'];
+		if($cou[$c]['testraster']=='')
+		{
+		$typ='';
+		if($cou[$c]['zoommax']<$cou[$c]['zoommax_raster'])
+		{
+		$typ='raster';
+		}
+		if($cou[$c]['raster']=='f')
+		{
+		$zz=$cou[$c]['zoommin'];
+		}
+		else
+		{
+		$zz=$cou[$c]['zoommax_raster'];
+		}
+		$tab_layer.="zlayer['".$cou[$c]['idappthe'].".".$cou[$c]['nom_theme']."']=new glayer('".$z."','FALSE','','',".$zz.",'".$cou[$c]['partiel']."');";
+		$layer.="layer[$j]='".$cou[$c]['idappthe'].".".$cou[$c]['nom_theme']."';";
+		$j=$j+1;
+		}
+		else
+		{
+		$typ='raster';
+		}
 	$cous=$z;
 	
-      }
-    if($cou[$c]['vu_initial']==1)
-      {
+	}
+	if($cou[$c]['vu_initial']==1)
+	{
 	$extraction.="extract('".$leg."','".$cous."','','".$typ."');";
-      }
-    $legende.="<g id=\"com".$z."\">\n";
-    $legende.="<rect id=\"coche".$z."\" x=\"650\" y=\"".$y."\" width=\"8\" height=\"8\" onclick=\"extract('".$leg."','".$cous."','','".$typ."')\"/>\n";
-    $legende.="<text id=\"tra".$z."\" x=\"650\" y=\"".($y+8)."\" class=\"fillfonce\" pointer-events=\"none\" style=\"font-size:12px;font-family:fontsvg;visibility:hidden\">b</text>\n";
-    if(count($couch)<1 && ($cou[$c]['style_fill']!="" || $cou[$c]['style_stroke']!=""))
-      {
-	if($cou[$c]['style_symbole']!="" || $couch[$w]['symbole']!="")
-	  {
-	    $legende.="<a><text id=\"coul".$z."\" x=\"660\" y=\"".($y+8)."\" font-size=\"12\" stroke=\"none\" font-family=\"fontsvg\" fill=\"rgb(".$cou[$c]['style_fill'].")\" onclick=\"affiche_gestion(evt,'".$cou[$c]['style_fill']."','".$cou[$c]['style_opacity']."','".$cou[$c]['style_stroke']."','".$cou[$c]['style_strokewidth']."','style','".$cou[$c]['style_fontsize']."','".$cou[$c]['style_symbole']."','".$cou[$c]['idstyle']."','".$z."','".$cou[$c]['idtheme']."')\">".$cou[$c]['style_symbole']."</text></a>\n";
-	  }
+	}
+$legende.="<g id=\"com".$z."\">\n";
+$legende.="<rect id=\"coche".$z."\" x=\"650\" y=\"".$y."\" width=\"8\" height=\"8\" onclick=\"extract('".$leg."','".$cous."','','".$typ."')\"/>\n";
+$legende.="<text id=\"tra".$z."\" x=\"650\" y=\"".($y+8)."\" class=\"fillfonce\" pointer-events=\"none\" style=\"font-size:12px;font-family:fontsvg;visibility:hidden\">b</text>\n";
+if(count($couch)<1 && ($cou[$c]['style_fill']!="" || $cou[$c]['style_stroke']!=""))
+{
+if($cou[$c]['style_symbole']!="" || $couch[$w]['symbole']!="")
+{
+$legende.="<a><text id=\"coul".$z."\" x=\"660\" y=\"".($y+8)."\" font-size=\"12\" stroke=\"none\" font-family=\"fontsvg\" fill=\"rgb(".$cou[$c]['style_fill'].")\" onclick=\"affiche_gestion(evt,'".$cou[$c]['style_fill']."','".$cou[$c]['style_opacity']."','".$cou[$c]['style_stroke']."','".$cou[$c]['style_strokewidth']."','style','".$cou[$c]['style_fontsize']."','".$cou[$c]['style_symbole']."','".$cou[$c]['idstyle']."','".$z."','".$cou[$c]['idtheme']."')\">".$cou[$c]['style_symbole']."</text></a>\n";
+}
+else
+{
+	if($cou[$c]['style_stroke']!="" && ($cou[$c]['style_fill']==""||$cou[$c]['style_fill']=="none"))
+	{
+	$legende.="<a><rect id=\"coul".$z."\" x=\"662\" y=\"".$y."\" width=\"8\" height=\"8\" n=\"ok\" fill=\"rgb(".$cou[$c]['style_stroke'].")\" onclick=\"affiche_gestion(evt,'".$cou[$c]['style_fill']."','".$cou[$c]['style_opacity']."','".$cou[$c]['style_stroke']."','".$cou[$c]['style_strokewidth']."','style','".$cou[$c]['style_fontsize']."','".$cou[$c]['style_symbole']."','".$cou[$c]['idstyle']."','".$z."','".$cou[$c]['idtheme']."')\"/></a>\n";
+	}
 	else
-	  {
-	    if($cou[$c]['style_stroke']!="" && ($cou[$c]['style_fill']==""||$cou[$c]['style_fill']=="none"))
-	      {
-		$legende.="<a><rect id=\"coul".$z."\" x=\"662\" y=\"".$y."\" width=\"8\" height=\"8\" n=\"ok\" fill=\"rgb(".$cou[$c]['style_stroke'].")\" onclick=\"affiche_gestion(evt,'".$cou[$c]['style_fill']."','".$cou[$c]['style_opacity']."','".$cou[$c]['style_stroke']."','".$cou[$c]['style_strokewidth']."','style','".$cou[$c]['style_fontsize']."','".$cou[$c]['style_symbole']."','".$cou[$c]['idstyle']."','".$z."','".$cou[$c]['idtheme']."')\"/></a>\n";
-	      }
-	    else
-	      {
-		$legende.="<a><rect id=\"coul".$z."\" x=\"662\" y=\"".$y."\" width=\"8\" height=\"8\" n=\"ok\" fill-opacity=\"".$cou[$c]['style_opacity']."\" fill=\"rgb(".$cou[$c]['style_fill'].")\" onclick=\"affiche_gestion(evt,'".$cou[$c]['style_fill']."','".$cou[$c]['style_opacity']."','".$cou[$c]['style_stroke']."','".$cou[$c]['style_strokewidth']."','style','".$cou[$c]['style_fontsize']."','".$cou[$c]['style_symbole']."','".$cou[$c]['idstyle']."','".$z."','".$cou[$c]['idtheme']."')\"/></a>\n";
-	      }
-	  }
-      }
-    $legende.="<a onclick=\"gest_control_choix(evt,".$cou[$c]['idappthe'].")\"><text id=\"text".$z."\" x=\"674\" y=\"".($y+8)."\" onmouseover=\"switchColor(evt,'fill','red','','')\" onmouseout=\"switchColor(evt,'fill','url(#survol)','','')\"  class=\"fillfonce\">".$cou[$c]['nom_theme']."</text></a>\n";
-    $posilegend.="posilegend[".$z."]='".$cou[$c]['idappthe'].".".$cou[$c]['nom_theme']."';";
-    $posilegendini.="posilegendini[".$z."]='".$cou[$c]['idappthe'].".".$cou[$c]['nom_theme']."';";
-    $txt_ordre_legend.="<text id=\"".$cou[$c]['idappthe'].".".$cou[$c]['nom_theme']."\" x=\"327\" y=\"".(80+($z*15))."\" text-anchor=\"middle\" font-size='10' onmouseover=\"sur(evt,'red')\" onmouseout=\"hors(evt)\" onclick=\"sel_txt_legende(evt,'".$z."')\">".$cou[$c]['nom_theme']."</text>\n";
-    $lay.="controllay[".$c."]=new ylayer(".$cou[$c]['zoommin'].",".$cou[$c]['zoommax'].",'".$typ."');";
-    if(count($couch)>0)
-      {
-	$legende.="<rect id=\"deroul".$z."\" x=\"640\" y=\"".($y+1)."\" width=\"6\" height=\"6\" onmouseover=\"switchColor(evt,'fill','red','','')\" onmouseout=\"switchColor(evt,'fill','white','','')\" onclick=\"Javascript:derouler(evt,".$z.",".count($couch).")\"/>\n";
-	$legende.="<line x1=\"641\" x2=\"645\" y1=\"".($y+4)."\" y2=\"".($y+4)."\" pointer-events=\"none\"/><line id=\"d".$z."\" x1=\"643\" x2=\"643\" y1=\"".($y+6)."\" y2=\"".($y+2)."\" visibility=\"visible\" pointer-events=\"none\"/>\n";
+	{
+	$legende.="<a><rect id=\"coul".$z."\" x=\"662\" y=\"".$y."\" width=\"8\" height=\"8\" n=\"ok\" fill-opacity=\"".$cou[$c]['style_opacity']."\" fill=\"rgb(".$cou[$c]['style_fill'].")\" onclick=\"affiche_gestion(evt,'".$cou[$c]['style_fill']."','".$cou[$c]['style_opacity']."','".$cou[$c]['style_stroke']."','".$cou[$c]['style_strokewidth']."','style','".$cou[$c]['style_fontsize']."','".$cou[$c]['style_symbole']."','".$cou[$c]['idstyle']."','".$z."','".$cou[$c]['idtheme']."')\"/></a>\n";
+	}
+}
+}
+$legende.="<a onclick=\"gest_control_choix(evt,".$cou[$c]['idappthe'].")\"><text id=\"text".$z."\" x=\"674\" y=\"".($y+8)."\" onmouseover=\"switchColor(evt,'fill','red','','')\" onmouseout=\"switchColor(evt,'fill','url(#survol)','','')\"  class=\"fillfonce\">".$cou[$c]['nom_theme']."</text></a>\n";
+$posilegend.="posilegend[".$z."]='".$cou[$c]['idappthe'].".".$cou[$c]['nom_theme']."';";
+$posilegendini.="posilegendini[".$z."]='".$cou[$c]['idappthe'].".".$cou[$c]['nom_theme']."';";
+$txt_ordre_legend.="<text id=\"".$cou[$c]['idappthe'].".".$cou[$c]['nom_theme']."\" x=\"327\" y=\"".(80+($z*15))."\" text-anchor=\"middle\" font-size='10' onmouseover=\"sur(evt,'red')\" onmouseout=\"hors(evt)\" onclick=\"sel_txt_legende(evt,'".$z."')\">".$cou[$c]['nom_theme']."</text>\n";
+//$legende.="<text id=\"text".$z."\" x=\"662\" y=\"".($y+8)."\" class=\"fillfonce\">".$cou[$c]['nom_theme']."</text>\n";
+$lay.="controllay[".$c."]=new ylayer(".$cou[$c]['zoommin'].",".$cou[$c]['zoommax'].",'".$typ."');";
+	if(count($couch)>0)
+	{
+		$legende.="<rect id=\"deroul".$z."\" x=\"640\" y=\"".($y+1)."\" width=\"6\" height=\"6\" onmouseover=\"switchColor(evt,'fill','red','','')\" onmouseout=\"switchColor(evt,'fill','white','','')\" onclick=\"Javascript:derouler(evt,".$z.",".count($couch).")\"/>\n";
+		$legende.="<line x1=\"641\" x2=\"645\" y1=\"".($y+4)."\" y2=\"".($y+4)."\" pointer-events=\"none\"/><line id=\"d".$z."\" x1=\"643\" x2=\"643\" y1=\"".($y+6)."\" y2=\"".($y+2)."\" visibility=\"visible\" pointer-events=\"none\"/>\n";
+		$legende.="</g>\n";
+		$legende.="<g id=\"soustheme".$z."\" visibility=\"hidden\">\n";
+		$y1=$y+12;
+		for ($w=0;$w<count($couch);$w++)
+		{
+		$chaine.="<g id='control".$z.codalpha($w+1)."' visibility='hidden'></g>\n";
+		$legende.="<rect id=\"coche".$z.codalpha($w+1)."\" x=\"662\" y=\"".$y1."\" width=\"8\" height=\"8\" onclick=\"extract('".$cou[$c]['idappthe'].".".$couch[$w]['intitule_legende']."','".$z.codalpha($w+1)."','','".$typ."')\"/>\n";
+    		if($couch[$w]['stroke_rgb']!="" && ($couch[$w]['fill']==""||$couch[$w]['fill']=="none"))
+			{
+			$coucoul=$couch[$w]['stroke_rgb'];
+			}
+			else
+			{
+			$coucoul=$couch[$w]['fill'];
+			}
+			if($coucoul=="")
+			{
+			$couch[$w]['fill']="0,0,0";
+			}
+			if($couch[$w]['symbole']!="")
+			{
+			$legende.="<a><text id=\"coul".$z.codalpha($w+1)."\" x=\"672\" y=\"".($y1+8)."\" font-size=\"12\" stroke=\"none\" font-family=\"fontsvg\" fill=\"rgb(".$coucoul.")\" onclick=\"affiche_gestion(evt,'".$couch[$w]['fill']."','".$couch[$w]['opacity']."','".$couch[$w]['stroke_rgb']."','".$couch[$w]['stroke_width']."','theme','".$couch[$w]['font_size']."','".$couch[$w]['symbole']."','".$cou[$c]['idappthe'].".".$couch[$w]['intitule_legende']."','".$z.codalpha($w+1)."','".$cou[$c]['idtheme']."')\">".$couch[$w]['symbole']."</text></a>\n";
+			}
+			else
+			{
+			
+			$legende.="<a><rect id=\"coul".$z.codalpha($w+1)."\" x=\"674\" y=\"".$y1."\" width=\"8\" height=\"8\" fill=\"rgb(".$coucoul.")\" onclick=\"affiche_gestion(evt,'".$couch[$w]['fill']."','".$couch[$w]['opacity']."','".$couch[$w]['stroke_rgb']."','".$couch[$w]['stroke_width']."','theme','".$couch[$w]['fontsize']."','".$couch[$w]['symbole']."','".$cou[$c]['idappthe'].".".$couch[$w]['intitule_legende']."','".$z.codalpha($w+1)."','".$cou[$c]['idtheme']."')\"/></a>\n";
+			}
+			$y1=$y1+12;
+    		
+		}
+		$legende.="<g><g id=\"tr".$z."\" font-size=\"12px\" pointer-events=\"none\" font-family=\"fontsvg\" class=\"fillfonce\" visibility=\"hidden\">\n";
+		$y2=$y+20;
+		for ($w=0;$w<count($couch);$w++)
+		{
+						$legende.="<text id=\"tra".$z.codalpha($w+1)."\" x=\"662\" y=\"".$y2."\">b</text>\n";
+						$y2=$y2+12;
+		}
+						$legende.="</g>\n";
+				$y3=$y+20;		
+		for ($w=0;$w<count($couch);$w++)
+		{
+						$legende.="<text id=\"text".$z.codalpha($w+1)."\" x=\"686\" y=\"".$y3."\" class=\"fillfonce\">".$couch[$w]['intitule_legende']."</text>\n";
+						$y3=$y3+12;
+		}
+					$legende.="</g>\n";
+			$legende.="</g>\n";  
+	}
+	else
+	{
 	$legende.="</g>\n";
-	$legende.="<g id=\"soustheme".$z."\" visibility=\"hidden\">\n";
-	$y1=$y+12;
-	for ($w=0;$w<count($couch);$w++)
-	  {
-	    $chaine.="<g id='control".$z.codalpha($w+1)."' visibility='hidden'></g>\n";
-	    $legende.="<rect id=\"coche".$z.codalpha($w+1)."\" x=\"662\" y=\"".$y1."\" width=\"8\" height=\"8\" onclick=\"extract('".$cou[$c]['idappthe'].".".$couch[$w]['intitule_legende']."','".$z.codalpha($w+1)."','','".$typ."')\"/>\n";
-	    if($couch[$w]['stroke_rgb']!="" && ($couch[$w]['fill']==""||$couch[$w]['fill']=="none"))
-	      {
-		$coucoul=$couch[$w]['stroke_rgb'];
-	      }
-	    else
-	      {
-		$coucoul=$couch[$w]['fill'];
-	      }
-	    if($coucoul=="")
-	      {
-		$couch[$w]['fill']="0,0,0";
-	      }
-	    if($couch[$w]['symbole']!="")
-	      {
-		$legende.="<a><text id=\"coul".$z.codalpha($w+1)."\" x=\"672\" y=\"".($y1+8)."\" font-size=\"12\" stroke=\"none\" font-family=\"fontsvg\" fill=\"rgb(".$coucoul.")\" onclick=\"affiche_gestion(evt,'".$couch[$w]['fill']."','".$couch[$w]['opacity']."','".$couch[$w]['stroke_rgb']."','".$couch[$w]['stroke_width']."','theme','".$couch[$w]['font_size']."','".$couch[$w]['symbole']."','".$cou[$c]['idappthe'].".".$couch[$w]['intitule_legende']."','".$z.codalpha($w+1)."','".$cou[$c]['idtheme']."')\">".$couch[$w]['symbole']."</text></a>\n";
-	      }
-	    else
-	      {
-		$legende.="<a><rect id=\"coul".$z.codalpha($w+1)."\" x=\"674\" y=\"".$y1."\" width=\"8\" height=\"8\" fill=\"rgb(".$coucoul.")\" onclick=\"affiche_gestion(evt,'".$couch[$w]['fill']."','".$couch[$w]['opacity']."','".$couch[$w]['stroke_rgb']."','".$couch[$w]['stroke_width']."','theme','".$couch[$w]['fontsize']."','".$couch[$w]['symbole']."','".$cou[$c]['idappthe'].".".$couch[$w]['intitule_legende']."','".$z.codalpha($w+1)."','".$cou[$c]['idtheme']."')\"/></a>\n";
-	      }
-	    $y1=$y1+12;
-	    
-	  }
-	$legende.="<g><g id=\"tr".$z."\" font-size=\"12px\" pointer-events=\"none\" font-family=\"fontsvg\" class=\"fillfonce\" visibility=\"hidden\">\n";
-	$y2=$y+20;
-	for ($w=0;$w<count($couch);$w++)
-	  {
-	    $legende.="<text id=\"tra".$z.codalpha($w+1)."\" x=\"662\" y=\"".$y2."\">b</text>\n";
-	    $y2=$y2+12;
-	  }
-	$legende.="</g>\n";
-	$y3=$y+20;		
-	for ($w=0;$w<count($couch);$w++)
-	  {
-	    $legende.="<text id=\"text".$z.codalpha($w+1)."\" x=\"686\" y=\"".$y3."\" class=\"fillfonce\">".$couch[$w]['intitule_legende']."</text>\n";
-	    $y3=$y3+12;
-	  }
-	$legende.="</g>\n";
-	$legende.="</g>\n";  
-      }
-    else
-      {
-	$legende.="</g>\n";
-      }
-    $chaine.="</g>\n";
-    $controle=$chaine.$controle;
-    $chaine="";
-    $y=$y+12;
-  }
+	}
+	$chaine.="</g>\n";
+	$controle=$chaine.$controle;
+	$chaine="";
+	$y=$y+12;
+}
 $controle="<g id='controlraster' visibility='hidden'></g>\n".$controle;
 for ($c=0;$c<count($cou);$c++)
-  {
-    $legende.="</g>\n";
-  }
+{
+$legende.="</g>\n";
+}
 $data="<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?>";
-if (file_exists("../css/".$insee.".css"))
-  {
-    $data.="<?xml-stylesheet href=\"../css/".$insee.".css\" type=\"text/css\" ?>";
-  }
- else
-   {
-     $data.="<?xml-stylesheet href=\"../css/default.css\" type=\"text/css\" ?>";
-   }
+if (file_exists("../../doc_commune/".$_SESSION["profil"]->insee."/css_interface/interface.css"))
+{
+$data.="<?xml-stylesheet href=\"../../doc_commune/".$_SESSION["profil"]->insee."/css_interface/interface.css\" type=\"text/css\" ?>";
+}
+else
+{
+$data.="<?xml-stylesheet href=\"../css/default.css\" type=\"text/css\" ?>";
+}
 $data.="<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.0//EN\" \"http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd\">";
 $data.="<svg id=\"svg2\" xmlns:xlink='http://www.w3.org/1999/xlink' width=\"100%\" heigth=\"100%\" viewBox=\"0 0 800 600\" onkeypress=\"tape(evt)\" onload=\"init(evt);".$extraction."\" onmousemove=\"determ_ratio()\">";
 $data.="<rect id=\"rectdefond\" width=\"100%\" height=\"100%\" x=\"0\" y=\"0\" fill=\"white\"/>"; 
@@ -381,16 +374,17 @@ $data.="cy=".$yc.";\n";
 $data.="intervale=".$intervale.";\n";
 $data.="theZoom=".$zoomouv.";\n";
 $data.="zoomVal=".$zoomouv.";\n";
-$data.="appli=".$appli."; \n";
+$data.="appli=".$_SESSION["appli"]."; \n";
 $data.="sessionid='".$sessi."';\n";
 $data.="sessionname='".session_name()."';\n";
-$data.="code_insee=".$insee.";\n";
+$data.="code_insee=".$_SESSION["profil"]->insee.";\n";
 $data.="xini=".$vu[0]['xini'].";\n";
 $data.="yini=".$vu[0]['yini'].";\n";
 $data.="largeurini=".$_SESSION['large'].";\n";
 $data.="hauteurini=".$_SESSION['haute'].";\n";
-$data.="serveur='".get_root_url()."';\n";
+$data.="serveur='".$_SERVER['HTTP_HOST']."';\n";
 $data.="zoom_init=100;\n";
+//$data.="";
 $data.="]]></script>
   <defs>
   <path id=\"chemin_sur\" d=\"M 226 190 465 190 M 226 200 465 200 M 226 210 465 210 M 226 220 465 220\" style=\"stroke:black;fill:none\" />
@@ -410,53 +404,53 @@ $data.="]]></script>
     alphabetic=\"0\" />
 <missing-glyph horiz-adv-x=\"1536\" d=\"M256 0V1280H1280V0H256ZM288 32H1248V1248H288V32Z\" />";
 $texte=fopen("../police.svg","r");
-$contents = fread($texte, filesize ("../police.svg"));
-$data1=explode("<",$contents);
-$tab_symbol=array();
-for ($i=1;$i<count($data1);$i++)
-  {
-    $pos1=0;$pos2=0;
-    if(ereg('unicode="',$data1[$i]) && ereg('d="',$data1[$i]))
-      { 
-	$symbol.="<".$data1[$i]."\n";
-	$pos1 = strpos($data1[$i], 'unicode="');
-	$pos2 = strpos($data1[$i],'"',$pos1+9);
-	$lettre=substr($data1[$i], $pos1+9, (($pos1+9)-($pos2-2)));
-	$textsymbol.="<text id=\"".$lettre."\" font-family=\"fontsvg\" fill=\"rgb(0,0,0)\" font-size=\"10\" >".$lettre."</text>"; 
-	array_push($tab_symbol,$lettre);
-      }
-  }
-fclose($texte);
+			$contents = fread($texte, filesize ("../police.svg"));
+			$data1=explode("<",$contents);
+			$tab_symbol=array();
+				for ($i=1;$i<count($data1);$i++)
+				{
+					$pos1=0;$pos2=0;
+					if(ereg('unicode="',$data1[$i]) && ereg('d="',$data1[$i]))
+					{ 
+					$symbol.="<".$data1[$i]."\n";
+					$pos1 = strpos($data1[$i], 'unicode="');
+					$pos2 = strpos($data1[$i],'"',$pos1+9);
+					$lettre=substr($data1[$i], $pos1+9, (($pos1+9)-($pos2-2)));
+					$textsymbol.="<text id=\"".$lettre."\" font-family=\"fontsvg\" fill=\"rgb(0,0,0)\" font-size=\"10\" >".$lettre."</text>"; 
+					array_push($tab_symbol,$lettre);
+					}
+				}
+			fclose($texte);
 $nb_symbol=count($tab_symbol);
 $nbligne_symbol=ceil($nb_symbol/16);
 $ysymbole=87;
 $xsymbole=152;
 $cont_symbol=1;
 for ($i=0;$i<($nbligne_symbol*16);$i++)
-  {
-    
-    if($i<$nb_symbol)
-      {
-	$des_symbol.="<a><rect id=\"cont_symb".$i."\" width=\"20\" height=\"20\" x=\"".$xsymbole."\" y=\"".$ysymbole."\" class=\"defaut\" onmouseover=\"switchColor(evt,'fill','red','','cont_symb".$i."')\" onmouseout=\"switchColor(evt,'fill','none','','cont_symb".$i."')\" onclick=\"select_symb('".$tab_symbol[$i]."')\"/></a>";
-	$des_symbol.="<text id=\"sym".$tab_symbol[$i]."\" font-family=\"fontsvg\" fill=\"rgb(0,0,0)\" font-size=\"15\" pointer-events=\"none\" x=\"".($xsymbole+9)."\" y=\"".($ysymbole+15)."\" text-anchor=\"middle\" >".$tab_symbol[$i]."</text>";
-      }
-    else
-      {
-	$des_symbol.="<rect id=\"cont_symb".$i."\" width=\"20\" height=\"20\" x=\"".$xsymbole."\" y=\"".$ysymbole."\" class=\"defaut\"/>";
-      }
-    if($cont_symbol==16)
-      {
-	$ysymbole=$ysymbole+22;
-	$xsymbole=152;
-	$cont_symbol=1;
-      }
-    else
-      {
-	$cont_symbol=$cont_symbol+1;
-	$xsymbole=22+$xsymbole;
-      }
-    
-  }
+				{
+				
+				if($i<$nb_symbol)
+				{
+				$des_symbol.="<a><rect id=\"cont_symb".$i."\" width=\"20\" height=\"20\" x=\"".$xsymbole."\" y=\"".$ysymbole."\" class=\"defaut\" onmouseover=\"switchColor(evt,'fill','red','','cont_symb".$i."')\" onmouseout=\"switchColor(evt,'fill','none','','cont_symb".$i."')\" onclick=\"select_symb('".$tab_symbol[$i]."')\"/></a>";
+				$des_symbol.="<text id=\"sym".$tab_symbol[$i]."\" font-family=\"fontsvg\" fill=\"rgb(0,0,0)\" font-size=\"15\" pointer-events=\"none\" x=\"".($xsymbole+9)."\" y=\"".($ysymbole+15)."\" text-anchor=\"middle\" >".$tab_symbol[$i]."</text>";
+				}
+				else
+				{
+				$des_symbol.="<rect id=\"cont_symb".$i."\" width=\"20\" height=\"20\" x=\"".$xsymbole."\" y=\"".$ysymbole."\" class=\"defaut\"/>";
+				}
+				if($cont_symbol==16)
+				{
+				$ysymbole=$ysymbole+22;
+				$xsymbole=152;
+				$cont_symbol=1;
+				}
+				else
+				{
+				$cont_symbol=$cont_symbol+1;
+				$xsymbole=22+$xsymbole;
+				}
+				
+				}
 $tableau_symbol="<g id=\"gestion_symbol\" visibility=\"hidden\" class=\"fillfonce\">
 <rect id=\"contour_symbol\" width=\"354\" height=\"".(21+($nbligne_symbol*22))."\" x=\"150\" y=\"66\" class=\"defaut\"/> 
 <rect width=\"353.5\" height=\"18\" x=\"150.5\" y=\"66.5\" class=\"fillclair\"/>
@@ -464,12 +458,12 @@ $tableau_symbol="<g id=\"gestion_symbol\" visibility=\"hidden\" class=\"fillfonc
 $data.=$symbol;
 $data.="</font>";
 if($os=="Linux")
-  {
-    $texte=fopen("../linux_arial.svg","r");
-    $contents = fread($texte, filesize ("../linux_arial.svg"));
-    $data.=$contents;
-    fclose($texte);
-  }
+{
+$texte=fopen("../linux_arial.svg","r");
+$contents = fread($texte, filesize ("../linux_arial.svg"));
+$data.=$contents;
+fclose($texte);
+}
 $data.=$textsymbol;
 $data.=$lettre;
 $data.="<rect id=\"boutonvierge\" width=\"23\" height=\"23\" x=\"0\" y=\"0\" ry=\"3\" rx=\"3\" /> 
@@ -530,15 +524,15 @@ $data.="</g>
 	</g>
 	</g>
 	<svg id=\"overviewmap\" x=\"645\" y=\"45\" width=\"150\" height=\"126\" viewBox=\"0 0 ".$_SESSION['large']." ".$_SESSION['haute']."\" onmouseover=\"inib_use();\" >";
-if (file_exists("../communes/".$insee.".JPG"))
-  {
-    $data.="<image id=\"fond\" x=\"0\" y=\"0\" width=\"".$_SESSION['large']."\" height=\"".$_SESSION['haute']."\" xlink:href=\"../communes/".$insee.".JPG\"/>";
-  }
- else
-   {
-     $data.="<image id=\"fond\" x=\"0\" y=\"0\" width=\"".$_SESSION['large']."\" height=\"".$_SESSION['haute']."\" xlink:href=\"../communes/default.JPG\"/>";
-   }
-$data.="<use x=\"0\" y=\"0\" width=\"".$_SESSION['large']."\" height=\"".$_SESSION['haute']."\" xlink:href=\"#dessin\"/>
+    if (file_exists("../communes/".$_SESSION["profil"]->insee.".JPG"))
+	{
+	$data.="<image id=\"fond\" x=\"0\" y=\"0\" width=\"".$_SESSION['large']."\" height=\"".$_SESSION['haute']."\" xlink:href=\"../communes/".$_SESSION["profil"]->insee.".JPG\"/>";
+	}
+	else
+	{
+	$data.="<image id=\"fond\" x=\"0\" y=\"0\" width=\"".$_SESSION['large']."\" height=\"".$_SESSION['haute']."\" xlink:href=\"../communes/default.JPG\"/>";
+	}
+	$data.="<use x=\"0\" y=\"0\" width=\"".$_SESSION['large']."\" height=\"".$_SESSION['haute']."\" xlink:href=\"#dessin\"/>
 	<g onmousedown=\"beginPan(evt)\" onmousemove=\"doPan(evt)\" onmouseup=\"endPan(evt)\" onmouseout=\"endPan(evt)\">
 	<rect id=\"Rect1\" cursor=\"move\" style=\"fill:rgb(255,0,0);stroke-width:20;stroke:rgb(0,0,0);fill-opacity:0.4\" x=\"0\" y=\"0\"
  width=\"".$_SESSION['large']."\" height=\"".$_SESSION['haute']."\" visibility=\"hidden\" />
@@ -558,11 +552,11 @@ $data.="<use x=\"0\" y=\"0\" width=\"".$_SESSION['large']."\" height=\"".$_SESSI
      		<text x=\"776.5\" y=\"197\" font-size=\"12px\" pointer-events=\"none\" class=\"fillfonce\">+</text></g>
 			<path id=\"zoomcursor\" transform=\"translate(686.75,199)\" d=\"M2.5 0 5 5 0 5Z\"/>";
 for ($int=0;$int<19;$int++)
-  {
-    $data.="<rect id=\"rectzoom".$min."\" x=\"".$posi."\" y=\"187.5\" width=\"2.5\" height=\"10\" onmouseover=\"switchColor(evt,'fill','url(#survol)','','');showinfotip(evt,'".$min." %')\" onmouseout=\"switchColor(evt,'fill','url(#hors)','','');hideinfotip(evt)\" onclick=\"Zoomto(evt,".$min.");\"/>";
-    $min=$min+$intervale;
-    $posi=$posi+4.5;
-  }
+{
+$data.="<rect id=\"rectzoom".$min."\" x=\"".$posi."\" y=\"187.5\" width=\"2.5\" height=\"10\" onmouseover=\"switchColor(evt,'fill','url(#survol)','','');showinfotip(evt,'".$min." %')\" onmouseout=\"switchColor(evt,'fill','url(#hors)','','');hideinfotip(evt)\" onclick=\"Zoomto(evt,".$min.");\"/>";
+$min=$min+$intervale;
+$posi=$posi+4.5;
+}
 $data.="</g></g>
     <g id=\"outil\" class=\"fillclair\" font-family=\"fontsvg\">
       		<g id=\"retour\">
@@ -579,9 +573,9 @@ $data.="</g></g>
      		</g>
 			<g id=\"mod_theme\">
        		<a id=\"li_mod_theme\"><use id=\"boutonmod_theme\" x=\"735\" y=\"215\" xlink:href=\"#boutonvierge\" onmouseover=\"showinfotip(evt,'Modifier un th&#x00E8;me')\" onmouseout=\"hideinfotip(evt)\" onclick=\"javascript:mod_the()\"/></a>
-   		<text x=\"736.5\" y=\"234\" style=\"font-size:22px;stroke:url(#survol);stroke-opacity:1;stroke-width:0.4\" pointer-events=\"none\">v</text>
+	   		<text x=\"736.5\" y=\"234\" style=\"font-size:22px;stroke:url(#survol);stroke-opacity:1;stroke-width:0.4\" pointer-events=\"none\">v</text>
      		</g>";
-$data.="</g>
+      	$data.="</g>
     	<g id=\"legende\" transform=\"translate(0,0)\">
 		<text x=\"645\" y=\"273\" style=\"stroke:url(#survol);stroke-width:0.5;font-size:12px\" class=\"fillfonce\">L&#x00E9;gende</text>
 		<svg id=\"leg\"  x=\"645\" y=\"279\" height=\"305\" width=\"148\" viewBox=\"636 279 148 305\">
@@ -704,12 +698,15 @@ $data.="<g id=\"gestion_modif_couche\" visibility=\"hidden\" class=\"fillfonce\"
 <rect id=\"contour_gestion_modif_couche\" width=\"312\" height=\"300\" x=\"160\" y=\"66\" class=\"defaut\"/> 
 <rect width=\"311\" height=\"18\" x=\"160.5\" y=\"66.5\" class=\"fillclair\"/>
 <text pointer-events=\"none\" x=\"316\" y=\"80\" text-anchor=\"middle\" >Modification des proprietes de la couche</text>
-<text pointer-events=\"none\" x=\"290\" y=\"110\" text-anchor=\"end\" font-size=\"8\">Uniquement vectoriel</text>
-<rect width=\"10\" height=\"10\" x=\"295\" y=\"102.5\" class=\"defaut\" onclick=\"bascule(evt,'unique_v')\"/>
-<text id=\"unique_v\" x=\"295\" y=\"112.5\" class=\"fillfonce\" pointer-events=\"none\" style=\"font-size:12px;font-family:fontsvg;visibility:hidden\">b</text>
-<text pointer-events=\"none\" x=\"400\" y=\"110\" text-anchor=\"end\" font-size=\"8\">Vu partielle</text>
-<rect width=\"10\" height=\"10\" x=\"405\" y=\"102.5\" class=\"defaut\" onclick=\"bascule(evt,'partiel')\"/>
-<text id=\"partiel\" x=\"405\" y=\"112.5\" class=\"fillfonce\" pointer-events=\"none\" style=\"font-size:12px;font-family:fontsvg;visibility:hidden\">b</text>
+<text pointer-events=\"none\" x=\"250\" y=\"110\" text-anchor=\"end\" font-size=\"8\">Uniquement vectoriel</text>
+<rect width=\"10\" height=\"10\" x=\"255\" y=\"102.5\" class=\"defaut\" onclick=\"bascule(evt,'unique_v')\"/>
+<text id=\"unique_v\" x=\"255\" y=\"112.5\" class=\"fillfonce\" pointer-events=\"none\" style=\"font-size:12px;font-family:fontsvg;visibility:hidden\">b</text>
+<text pointer-events=\"none\" x=\"320\" y=\"110\" text-anchor=\"end\" font-size=\"8\">Vu partielle</text>
+<rect width=\"10\" height=\"10\" x=\"325\" y=\"102.5\" class=\"defaut\" onclick=\"bascule(evt,'partiel')\"/>
+<text id=\"partiel\" x=\"325\" y=\"112.5\" class=\"fillfonce\" pointer-events=\"none\" style=\"font-size:12px;font-family:fontsvg;visibility:hidden\">b</text>
+<text pointer-events=\"none\" x=\"430\" y=\"110\" text-anchor=\"end\" font-size=\"8\">Force le rechargement</text>
+<rect width=\"10\" height=\"10\" x=\"435\" y=\"102.5\" class=\"defaut\" onclick=\"bascule(evt,'force')\"/>
+<text id=\"force\" x=\"435\" y=\"112.5\" class=\"fillfonce\" pointer-events=\"none\" style=\"font-size:12px;font-family:fontsvg;visibility:hidden\">b</text>
 <text pointer-events=\"none\" x=\"290\" y=\"130\" text-anchor=\"end\" font-size=\"8\">Zoom mini</text>
 <rect width=\"25\" height=\"10\" x=\"295\" y=\"122.5\" class=\"defaut\" onclick=\"entre_dim(evt,'r_zoom_min_v')\"/>
 <text id=\"r_zoom_min_v\" pointer-events=\"none\" x=\"307.5\" y=\"130\" text-anchor=\"middle\" font-size=\"8\">!</text>
@@ -858,12 +855,15 @@ $data.="<g id=\"gestion_modif_couche\" visibility=\"hidden\" class=\"fillfonce\"
 <text pointer-events=\"none\" x=\"390\" y=\"150\" text-anchor=\"end\" font-size=\"8\">Groupe</text>
 <rect width=\"70\" height=\"10\" x=\"395\" y=\"142.5\" class=\"defaut\" onclick=\"entre_dim(evt,'r_crea_groupe')\"/>
 <text id=\"r_crea_groupe\" pointer-events=\"none\" x=\"430\" y=\"150\" text-anchor=\"middle\" font-size=\"8\"> </text>
-<text pointer-events=\"none\" x=\"275\" y=\"170\" text-anchor=\"end\" font-size=\"8\">Vu partielle</text>
-<rect width=\"10\" height=\"10\" x=\"290\" y=\"162.5\" class=\"defaut\" onclick=\"bascule(evt,'crea_partiel')\"/>
-<text id=\"crea_partiel\" x=\"290\" y=\"172.5\" class=\"fillfonce\" pointer-events=\"none\" style=\"font-size:12px;font-family:fontsvg;visibility:hidden\">b</text>
-<text pointer-events=\"none\" x=\"360\" y=\"170\" text-anchor=\"end\" font-size=\"8\">Vu initial</text>
-<rect width=\"10\" height=\"10\" x=\"365\" y=\"162.5\" class=\"defaut\" onclick=\"bascule(evt,'crea_initial')\"/>
-<text id=\"crea_initial\" x=\"365\" y=\"172.5\" class=\"fillfonce\" pointer-events=\"none\" style=\"font-size:12px;font-family:fontsvg;visibility:hidden\">b</text>
+<text pointer-events=\"none\" x=\"230\" y=\"170\" text-anchor=\"end\" font-size=\"8\">Vu partielle</text>
+<rect width=\"10\" height=\"10\" x=\"235\" y=\"162.5\" class=\"defaut\" onclick=\"bascule(evt,'crea_partiel')\"/>
+<text id=\"crea_partiel\" x=\"235\" y=\"172.5\" class=\"fillfonce\" pointer-events=\"none\" style=\"font-size:12px;font-family:fontsvg;visibility:hidden\">b</text>
+<text pointer-events=\"none\" x=\"310\" y=\"170\" text-anchor=\"end\" font-size=\"8\">Vu initiale</text>
+<rect width=\"10\" height=\"10\" x=\"315\" y=\"162.5\" class=\"defaut\" onclick=\"bascule(evt,'crea_initial')\"/>
+<text id=\"crea_initial\" x=\"315\" y=\"172.5\" class=\"fillfonce\" pointer-events=\"none\" style=\"font-size:12px;font-family:fontsvg;visibility:hidden\">b</text>
+<text pointer-events=\"none\" x=\"410\" y=\"170\" text-anchor=\"end\" font-size=\"8\">Force le rechargement</text>
+<rect width=\"10\" height=\"10\" x=\"415\" y=\"162.5\" class=\"defaut\" onclick=\"bascule(evt,'crea_force')\"/>
+<text id=\"crea_force\" x=\"415\" y=\"172.5\" class=\"fillfonce\" pointer-events=\"none\" style=\"font-size:12px;font-family:fontsvg;visibility:hidden\">b</text>
 <text pointer-events=\"none\" x=\"220\" y=\"190\" text-anchor=\"end\" font-size=\"8\">Zoommin</text>
 <rect width=\"25\" height=\"10\" x=\"225\" y=\"182.5\" class=\"defaut\" onclick=\"entre_dim(evt,'r_crea_zmin')\"/>
 <text id=\"r_crea_zmin\" pointer-events=\"none\" x=\"237.5\" y=\"190\" text-anchor=\"middle\" font-size=\"8\"> </text>
@@ -1051,12 +1051,15 @@ $data.="<g id=\"gestion_modif_couche\" visibility=\"hidden\" class=\"fillfonce\"
 <text pointer-events=\"none\" x=\"390\" y=\"150\" text-anchor=\"end\" font-size=\"8\">Groupe</text>
 <rect width=\"70\" height=\"10\" x=\"395\" y=\"142.5\" class=\"defaut\" onclick=\"entre_dim(evt,'r_mod_groupe')\"/>
 <text id=\"r_mod_groupe\" pointer-events=\"none\" x=\"430\" y=\"150\" text-anchor=\"middle\" font-size=\"8\"> </text>
-<text pointer-events=\"none\" x=\"275\" y=\"170\" text-anchor=\"end\" font-size=\"8\">Vu partielle</text>
-<rect width=\"10\" height=\"10\" x=\"290\" y=\"162.5\" class=\"defaut\" onclick=\"bascule(evt,'mod_partiel')\"/>
-<text id=\"mod_partiel\" x=\"290\" y=\"172.5\" class=\"fillfonce\" pointer-events=\"none\" style=\"font-size:12px;font-family:fontsvg;visibility:hidden\">b</text>
-<text pointer-events=\"none\" x=\"360\" y=\"170\" text-anchor=\"end\" font-size=\"8\">Vu initial</text>
-<rect width=\"10\" height=\"10\" x=\"365\" y=\"162.5\" class=\"defaut\" onclick=\"bascule(evt,'mod_initial')\"/>
-<text id=\"mod_initial\" x=\"365\" y=\"172.5\" class=\"fillfonce\" pointer-events=\"none\" style=\"font-size:12px;font-family:fontsvg;visibility:hidden\">b</text>
+<text pointer-events=\"none\" x=\"230\" y=\"170\" text-anchor=\"end\" font-size=\"8\">Vu partielle</text>
+<rect width=\"10\" height=\"10\" x=\"235\" y=\"162.5\" class=\"defaut\" onclick=\"bascule(evt,'mod_partiel')\"/>
+<text id=\"mod_partiel\" x=\"235\" y=\"172.5\" class=\"fillfonce\" pointer-events=\"none\" style=\"font-size:12px;font-family:fontsvg;visibility:hidden\">b</text>
+<text pointer-events=\"none\" x=\"310\" y=\"170\" text-anchor=\"end\" font-size=\"8\">Vu initiale</text>
+<rect width=\"10\" height=\"10\" x=\"315\" y=\"162.5\" class=\"defaut\" onclick=\"bascule(evt,'mod_initial')\"/>
+<text id=\"mod_initial\" x=\"315\" y=\"172.5\" class=\"fillfonce\" pointer-events=\"none\" style=\"font-size:12px;font-family:fontsvg;visibility:hidden\">b</text>
+<text pointer-events=\"none\" x=\"410\" y=\"170\" text-anchor=\"end\" font-size=\"8\">Force le rechargement</text>
+<rect width=\"10\" height=\"10\" x=\"415\" y=\"162.5\" class=\"defaut\" onclick=\"bascule(evt,'mod_force')\"/>
+<text id=\"mod_force\" x=\"415\" y=\"172.5\" class=\"fillfonce\" pointer-events=\"none\" style=\"font-size:12px;font-family:fontsvg;visibility:hidden\">b</text>
 <text pointer-events=\"none\" x=\"220\" y=\"190\" text-anchor=\"end\" font-size=\"8\">Zoommin</text>
 <rect width=\"25\" height=\"10\" x=\"225\" y=\"182.5\" class=\"defaut\" onclick=\"entre_dim(evt,'r_mod_zmin')\"/>
 <text id=\"r_mod_zmin\" pointer-events=\"none\" x=\"237.5\" y=\"190\" text-anchor=\"middle\" font-size=\"8\"> </text>
@@ -1181,6 +1184,8 @@ $data.="<g id=\"gestion_modif_couche\" visibility=\"hidden\" class=\"fillfonce\"
 		<g id=\"tderoul\" >
 		</g>
 		</svg></g>";
+//<rect id=\"rect_deroul\" width=\"100\" height=\"100\" x=\"280\" y=\"200\"/>
+//</g>";
 $data.="<g id=\"message\" visibility=\"hidden\" class=\"fillfonce\" font-size=\"14\" opacity=\"0.8\">
 <rect id=\"idcont\" width=\"292\" height=\"100\" x=\"170\" y=\"66\" class=\"defaut\"/> 
 <rect width=\"292\" height=\"18\" x=\"170\" y=\"66\" class=\"fillclair\"/>

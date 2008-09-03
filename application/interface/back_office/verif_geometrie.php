@@ -32,11 +32,13 @@ sécurité de leurs systèmes et ou de leurs données et, plus généralement,
 Le fait que vous puissiez accéder à cet en-tête signifie que vous avez 
 pris connaissance de la licence CeCILL-C, et que vous en avez accepté les 
 termes.*/
-include("../../connexion/deb.php");
+define('GIS_ROOT', '../..');
+include_once(GIS_ROOT . '/inc/common.php');
+gis_session_start();
 $sql="select theme.schema,theme.tabl from admin_svg.theme where idtheme='".$_GET["idtheme"]."'";
-$cou=tab_result($pgx,$sql);
+$cou=$DB->tab_result($sql);
 $d="select * from admin_svg.col_sel where idtheme='".$_GET["idtheme"]."'";
-$col=tab_result($pgx,$d);
+$col=$DB->tab_result($d);
 for ($z=0;$z<count($col);$z++)
 {
 			if($col[$z]['nom_as']=='geom')
@@ -45,6 +47,6 @@ for ($z=0;$z<count($col);$z++)
 			}
 }
 $dd="select distinct geometrytype(".$geometrie.") as geome from ".$cou[0]['schema'].".".$cou[0]['tabl'];
-$geo=tab_result($pgx,$dd);
+$geo=$DB->tab_result($dd);
 echo $geo[0]['geome'];
 ?>

@@ -1,4 +1,5 @@
 #!/bin/bash
+#./maj_edigeo.dd répertoire_contenant_les_communes_au format_edigeo_compressé code_département_+_identifiant_agglomeration
 cd $1
 inter=0		#commande de creation des tables au début du fichier si =0
   for i in * ;do
@@ -9,7 +10,7 @@ inter=0		#commande de creation des tables au début du fichier si =0
  		sect=${o:14:2}
 		cd /home/sig/$1/$i/$o
   		tar -xjf /home/sig/$1/$i/$o/$o.tar.bz2 
- 		perl /home/sig/edi2mif.pl /home/sig/$1/$i/$o /home/sig/decompo/$i test_cadastre $commune $inter
+ 		perl ./edi2mif.pl /home/sig/$1/$i/$o /home/sig/decompo/$i test_cadastre $commune $inter
 		cd ..
 		inter=1	#on ne créé les tables qu'une fois!
   	done
@@ -22,8 +23,8 @@ cd /home/sig/decompo
 for i in *;do
 	for o in $i/*.sql;do
 		#echo $o
-		/usr/local/pgsql/bin/psql -e meaux -f $o
+		./psql -e meaux -f $o
 	done
 done
 cd ..
-/usr/local/pgsql/bin/psql -e meaux -f maj_edigeo_sql.sql
+./psql -e meaux -f maj_edigeo_sql.sql

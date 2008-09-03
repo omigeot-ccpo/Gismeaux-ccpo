@@ -30,7 +30,7 @@ sécurité de leurs systèmes et ou de leurs données et, plus généralement,
 Le fait que vous puissiez accéder à cet en-tête signifie que vous avez 
 pris connaissance de la licence CeCILL-C, et que vous en avez accepté les 
 termes.*/
-var largeurbox=800,hauteurbox=600,larmap=620,haumap=520,ratiovue=larmap/haumap,imp='',coucherasterold='',coucherasterposi='',Rpressed=0;
+var largeurbox=800,hauteurbox=600,larmap=780,haumap=546,ratiovue=larmap/haumap,imp='',coucherasterold='',coucherasterposi='',Rpressed=0;
 var zoomtool='',RevtX=0,RevtY=0,couraster=0,mapPosX=0,mapPosY=0,nbsplit=0,liste_scroll_decale=0,offsetXmap=0,offsetYmap=0,scroll_y=0;
 var liste_scroll_appui=false,ratio=0,svgdoc='',overini=0,pressed=0,rectOveXcorner='',rectOveYcorner='',rectXcorner=0,rectYcorner=0;
 var rect1Ovewidth=0,rect1Oveheight=0,rect1UlXCorner=0,rect1UlYCorner=0,evtX=0,evtY=0,coucherastervisible='',couchesvgvisible='';
@@ -40,13 +40,11 @@ var lin2='',svgMainViewport='',svgns='http://www.w3.org/2000/svg',ligne='',ligne
 var xm='',ym='',cotation=0,longtrait=0,angle=0,posix=0,posiy=0,countrait=0,countcotation=0,countsurface=0,selectid='boutonselect';
 var selectstroke='0',parce="''",bouton_distance=0,cumul=0,distance=0,surface=0,polygon=0,polyg='',indice='',count=0,image='';
 var nom='',noactive=0,retparam1='',Periode='',retparam2='',idparam1='',idparam2='',phrase='',phrase1='',valn=0,valconteur=new Array;
-var varcotations=new Array,ini_use=0;
+var varcotations=new Array,ini_use=0,couche_init=0;
 function init(evt) 
 	{
-HTTP()
-	svgdoc=evt.target.ownerDocument
-	svgdoc.getElementById('droite').firstChild.data=parseFloat(parseInt((zoom_init/100)*(largeurini/620)*90)/1000);
-	svgdoc.getElementById('centre').firstChild.data=parseFloat(parseInt((zoom_init/100)*(largeurini/620)*45)/1000);
+HTTP();
+	svgdoc=evt.target.ownerDocument;
 	svgRect = svgdoc.getElementById('locationRect');
 	Rect1 = svgdoc.getElementById('Rect1');
 	lin1 = svgdoc.getElementById('lin1');
@@ -73,7 +71,7 @@ function codalph(ch)
 		 {
 			txt="";
 		 }
-         return txt
+         return txt;
 }
 
 function derouler(evt,x,y)
@@ -82,18 +80,18 @@ var nlay=nblayer;
 var objet=svgdoc.getElementById("d" + x);
 if (objet.getStyle().getPropertyValue("visibility") == "hidden")
 	{
-	objet.getStyle().setProperty('visibility','visible')
-	svgdoc.getElementById("soustheme" + x).getStyle().setProperty('visibility','hidden')
+	objet.getStyle().setProperty('visibility','visible');
+	svgdoc.getElementById("soustheme" + x).getStyle().setProperty('visibility','hidden');
 	for(z=1;z<=y;z++)
 	{
-	svgdoc.getElementById("tra"+x+codalph(z)).getStyle().setProperty('visibility','hidden')	
+	svgdoc.getElementById("tra"+x+codalph(z)).getStyle().setProperty('visibility','hidden');
 	}
 	for (i=1;i<=nblayer;i++)
 		{
 			if(svgdoc.getElementById("theme" + i).getAttribute("so")>0 && svgdoc.getElementById("d" + i).getStyle().getPropertyValue("visibility") == "hidden")
 			{
 			
-			nlay=nlay+Math.round(svgdoc.getElementById("theme" + i).getAttribute("so"))
+			nlay=nlay+Math.round(svgdoc.getElementById("theme" + i).getAttribute("so"));
 			}
 			if(i==x+1)
 			{
@@ -103,12 +101,12 @@ if (objet.getStyle().getPropertyValue("visibility") == "hidden")
 	} 
 	else
 	{
-	objet.getStyle().setProperty('visibility','hidden')
+	objet.getStyle().setProperty('visibility','hidden');
 if (svgdoc.getElementById("tra" + x).getStyle().getPropertyValue("visibility") == "visible")
 	{
 for(z=1;z<=y;z++)
 	{
-	svgdoc.getElementById("tra"+x+codalph(z)).getStyle().setProperty('visibility','visible')	
+	svgdoc.getElementById("tra"+x+codalph(z)).getStyle().setProperty('visibility','visible');	
 	}
 	}
 for (i=1;i<=nblayer;i++)
@@ -116,14 +114,14 @@ for (i=1;i<=nblayer;i++)
 			if(svgdoc.getElementById("theme" + i).getAttribute("so")>0 && svgdoc.getElementById("d" + i).getStyle().getPropertyValue("visibility") == "hidden")
 			{
 			
-			nlay=nlay+Math.round(svgdoc.getElementById("theme" + i).getAttribute("so"))
+			nlay=nlay+Math.round(svgdoc.getElementById("theme" + i).getAttribute("so"));
 			}
 			if(i==x+1)
 			{
 			svgdoc.getElementById("theme" + i).setAttributeNS(null,'transform','translate(0,'+Math.round(12*y)+')');
 			}
 	}
-svgdoc.getElementById("soustheme" + x).getStyle().setProperty('visibility','visible')
+svgdoc.getElementById("soustheme" + x).getStyle().setProperty('visibility','visible');
 }
 if(17+(nlay*12)>291)
 {
@@ -132,7 +130,7 @@ svgdoc.getElementById("scroll_cursor").setAttribute("height",291-((nlay-23)*12))
 else
 {
 svgdoc.getElementById("layer").setAttributeNS(null,'transform','translate(0,0)');
-svgdoc.getElementById("curseur").setAttributeNS(null,'transform','translate(0,0)')
+svgdoc.getElementById("curseur").setAttributeNS(null,'transform','translate(0,0)');
 svgdoc.getElementById("scroll_cursor").setAttribute("height",291);
 }
 }
@@ -192,7 +190,7 @@ var infotiprect = 'infotipRect';
 var svgobj = svgdoc.getElementById (infotip);
 var svgobjtxt = svgobj;
 svgobj.setAttributeNS(null,'x', (evt.getClientX()-offsetXmap)/ratio+9);
-svgobj.setAttributeNS(null,'y', (evt.getClientY()-offsetYmap)/ratio);
+svgobj.setAttributeNS(null,'y', (evt.getClientY()-offsetYmap)/ratio+6);
 var svgstyle = svgobj.style;
 svgstyle.setProperty ('visibility', 'visible');
 svgstyle.setProperty('font-size', 8);
@@ -207,7 +205,7 @@ else
 	for (k=1; k<nbsplit ; k++)
 		{
 		myspan = svgdoc.createElement('tspan');
-		myspan.setAttributeNS(null,'dy', 1.2+'em');
+		myspan.setAttributeNS(null,'dy', 7.2);
 		myspan.setAttributeNS(null,'id', k);
 		myspan.setAttributeNS(null,'x', (evt.getClientX()-offsetXmap)/ratio+9);
 var reg1=new RegExp("<i>","g");
@@ -229,9 +227,9 @@ svgobj.appendChild(myspan);}
 var txtlen=9+svgobj.getBBox().width;
 var svgobj = svgdoc.getElementById (infotiprect);
 svgobj.setAttributeNS(null,'x', (evt.getClientX()-offsetXmap)/ratio+5.5);
-svgobj.setAttributeNS(null,'y', (evt.getClientY()-offsetYmap)/ratio-9.5);
+svgobj.setAttributeNS(null,'y', (evt.getClientY()-offsetYmap)/ratio-3);
 svgobj.setAttributeNS(null,'width', txtlen);
-if (nbsplit >1) svgobj.setAttributeNS(null,'height',1.1*nbsplit+'em');else svgobj.setAttribute ('height',1+'em');
+if (nbsplit >1) svgobj.setAttributeNS(null,'height',10*nbsplit);else svgobj.setAttribute ('height',1+'em');
 svgobj.setAttributeNS(null,'rx', 3);
 svgobj.setAttributeNS(null,'ry', 3);
 var svgstyle = svgobj.getStyle();
@@ -271,7 +269,7 @@ function Zoomto(evt,tovalue,x)
 	oldbarzoom.setAttributeNS(null,'stroke','url(#survol)');
 	var barzoom = svgdoc.getElementById('rectzoom'+tovalue);
 	barzoom.setAttributeNS(null,'stroke','url(#zoomselect)');
-	svgdoc.getElementById('zoomcursor').setAttributeNS(null,'transform','translate('+ parseFloat(parseInt(tovalue)*4.5/intervale + 686.75 -zoommin*4.5/intervale) +',199)');
+	svgdoc.getElementById('zoomcursor').setAttributeNS(null,'transform','translate('+ parseFloat(parseInt(tovalue)*4.5/intervale + 523.75 -zoommin*4.5/intervale) +',24)');
 	zoomVal = parseInt(tovalue);
 	theZoom  = zoomVal;
 	rectOveXcorner = parseFloat(svgRect.getAttributeNS(null,'x'));
@@ -290,11 +288,27 @@ function Zoomto(evt,tovalue,x)
 	ycenter = rectOveYcorner + rectOveheight / 2;
 	
 	}
-	
-	nWidth = largeurini * (100/zoomVal);
+	if(hauteurini*ratiovue>largeurini)
+	{
+		nWidth = hauteurini*ratiovue * (100/zoomVal);
+		nHeight = hauteurini*(100/zoomVal);
+		
+	}
+	else
+	{
+		nWidth = largeurini*(100/zoomVal);
+		nHeight = (largeurini/ratiovue)*(100/zoomVal);
+	}
+	if(zoomVal==100)
+	{
+	xnulcorner = xcenterini - nWidth/ 2;
+	ynulcorner = ycenterini - nHeight/2
+	}
+	else
+	{
 	xnulcorner = xcenter - nWidth/ 2;
-	nHeight = (nWidth/ratiovue);
 	ynulcorner = ycenter - nHeight/2
+	}
 	Rect1lar = parseFloat(Rect1.getAttributeNS(null,'width'));
 	Rect1hau =Rect1lar/ratiovue;
 	if ((zoomtool == 'zoomin') && (Rpressed != 0))
@@ -304,8 +318,8 @@ function Zoomto(evt,tovalue,x)
 	    ynulcorner  = parseFloat(svgRectee.getAttributeNS(null,'y'));
 		wnul=parseFloat(svgRectee.getAttributeNS(null,'width'));
 		hnul= parseFloat(svgRectee.getAttributeNS(null,'height'));
-		xnulcorner=(rectOveXcorner+((xnulcorner-11)*rectOvewidth/larmap));
-		ynulcorner=(rectOveYcorner+((ynulcorner-11)*rectOveheight/haumap));
+		xnulcorner=(rectOveXcorner+((xnulcorner-10)*rectOvewidth/larmap));
+		ynulcorner=(rectOveYcorner+((ynulcorner-10)*rectOveheight/haumap));
 		xcenter = xnulcorner + nWidth/2;
 		ycenter = ynulcorner + nHeight/2;
 		}
@@ -313,7 +327,6 @@ function Zoomto(evt,tovalue,x)
 	var xnu=xnulcorner;
 	svgRect.setAttributeNS(null,'y',ynulcorner);
 	var ynu=ynulcorner;
-	
 	svgRect.setAttributeNS(null,'width',nWidth);
 	svgRect.setAttributeNS(null,'height',nHeight);
 	svgRect.setAttributeNS(null,'visibility','visible');
@@ -342,7 +355,8 @@ if (zoomVal>600)
 	else
 	{
 		Rect1.setAttributeNS(null,'x',xcenter-(parseFloat(Rect1.getAttributeNS(null,'width'))/2));
-		Rect1.setAttributeNS(null,'y',ycenter-(parseFloat(Rect1.getAttributeNS(null,'height'))/2));																	   		lin1.setAttributeNS(null,'x',xcenter-(parseFloat(Rect1.getAttributeNS(null,'width'))/2));
+		Rect1.setAttributeNS(null,'y',ycenter-(parseFloat(Rect1.getAttributeNS(null,'height'))/2));	
+		lin1.setAttributeNS(null,'x',xcenter-(parseFloat(Rect1.getAttributeNS(null,'width'))/2));
 		lin1.setAttributeNS(null,'y',ycenter);
 		lin2.setAttributeNS(null,'x',xcenter);
 		lin2.setAttributeNS(null,'y',ycenter-(parseFloat(Rect1.getAttributeNS(null,'height'))/2));											   }
@@ -385,7 +399,7 @@ if (zoomVal>600)
 		zoomin.setAttributeNS(null,'opacity','1');
 		}
 		initScaleBar(evt);
-		lecture_control()
+		lecture_control();
 		
 }
 
@@ -462,10 +476,8 @@ function initScaleBar(evt)
 {
 	svgobj = svgdoc.getElementById('droite');
 	childobj = svgobj.getFirstChild();
-	childobj.setData(parseFloat(parseInt((zoom_init/zoomVal)*(largeurini/620)*90)/1000));
-	svgobj = svgdoc.getElementById('centre');
-	childobj = svgobj.getFirstChild();
-	childobj.setData(parseFloat(parseInt((zoom_init/zoomVal)*(largeurini/620)*45)/1000));
+	rectOvewidth = parseFloat(svgRect.getAttributeNS(null,'width'));
+	svgdoc.getElementById('droite').firstChild.data=parseFloat(parseInt((rectOvewidth/larmap)*50*100))/100;
 }
 
 function clear(id1)
@@ -491,7 +503,7 @@ if(nblayer>1)
 								var tableau=libelle.split(cher);
 								for (var i=0; i<tableau.length; i++) 
 								{
-									suppvarraster(tableau[i])
+									suppvarraster(tableau[i]);
  								}
 								if(raster=='')
 								{
@@ -501,7 +513,7 @@ if(nblayer>1)
 								}
 									
 								}
-						lecture_control()	
+						lecture_control();	
 							for(i=0;i<nblayer;i++)
 							{
 							svgdoc.getElementById('control'+tablayers[i]).getStyle().setProperty('visibility','hidden');
@@ -526,7 +538,8 @@ if(nblayer>1)
 									zlayer[tableau[i]].svg_visible='true';
 								}
 							}
-							lecture_control()
+							lecture_control();
+							couche_init=0;
 				if(svgdoc.getElementById('d'+parseInt(tablayers[0])).getStyle().getPropertyValue('visibility') == 'hidden')
 				{
 					for(i=0;i<nblayer;i++)
@@ -551,12 +564,12 @@ if(nblayer>1)
 				svgdoc.getElementById('control'+couche).getStyle().setProperty('visibility','hidden');
 				svgdoc.getElementById('tra'+couche).getStyle().setProperty('visibility','hidden');
 			
-								suppvarraster(libelle)
+								suppvarraster(libelle);
 								if(raster=='')
 								{
 								zlayer[libelle].svg_visible='false';
 								}
-								lecture_control()
+								lecture_control();
 								
 								
 			}
@@ -573,7 +586,8 @@ if(nblayer>1)
 							{
 								zlayer[libelle].svg_visible='true';
 							}
-							lecture_control()
+							lecture_control();
+							couche_init=0;
 			}
 		}
 }
@@ -587,8 +601,8 @@ function extraction(x)
 	coucherasteraenvoyer=coucherastervisible.replace(reg,"_");
 	coucherasteraenvoyer=coucherasteraenvoyer.substr(0,coucherasteraenvoyer.length-1)
 	var url="charge.php?type=raster&raster="+coucherasteraenvoyer+"&layer=" + x + "&x="+ xnulcorner + "&y=" + ynulcorner + "&lar=" + nWidth  + "&hau=" + nHeight+ "&zoom=" + zoomVal  + "&sessionname=" + sessionname + "&sessionid=" + sessionid + "&xini=" + xini + "&yini=" + yini ;
-	animation()
-	getURL(url,retour_extract)
+	animation();
+	getURL(url,retour_extract);
 	}
 	else
 	{
@@ -599,10 +613,8 @@ var url='charge.php?type=svg&raster='+ cou +'&layer=' + x + '&x='+ xnulcorner + 
 	}
 	else	{	
 	var url='charge.php?type=svg&raster='+couchesvgvisible+'&layer=' + x + '&x='+ xnulcorner + '&y=' + ynulcorner + '&lar=' + nWidth  + '&hau=' + nHeight+ '&zoom=' + zoomVal  + '&sessionname=' + sessionname + '&sessionid=' + sessionid + '&xini=' + xini + '&yini=' + yini+ '&nav=' + nav + '&placid=' + placid;}
-	animation()
-	//alert(url)
-//message("toto")
-	getURL(url,retour_extract)
+	animation();
+	getURL(url,retour_extract);
 	couchesvgvisible="";
 	}
 }
@@ -649,10 +661,10 @@ function convasc(data)
 
 function retour_extract(data)
 {
-	 var string = '';
+	var string = '';
 	if(data.success) 
 	{
-    string = data.content;
+	string = data.content;
 	if(string!="")
 	{
 	var docFragment=parseXML(string, document);
@@ -660,12 +672,12 @@ function retour_extract(data)
 	var elem=frag.getAttributeNS(null,"id");
 	var content = document.getElementById(elem);
     content.appendChild(docFragment);
-	cache()
+	cache();
 	}
 	else
 	{
-	cache()	
-	message('Impossible de charger cette couche...')
+	cache()	;
+	message('Impossible de charger cette couche...');
 	}
 	}
 }
@@ -681,12 +693,12 @@ for(a=0;a<n;a++)
 	{
 		if(svgdoc.getElementById("theme" + r).getAttribute("so")>0)
 			{
-				l=svgdoc.getElementById("theme" + r).getAttribute("so")
+				l=svgdoc.getElementById("theme" + r).getAttribute("so");
 				if(svgdoc.getElementById("d" + r).getStyle().getPropertyValue("visibility") == "hidden")
 					{
 						for(z=1;z<=l;z++)
 							{
-							svgdoc.getElementById("tra"+r+codalph(z)).getStyle().setProperty('visibility','hidden')
+							svgdoc.getElementById("tra"+r+codalph(z)).getStyle().setProperty('visibility','hidden');
 							}
 						svgdoc.getElementById("d" + r).getStyle().setProperty('visibility','visible');
 						svgdoc.getElementById('soustheme'+r).getStyle().setProperty('visibility','hidden');
@@ -700,10 +712,10 @@ for(a=0;a<n;a++)
 							var exp=new RegExp(",","g");
 							var tabvari=vari.split(exp);
 							vari=tabvari[0].substring(0,tabvari[0].length-1);
-							suppvarraster(vari)
+							suppvarraster(vari);
 							if(controllay[a].type=='')
 								{
-								zlayer[vari].svg_visible='false'
+								zlayer[vari].svg_visible='false';
 								}
 						}
 						
@@ -718,9 +730,9 @@ for(a=0;a<n;a++)
 				//alert(vari)
 				if(controllay[a].type=='')
 								{
-								zlayer[vari].svg_visible='false'
+								zlayer[vari].svg_visible='false';
 								}
-				suppvarraster(vari)
+				suppvarraster(vari);
 			}
 			
 			svgdoc.getElementById('com'+r).getStyle().setProperty('opacity','0.5');
@@ -743,18 +755,18 @@ for(a=0;a<n;a++)
 	var axey="nok";
 		if(zlayer[layer[b]].svg_visible=='true')
 		{
-			if(zlayer[layer[b]].svg_zoomraster>zoomVal || ((nWidth*3300/620)>5221 && zlayer[layer[b]].svg_partiel=='1'))
+			if(zlayer[layer[b]].svg_zoomraster>zoomVal || ((nWidth*3300/larmap)>5221 && zlayer[layer[b]].svg_partiel=='1'))
 			{
-				clear('control'+zlayer[layer[b]].svg_controle)
-				zlayer[layer[b]].svg_zoom_charge=''
-				suppvarraster(layer[b])	
+				clear('control'+zlayer[layer[b]].svg_controle);
+				zlayer[layer[b]].svg_zoom_charge='';
+				suppvarraster(layer[b])	;
 				coucherastervisible+=layer[b]+";";
 				
 			}
 			else
 			{
-								suppvarraster(layer[b])
-								if(zlayer[layer[b]].svg_zoom_charge=='')
+								suppvarraster(layer[b]);
+								if(zlayer[layer[b]].svg_zoom_charge=='' || (zlayer[layer[b]].svg_force_charge=='1' && couche_init==1) )
 								{
 									couchesvgvisible=layer[b];
 									zlayer[layer[b]].svg_zoom_charge=zoomVal;
@@ -773,18 +785,18 @@ for(a=0;a<n;a++)
 									
 									if(parseFloat(tableau[0])<=xnulcorner && lar1>=lar2)
 									{
-										axex='ok'
+										axex='ok';
 									}
 									if(parseFloat(tableau[1])<=ynulcorner && hau1>=hau2)
 									{
-										axey='ok'
+										axey='ok';
 									}
 									if((axex!='ok' || axey!='ok') && zlayer[layer[b]].svg_partiel=='1')
 									{
 										couchesvgvisible=layer[b];
 										zlayer[layer[b]].svg_zoom_charge=zoomVal;
 										zlayer[layer[b]].svg_position=xnulcorner + ' ' + ynulcorner + ' ' + nWidth + ' ' + nHeight;
-										clear('control'+zlayer[layer[b]].svg_controle)
+										clear('control'+zlayer[layer[b]].svg_controle);
 										extraction('control'+zlayer[layer[b]].svg_controle);
 									}
 									
@@ -794,7 +806,7 @@ for(a=0;a<n;a++)
 									couchesvgvisible=layer[b];
 										zlayer[layer[b]].svg_zoom_charge=zoomVal;
 										zlayer[layer[b]].svg_position=xnulcorner + ' ' + ynulcorner + ' ' + nWidth + ' ' + nHeight;
-										clear('control'+zlayer[layer[b]].svg_controle)
+										clear('control'+zlayer[layer[b]].svg_controle);
 										extraction('control'+zlayer[layer[b]].svg_controle);
 								}
 								
@@ -804,7 +816,7 @@ for(a=0;a<n;a++)
 	}
 	if((coucherastervisible=="" || coucherastervisible==";" || coucherastervisible==";;") && couraster==0)
 	{
-	clear('controlraster')
+	clear('controlraster');
 	couraster=1;
 	coucherastervisible="";
 	}
@@ -813,7 +825,7 @@ for(a=0;a<n;a++)
 							posiactu=xnulcorner + ' ' + ynulcorner + ' ' + nWidth + ' ' + nHeight;
 							if(posiactu!=coucherasterposi || coucherastervisible!=coucherasterold)
 							{
-							clear('controlraster')
+							clear('controlraster');
 							extraction('controlraster');
 							couraster=0;
 							coucherasterposi=xnulcorner + ' ' + ynulcorner + ' ' + nWidth + ' ' + nHeight;
@@ -823,8 +835,9 @@ for(a=0;a<n;a++)
 							else
 							{
 							coucherasterposi="";
-							coucherasterold=""
+							coucherasterold="";
 							}
+							
 }
 
 function suppvarraster(x)
@@ -880,13 +893,13 @@ svgdoc.getElementById("curseur").setAttributeNS(null,'transform','translate(0,'+
 }
 else
 {
-liste_scroll_decale-=pas
+liste_scroll_decale-=pas;
 }
 }
 
 function liste_glisse_click(evt,valeur)
 {scroll_y=evt.getClientY();
-liste_scroll_appui=valeur}
+liste_scroll_appui=valeur;}
 
 function liste_glisse(evt)
 {
@@ -900,16 +913,16 @@ if (decale!=0)
 liste_scroll_decale+=decale;
 if (liste_scroll_decale<0)
  {
-liste_scroll_decale=0
+liste_scroll_decale=0;
 }
 if (liste_scroll_decale>(291-larg)/12)
 {
-liste_scroll_decale=(291-larg)/12
+liste_scroll_decale=(291-larg)/12;
 }
 node=svgdoc.getElementById("layer");
 node.setAttributeNS(null,'transform','translate(0,'+Math.round((-12*liste_scroll_decale))+')');
 var y_pos=parseInt(liste_scroll_decale);
-svgdoc.getElementById("curseur").setAttributeNS(null,'transform','translate(0,'+y_pos*12+')')
+svgdoc.getElementById("curseur").setAttributeNS(null,'transform','translate(0,'+y_pos*12+')');
 }
 }}
 
@@ -1028,7 +1041,7 @@ function endPan(evt)
 	svgMainViewport.setAttributeNS(null,'viewBox',newViewport);
 if (pressed == 1)
 		{
-			lecture_control()
+			lecture_control();
 		}
 	pressed = 0;
 }
@@ -1044,8 +1057,8 @@ function goEast(evt)
 		z= rectX + w;
 		if (z < (largeurini))
 			{
-			attribution('x',rectX,'+')
-			lecture_control()
+			attribution('x',rectX,'+');
+			lecture_control();
 			}
 		}
 }
@@ -1059,8 +1072,8 @@ function goWest(evt)
 		rectX = parseFloat(svgRect.getAttributeNS(null,'x'));
 		if (rectX > 0)
 			{
-			attribution('x',rectX,'-')
-			lecture_control()
+			attribution('x',rectX,'-');
+			lecture_control();
 			}
 		}
 }
@@ -1072,8 +1085,8 @@ function goNorth(evt)
 		rectY = parseFloat(svgRect.getAttributeNS(null,'y'));
 		if (rectY > 0)
 			{
-			attribution('y',rectY,'-')
-			lecture_control()
+			attribution('y',rectY,'-');
+			lecture_control();
 			}
 		}
 }
@@ -1087,8 +1100,8 @@ function goSouth(evt)
 		z= rectY+h;
 			if (z < (hauteurini)) 
 			{
-			attribution('y',rectY,'+')
-lecture_control()
+			attribution('y',rectY,'+');
+lecture_control();
 			}
 		}
 }
@@ -1106,7 +1119,7 @@ function attribution(pos,rectval,signe)
 		}
 		if(signe=='+')
 		{
-		rectX = rectval + att/6
+		rectX = rectval + att/6;
 		l1=-att/6;
 		l2=l1;
 		r1=l1;
@@ -1164,7 +1177,7 @@ RevtY =(RevtY-offsetYmap)/ratio;
 	if (zoomtool == 'zoomin')
 		{
 		var objrectevt;
-		if ((RevtX > 11) && (RevtX < larmap+11) && (RevtY> 11 ) && (RevtY <=  haumap+11))
+		if ((RevtX > 10) && (RevtX < larmap+10) && (RevtY> 44 ) && (RevtY <=  haumap+44))
 			{
 			Rpressed = 1;
 			objrectevt = svgdoc.getElementById('rectevt');
@@ -1182,7 +1195,7 @@ if ((Rpressed == 1) && (zoomtool == 'zoomin'))
 RnewevtX =(RnewevtX-offsetXmap)/ratio;
 RnewevtY =(RnewevtY-offsetYmap)/ratio;
 objrectevt = svgdoc.getElementById('rectevt');
-	if ((RnewevtX >= 11) && (RnewevtX <= larmap+11))
+	if ((RnewevtX >= 10) && (RnewevtX <= larmap+10))
 		{
 		if (RnewevtX > RevtX)
 			{
@@ -1196,17 +1209,17 @@ objrectevt = svgdoc.getElementById('rectevt');
 		}
 	else
 		{
-		if (RnewevtX < 11)
+		if (RnewevtX < 10)
 			{
 			objrectevt.setAttributeNS(null,'x',RnewevtX);
-			widthrect = -(11-RevtX);
+			widthrect = -(10-RevtX);
 			} 
-		if (RnewevtX > larmap+11)
+		if (RnewevtX > larmap+10)
 			{
-			widthrect = larmap+11-RevtX;
+			widthrect = larmap+10-RevtX;
 			}
 		}
-	if ((RnewevtY> 11 ) && (RnewevtY <= 11 + haumap))
+	if ((RnewevtY> 44 ) && (RnewevtY <= 44 + haumap))
 		{	
 		if (RnewevtY > RevtY)
 			{
@@ -1220,14 +1233,14 @@ objrectevt = svgdoc.getElementById('rectevt');
 		}
 	else
 		{
-		if (RnewevtY<= 11 )
+		if (RnewevtY<= 44 )
 			{
 			objrectevt.setAttributeNS(null,'y',RnewevtY);
-			heightrect = -(11 - RevtY);
+			heightrect = -(44 - RevtY);
 			}
-		if (RnewevtY > 11 + haumap)	
+		if (RnewevtY > 44 + haumap)	
 			{
-			heightrect = haumap+11 - RevtY;
+			heightrect = haumap+44 - RevtY;
 			}
 		}
 	objrectevt.setAttributeNS(null,'height',heightrect);
@@ -1294,7 +1307,7 @@ function sur2(evt,param1,valeur,param2,valeur2)
 	retparam1=svgdoc.getElementById(ident).getAttribute(param1);
 	if(retparam1=="")
 	{
-		retparam1="none"
+		retparam1="none";
 	}
 	 svgdoc.getElementById(ident).setAttribute(param1,valeur);
 	 }
@@ -1304,7 +1317,7 @@ function sur2(evt,param1,valeur,param2,valeur2)
 	 retparam2=svgdoc.getElementById(ident).getAttribute(param2);
 	 if(retparam2=="")
 	{
-		retparam2="none"
+		retparam2="none";
 	}
 	 svgdoc.getElementById(ident).setAttribute(param2,valeur2);
 	 }
@@ -1332,7 +1345,7 @@ svgdoc.getElementById(ident).setAttribute(idparam2,retparam2);
 	}
 }
 }
-hideinfotip(evt)
+hideinfotip(evt);
 	}
 }
 function inib_use()
@@ -1410,7 +1423,7 @@ coulfil+=")";
 	}
 	else
 	{
-		coulfil="rgb(255,0,0)"
+		coulfil="rgb(255,0,0)";
 	}
 	
 	if(node.getAttribute("fill")!='rgb(150,254,150)' && testcouleur=='none')
@@ -1426,11 +1439,11 @@ if(testcouleur!='none' && node.getAttribute("fill")!='rgb(150,254,150)')
 }
 if(info!='')
 {
-	showinfotip(evt,node.getAttribute("n")+" $ "+info)
+	showinfotip(evt,node.getAttribute("n")+" $ "+info);
 }
 else
 {
-showinfotip(evt,node.getAttribute("n"))
+showinfotip(evt,node.getAttribute("n"));
 }}}
 }
 function hors(evt)
@@ -1438,31 +1451,34 @@ function hors(evt)
 node = evt.getTarget();
 if(ini_use==0)
 {
+	
 if(node.getAttribute("fill")!='rgb(150,254,150)')
 {
-node.setAttribute("fill",coulfill);
+	node.setAttribute("fill",coulfill);
 node.setAttribute("fill-opacity",opacityfill);
 }
-hideinfotip(evt)
+hideinfotip(evt);
 }
 }
 function lien(evt,te,lhref,sel,nombre,target)
 	{
-	n_url=lhref;
-	if(multi=="1")
-	{
-		if(sel=="m")
+		if(noactive!=1)
+		{
+			n_url=lhref;
+			if(multi=="1")
 			{
-				if(tee=="")
+				if(sel=="m")
+					{
+					if(tee=="")
 					{
 					tee=te;
 					}
-				if(tee==te)
+					if(tee==te)
 					{
 					clic="1";
 					ur = evt.getTarget();
 					urelle = ur.getAttribute("id"); 
-					if(selectio=="")
+						if(selectio=="")
 						{
 						svgdoc.getElementById('valmultiple').getStyle().setProperty('visibility','visible');
 						id1=urelle;
@@ -1476,7 +1492,7 @@ function lien(evt,te,lhref,sel,nombre,target)
 						var reg=new RegExp(",", "g");
 						var longueur=selectio.split(reg);
 						var nb = longueur.length;
-						if(nombre!=""&&nb==nombre)
+							if(nombre!=""&&nb==nombre)
 							{
 							message("Ce type d'objet est limite a "+nb+" selections.");
 							}
@@ -1491,25 +1507,28 @@ function lien(evt,te,lhref,sel,nombre,target)
 						}
 	
 					}
-				else
+					else
 					{
 					message("Vous devez choisir le meme type d'objet");
 					}
-			}
-			else
+				}
+				else
 				{
 					message("Objet disponible uniquement en mode selection unique");
 				}
-	}
-	else
-	{
-	clic="0";
-	ur = evt.getTarget();
-	urelle = ur.getAttribute("id"); 
-	var zer="li"+urelle;
-var url=n_url+urelle;
-var param="_blank";
-ouvrepage(url,param,zer)	}
+			}
+			else
+			{
+			couche_init=1;	
+			clic="0";
+			ur = evt.getTarget();
+			urelle = ur.getAttribute("id"); 
+			var zer="li_lien"+urelle;
+			var url=n_url+urelle;
+			var param="_blank";
+			ouvrepage(url,param,zer);	
+			}
+		}
 }
 function impression()
 {
@@ -1517,7 +1536,7 @@ function impression()
 	var nb = layer.length;
 	var reg=new RegExp("( )", "g");
 	var coucherasteraimprimer=coucherastervisible.replace(reg,"_");
-	coucherasteraimprimer=coucherasteraimprimer.substr(0,coucherasteraimprimer.length-1)
+	coucherasteraimprimer=coucherasteraimprimer.substr(0,coucherasteraimprimer.length-1);
 	couches="";
 	if(coucherasteraimprimer!="" || coucherasteraimprimer!=";" || coucherasteraimprimer!=";;")
 	   {
@@ -1533,11 +1552,7 @@ function impression()
 		if(zlayer[layer[b]].svg_visible=='true')
 		{
 			couche=layer[b].replace(reg,"_");
-			
-			 //alert(layer[b])
-				var layer_test=layer[b].replace(reg,"_");
-				//var reg1=new RegExp("["+layer_test+"]","g");
-				
+			var layer_test=layer[b].replace(reg,"_");
 				if (couches.match(layer_test)) 
 				{
 				}
@@ -1577,17 +1592,17 @@ function impression()
 		{
 			ajo=")";
 		}
-	var url="https://" + serveur + "/interface/preprint.php?nav="+nav+"&raster="+couches+"&x="+ xnulcorner + "&y=" + ynulcorner + "&lar=" + nWidth  + "&hau=" + nHeight+ "&zoom=" + zoomVal  + "&xini=" + xini + "&yini=" + yini +"&nav="+nav+"&sessionname=" + sessionname + "&sessionid=" + sessionid +"&echini="+(nWidth*3300/620)+"&parce=('"+placid+"'"+ajo;
+		var url=protocol+"://"+serveur+"/interface/preprint.php?nav="+nav+"&raster="+couches+"&x="+ xnulcorner + "&y=" + ynulcorner + "&lar=" + nWidth  + "&hau=" + nHeight+ "&zoom=" + zoomVal  + "&xini=" + xini + "&yini=" + yini +"&nav="+nav+"&sessionname=" + sessionname + "&sessionid=" + sessionid +"&echini="+(nWidth*3300/larmap)+"&parce=('"+placid+"'"+ajo;
 var param="_blank";
 var zer="liprint";
-ouvrepage(url,param,zer)
+ouvrepage(url,param,zer);
 couches="";
 }
 function ouvrepage(url,param,zer)
 {
-	if(nav=="0" && param!="")
+	if(nav==0 && param!="")
 	{
-		open(url,'nom')
+		open(url,'nom');
 	}
 	else
 	{
@@ -1599,49 +1614,48 @@ function ouvrepage(url,param,zer)
 		}
 	}
 }
-function selectunique()
+function selectunique(evt)
 {
-	if(cotation!=0 || distance!=0 || surface!=0)
+	if(noactive==1)
 	{
-	bouton_distance=0	
-	traitpret=0	
+	bouton_distance=0;	
+	traitpret=0	;
 	noactive=0;
-	clearobj()
-	cotation=0
-	distance=0
-	surface=0
-	lx=0
+	clearobj();
+	cotation=0;
+	distance=0;
+	surface=0;
+	lx=0;
 	svgdoc.getElementById("dessin").setAttributeNS(null,"pointer-events","visible");
 	svgdoc.getElementById("desrect").setAttributeNS(null,"pointer-events","none");
+	svgdoc.getElementById("effacemesure").setAttribute("visibility","hidden");
 	}
 	else
 	{
 	if(multi=="0")
 	{
 	multi="1";
-	svgdoc.getElementById("boutonselect").setAttributeNS(null,"onmouseover","showinfotip(evt,'Selection multiple')");
-	//hideinfotip(evt)
-	//showinfotip(evt,'Selection multiple')
+	svgdoc.getElementById("boutonselect").setAttribute("onmouseover","showinfotip(evt,'Selection multiple')");
+	showinfotip(evt,'Selection multiple');
 	svgdoc.getElementById("sel").firstChild.data="h";
-	svgdoc.getElementById("sel").setAttributeNS(null,"x",677);
-	svgdoc.getElementById("sel").setAttributeNS(null,"y",232);
+	svgdoc.getElementById("sel").setAttributeNS(null,"x",125.5);
+	svgdoc.getElementById("sel").setAttributeNS(null,"y",23);
 	}
 	else
 	{
 	multi="0";
 	svgdoc.getElementById("boutonselect").setAttribute("onmouseover","showinfotip(evt,'Selection simple')");
-	//hideinfotip(evt)
-	//showinfotip(evt,'Selection simple')
+	showinfotip(evt,'Selection simple');
 	svgdoc.getElementById('valmultiple').getStyle().setProperty('visibility','hidden');
 	svgdoc.getElementById("sel").firstChild.data="g";
-	svgdoc.getElementById("sel").setAttributeNS(null,"x",678.5);
-	svgdoc.getElementById("sel").setAttributeNS(null,"y",234);
+	svgdoc.getElementById("sel").setAttributeNS(null,"x",127);
+	svgdoc.getElementById("sel").setAttributeNS(null,"y",25);
 	}
 
 selectio="";	
 if (id1!="")
 	{
-		effaceid1()
+		effaceid1();
 	}
 typebascule=new Array();
 coulbascule=new Array();
@@ -1659,9 +1673,9 @@ for (var klayer = 0;klayer <= nb; klayer++)
 {
 	node=svgdoc.getElementById(tabla[klayer]).parentNode.getAttribute("id");
 	node1=svgdoc.getElementById(node).parentNode.getAttribute("id");
-	couleur=svgdoc.getElementById(node1).getAttribute("fill")
-	opacite=svgdoc.getElementById(node1).getAttribute("fill-opacity")
-	strok=svgdoc.getElementById(node1).getAttribute("stroke")
+	couleur=svgdoc.getElementById(node1).getAttribute("fill");
+	opacite=svgdoc.getElementById(node1).getAttribute("fill-opacity");
+	strok=svgdoc.getElementById(node1).getAttribute("stroke");
 	svgdoc.getElementById(tabla[klayer]).setAttribute("fill",couleur);
 	svgdoc.getElementById(tabla[klayer]).setAttribute("fill-opacity",opacite);
 	svgdoc.getElementById(tabla[klayer]).setAttribute("stroke",strok);
@@ -1677,20 +1691,18 @@ svgdoc.getElementById('valmultiple').getStyle().setProperty('visibility','hidden
 var zer="livalide";
 var url=n_url+selectio;
 var param="_blank";
-ouvrepage(url,param,zer)
-effaceid1()
+ouvrepage(url,param,zer);
+effaceid1();
 }
 function clignotement(evt,x)
 { 
 if(svgdoc.getElementById(x).style.getPropertyValue('visibility')=='visible')
 {
-	svgdoc.getElementById(x).getStyle().setProperty('visibility','hidden')
+	svgdoc.getElementById(x).getStyle().setProperty('visibility','hidden');
 	}
 else
 {
-
-	svgdoc.getElementById(x).getStyle().setProperty('visibility','visible')
-
+svgdoc.getElementById(x).getStyle().setProperty('visibility','visible');
 }
 } 
 function entre_dim(evt)
@@ -1718,19 +1730,19 @@ if (phrase.length<17)
 phrase=phrase+lettre;
 }
 }
-var val=parseFloat(646+(phrase.length)*4.8)
+var val=parseFloat(626+(phrase.length)*4.8);
 svgdoc.getElementById("x_rect").getFirstChild().setData(phrase);
-svgdoc.getElementById('cligno1').setAttributeNS(null,'x',val)
+svgdoc.getElementById('cligno1').setAttributeNS(null,'x',val);
 }
 }
 function recherche()
 {
 clearInterval(Periode);
-svgdoc.getElementById('cligno1').style.setProperty('visibility','hidden')	
+svgdoc.getElementById('cligno1').style.setProperty('visibility','hidden');	
 tape_autorise=0;
 about = svgdoc.getElementById('inforecherche');
 about.getStyle().setProperty('visibility','visible');
-extraire_recherche()
+extraire_recherche();
 }
 function hideAbout()
 {
@@ -1741,8 +1753,8 @@ svgdoc.getElementById("numer").setAttribute("visibility","hidden");
 function extraire_recherche()
 {
 objet=svgdoc.getElementById("x_rect").getFirstChild().getData();
-svgdoc.getElementById("x_rect").getFirstChild().setData("?");
-svgdoc.getElementById('cligno1').setAttributeNS(null,'x','646')
+svgdoc.getElementById("x_rect").getFirstChild().setData("Recherche");
+svgdoc.getElementById('cligno1').setAttributeNS(null,'x','626');
 url='cherche.php?indice=' + objet + '&sessionname=' + sessionname + '&sessionid=' + sessionid + '&code_insee=' + code_insee;
 
 getURL(url,retour)
@@ -1752,8 +1764,7 @@ function retour(data)
  var string = '';
     if(data.success) {
       string = data.content;
-//alert(string)
-    var docFragment=parseXML(string, document);
+	var docFragment=parseXML(string, document);
 	afficherecherche = svgdoc.getElementById('controlrecherche');
 var content = document.getElementById('controlrecherche');
     content.appendChild(docFragment);
@@ -1766,11 +1777,11 @@ var routage = node.getAttribute("n");
 var routage2= node.getAttribute("r");
 if (routage==1)
 {
-var parcelle=node.getAttribute("id")
+var parcelle=node.getAttribute("id");
 chargement=1;
 
 var url='locali.php?parcelle=' + parcelle + '&sessionname=' + sessionname + '&sessionid=' + sessionid + '&xini=' + xini + '&yini=' + yini;
-getURL(url,retourrecherche)
+getURL(url,retourrecherche);
 }
 else
 {
@@ -1796,7 +1807,7 @@ message("La num"+String.fromCharCode(233)+"rotation n'est pas valide la carte es
 }
 else
 {
-hideAbout()}
+hideAbout();}
 rectOvewidth = parseFloat(svgRect.getAttributeNS(null,'width'));
 rectOveheight = parseFloat(svgRect.getAttributeNS(null,'height'));
 var x1=placx-(rectOvewidth/2);
@@ -1819,19 +1830,19 @@ ynulcorner=parseFloat(svgRect.getAttributeNS(null,'y'));;
 	rectOveXcorner = parseFloat(rectOveXcorner + (x*100/zoomVal));
 	newViewport = xnulcorner + ' ' + ynulcorner + ' ' + rectOvewidth + ' ' + rectOveheight;
 	svgMainViewport.setAttributeNS(null,'viewBox',newViewport);
-Zoomto(evt,zoomrecherche)
-svgdoc.getElementById("x_rect").getFirstChild().setData("?");
+Zoomto(evt,zoomrecherche);
+svgdoc.getElementById("x_rect").getFirstChild().setData("Recherche");
 svgdoc.getElementById("x_rectnum").getFirstChild().setData("?");
 }
 function recher()
 {
-tapenum_autorise=0	
+tapenum_autorise=0	;
 var adresse=svgdoc.getElementById("adre").getFirstChild().getData();
 var num=svgdoc.getElementById("x_rectnum").getFirstChild().getData();
 svgdoc.getElementById("x_rectnum").getFirstChild().setData("?");
-hideAbout()
+hideAbout();
 var url='locali.php?parcelle=&code=' + adresse + '&numero=' + num + '&sessionname=' + sessionname + '&sessionid=' + sessionid;
-getURL(url,retourrecherche)
+getURL(url,retourrecherche);
 }
 function entre_dimnum(evt)
 {
@@ -1843,14 +1854,14 @@ Periode=setInterval("clignotement(evt,'cligno2')", 500);
 function tapenum(evt)
 {
 clearInterval(Periode);
-svgdoc.getElementById('cligno2').style.setProperty('visibility','hidden')	
+svgdoc.getElementById('cligno2').style.setProperty('visibility','hidden')	;
 
 if(tapenum_autorise=1)
 {
 key1 = evt.getCharCode();	
 if ((key1==8)&&(phrase1!="")) 
 {
-phrase1=phrase1.substring(0,phrase1.length-1)
+phrase1=phrase1.substring(0,phrase1.length-1);
 }
 else
 {
@@ -1866,12 +1877,12 @@ svgdoc.getElementById("x_rectnum").getFirstChild().setData(phrase1);
 }
 function activetrait(evt)
 {
+noactive=1;	
 svgdoc.getElementById("dessin").setAttribute("pointer-events","none");
 svgdoc.getElementById("desrect").setAttribute("pointer-events","visible");
-noactive=1;
 if(bouton_distance==0)
 {
-clearobj()
+clearobj();
 cotation=0;
 distance=1;
 surface=0;
@@ -1880,9 +1891,9 @@ indice="distance";
 cumul=0;
 longtrait=0;
 svgdoc.getElementById("boutonregle").setAttribute("onmouseover","showinfotip(evt,'Mesure de distance')");
-showinfotip(evt,'Mesure de distance')
+showinfotip(evt,'Mesure de distance');
 svgdoc.getElementById("outi").getFirstChild().setData("j");
-svgdoc.getElementById("outi").setAttribute("x",709);
+svgdoc.getElementById("outi").setAttribute("x",155.5);
 }
 else if(bouton_distance==1)
 {
@@ -1893,14 +1904,14 @@ distance=0;
 surface=0;
 indice="cotation";
 svgdoc.getElementById("boutonregle").setAttribute("onmouseover","showinfotip(evt,'Cotation')");
-showinfotip(evt,'Cotation')
+showinfotip(evt,'Cotation');
 svgdoc.getElementById("outi").getFirstChild().setData("ij");
-svgdoc.getElementById("outi").setAttribute("x",705.5);
+svgdoc.getElementById("outi").setAttribute("x",152);
 cumul=0;
 }
 else
 {
-clearobj()
+clearobj();
 cumul=0;
 polygon=0;
 svgdoc.getElementById("effacemesure").setAttribute("visibility","hidden");	
@@ -1910,15 +1921,15 @@ surface=1;
 indice="surface";
 polyg=""
 svgdoc.getElementById("boutonregle").setAttribute("onmouseover","showinfotip(evt,'Mesure de surface')");
-showinfotip(evt,'Mesure de surface')
+showinfotip(evt,'Mesure de surface');
 svgdoc.getElementById("outi").getFirstChild().setData("n");
-svgdoc.getElementById("outi").setAttribute("x",709);
+svgdoc.getElementById("outi").setAttribute("x",155.5);
 }
 if(indice!="surface")
-{bouton_distance+=1}
+{bouton_distance+=1;}
 else
-{bouton_distance=0}
-traitpret=0
+{bouton_distance=0;}
+traitpret=0;
 }
 function createcircle(evt)
 {
@@ -1926,9 +1937,9 @@ function createcircle(evt)
 cumul=parseFloat(cumul+longtrait);
 if(surface==1)
 {
-traitrouge(evt)
-surface=2
-traitpret=1
+traitrouge(evt);
+surface=2;
+traitpret=1;
 lx=xm;
 ly=ym;
 polyg = parseFloat(xini+xm)+ " " + parseFloat(yini-ym);
@@ -1953,20 +1964,20 @@ svgdoc.getElementById("effacesurface").setAttribute("visibility","visible");
 svgdoc.getElementById("validesurface").setAttribute("visibility","visible");
 }
 countsurface=countsurface+1;
-traitblue(evt)
+traitblue(evt);
 polyg += ","+parseFloat(xini+xm)+ " " + parseFloat(yini-ym);	
 lxdist=xm;
 lydist=ym;
 lx=xm;
 ly=ym;
-traitrouge(evt)
+traitrouge(evt);
 }
 if(distance==1)
 {
 	
-traitrouge(evt)
-distance=2
-traitpret=1
+traitrouge(evt);
+distance=2;
+traitpret=1;
 lx=xm;
 ly=ym;
 }
@@ -1980,27 +1991,27 @@ else if(distance==2)
 
 svgdoc.getElementById("effacemesure").setAttribute("visibility","visible");
 countrait=countrait+1;
-traitblue(evt)
+traitblue(evt);
 lxdist=xm;
 lydist=ym;
 lx=xm;
 ly=ym;
-traitrouge(evt)
-affichetext(evt)
+traitrouge(evt);
+affichetext(evt);
 hideinfotip(evt);
 }
 if(cotation==1)
 {
-	if(lx!=0)
+	if(lx!=0 && countrait>0)
 	{
 		objet=svgdoc.getElementById("traits2");
 		svgdoc.getElementById("dess").removeChild(objet);
 	}
 	lxdist=0;
 	lydist=0;
-	traitrouge(evt)
-cotation=2
-traitpret=1
+	traitrouge(evt);
+cotation=2;
+traitpret=1;
 lx=xm;
 ly=ym;
 }
@@ -2013,12 +2024,12 @@ else if(cotation==2)
 			}
 svgdoc.getElementById("effacemesure").setAttribute("visibility","visible");
 countcotation=countcotation+1;
-traitblue(evt)
-cotation=1
-traitpret=0
+traitblue(evt);
+cotation=1;
+traitpret=0;
 lx=0;
 ly=0;
-affichetext(evt)
+affichetext(evt);
 hideinfotip(evt);
 }
 }
@@ -2027,13 +2038,13 @@ function bougetrait(evt)
 
 if(traitpret==1)
 {
-coordonne(evt)	
+coordonne(evt)	;
 svgdoc.getElementById("traits2").setAttribute("x2",(xm));
 svgdoc.getElementById("traits2").setAttribute("y2",(ym));
 var carx=Math.pow(parseFloat(lx-xm),2);
 var cary=Math.pow(parseFloat(ly-ym),2);
 longtrait=Math.sqrt(carx+cary);
-valtrait=Math.round(longtrait*100)/100
+valtrait=Math.round(longtrait*100)/100;
 if(lx<=xm && ly<=ym)
 {
 cosa=(ly-ym)/longtrait;
@@ -2059,7 +2070,7 @@ posix=lx+((xm-lx)/2);
 posiy=ly+((ym-ly)/2);
 if(surface==0)
 {
-showinfotip (evt,' '+valtrait+' ')
+showinfotip (evt,' '+valtrait+' ');
 }
 }
 
@@ -2114,21 +2125,18 @@ if(indice=='surface')
 {
 countsurface=countsurface-1;
 count=countsurface;
-lx=xold
-ly=yold
+lx=xold;
+ly=yold;
 }
 else if(indice=='cotation')
 {
 objet=svgdoc.getElementById("tex"+indice+de);
 svgdoc.getElementById("dess").removeChild(objet);
-//if(nav!="0")
-//{
-varcotations.pop()
-//}
+varcotations.pop();
 countcotation=countcotation-1;
 count=countcotation;
-lx=xold
-ly=yold
+lx=xold;
+ly=yold;
 }
 if(count==0)
 {
@@ -2144,29 +2152,29 @@ if(count==0)
 	svgdoc.getElementById("effacesurface").setAttribute("visibility","hidden");	
 	svgdoc.getElementById("validesurface").setAttribute("visibility","hidden");
 		}
-	traitpret=0
-	surface=1
-	lxdist=0
-	lx=0
-	ly=0
+	traitpret=0;
+	surface=1;
+	lxdist=0;
+	lx=0;
+	ly=0;
 	}
 	if(indice=="cotation")
 	{
 	svgdoc.getElementById("effacemesure").setAttribute("visibility","hidden");	
-	traitpret=0
-	cotation=1
-	lxdist=0
-	lx=0
-	ly=0
+	traitpret=0;
+	cotation=1;
+	lxdist=0;
+	lx=0;
+	ly=0;
 	}
 	if(indice=="distance")
 	{
 	svgdoc.getElementById("effacemesure").setAttribute("visibility","hidden");
-	traitpret=0
-	distance=1
-	lxdist=0
-	lx=0
-ly=0
+	traitpret=0;
+	distance=1;
+	lxdist=0;
+	lx=0;
+ly=0;
 	}
 if(ligne && indice!="cotation")
 			{
@@ -2197,8 +2205,8 @@ polyg += ","+tableau[i];
 function coordonne(evt)
 {
 	root=svgdoc.getElementById("mapid");
-	x=root.getAttributeNS(null,'x')
-	y=root.getAttributeNS(null,'y')
+	x=root.getAttributeNS(null,'x');
+	y=root.getAttributeNS(null,'y');
 	rectOveXcorner = parseFloat(svgRect.getAttributeNS(null,'x'));
 	rectOveYcorner = parseFloat(svgRect.getAttributeNS(null,'y'));
 	rectOvewidth = parseFloat(svgRect.getAttributeNS(null,'width'));
@@ -2209,17 +2217,13 @@ function coordonne(evt)
 function changecolor(x)
 {
 	selectstroke=svgdoc.getElementById("boutonprint").style.getPropertyValue("stroke");
-	if(selectstroke!="0")
-	{
 	svgdoc.getElementById(selectid).setAttribute("stroke",selectstroke);
-	
 	selectid=x;
-	}
 	svgdoc.getElementById(x).setAttributeNS(null,"stroke","red");
 }
 function traitrouge(evt)
 {
-coordonne(evt)
+coordonne(evt);
 debuttrait_x=xm;
 debuttrait_y=ym;
 if(lxdist!=0)
@@ -2228,19 +2232,19 @@ if(lxdist!=0)
 	debuttrait_y=lydist;
 }
 ligne=svgDocument.createElementNS(null, "line");
-ligne.setAttribute("id","traits2")
-ligne.setAttribute("x1",(debuttrait_x))
-ligne.setAttribute("y1",(debuttrait_y))
-ligne.setAttribute("x2",(xm))
-ligne.setAttribute("y2",(ym))
+ligne.setAttribute("id","traits2");
+ligne.setAttribute("x1",(debuttrait_x));
+ligne.setAttribute("y1",(debuttrait_y));
+ligne.setAttribute("x2",(xm));
+ligne.setAttribute("y2",(ym));
 if(cotation!=0)
 {
-ligne.setAttribute("marker-start","url(#extremite_mesure)")
+ligne.setAttribute("marker-start","url(#extremite_mesure)");
 }
-ligne.setAttribute("stroke-width","0.5")
-ligne.setAttribute("fill", "red")
-ligne.setAttribute("stroke","red")
-svgDocument.getElementById("dess").appendChild(ligne)
+ligne.setAttribute("stroke-width","0.5");
+ligne.setAttribute("fill", "red");
+ligne.setAttribute("stroke","red");
+svgDocument.getElementById("dess").appendChild(ligne);
 }
 function traitblue(evt)
 {
@@ -2253,26 +2257,23 @@ function traitblue(evt)
 	{
 		var indice1=countcotation;
 	}
-coordonne(evt)
+coordonne(evt);
 ligne1=svgDocument.createElementNS(null, "line");
-ligne1.setAttribute("id",indice+indice1)
-ligne1.setAttribute("x1",lx)
-ligne1.setAttribute("y1",ly)
-ligne1.setAttribute("x2",xm)
-ligne1.setAttribute("y2",ym)
+ligne1.setAttribute("id",indice+indice1);
+ligne1.setAttribute("x1",lx);
+ligne1.setAttribute("y1",ly);
+ligne1.setAttribute("x2",xm);
+ligne1.setAttribute("y2",ym);
 if(cotation!=0)
 {
-ligne1.setAttribute("marker-start","url(#debut_mesure)")
-ligne1.setAttribute("marker-end","url(#fin_mesure)")
+ligne1.setAttribute("marker-start","url(#debut_mesure)");
+ligne1.setAttribute("marker-end","url(#fin_mesure)");
 }
-ligne1.setAttribute("stroke-width","0.5")
-ligne1.setAttribute("fill", "blue")
-ligne1.setAttribute("stroke","blue")
-svgDocument.getElementById("dess").appendChild(ligne1)
-//if(nav!="0")
-//{
+ligne1.setAttribute("stroke-width","0.5");
+ligne1.setAttribute("fill", "blue");
+ligne1.setAttribute("stroke","blue");
+svgDocument.getElementById("dess").appendChild(ligne1);
 varcotations[countcotation-1]=Math.round(lx*100)/100+"|"+Math.round(ly*100)/100+"|"+Math.round(xm*100)/100+"|"+Math.round(ym*100)/100+"|"+Math.round(angle*100)/100+"|"+Math.round(posix*100)/100+"|"+Math.round(posiy*100)/100+"|"+Math.round(longtrait*100)/100;
-//}
 }
 function affichetext(evt)
 {
@@ -2292,7 +2293,7 @@ function affichetext(evt)
 	}
 texte=svgDocument.createElementNS(null, 'text');
 texte.setAttribute("fill","red");
-texte.setAttribute("id","tex"+indice+indice1)
+texte.setAttribute("id","tex"+indice+indice1);
 texte.setAttribute("font-size","3");
 texte.setAttribute("x",pox);
 texte.setAttribute("y",poy);
@@ -2301,9 +2302,9 @@ if(cotation!=0)
 texte.setAttribute("transform","rotate("+angle+","+pox+","+poy+")");
 texte.setAttribute("text-anchor","middle");
 }
-text_content = svgDocument.createTextNode(Math.round(aff*100)/100)
-texte.appendChild(text_content)
-svgDocument.getElementById("dess").appendChild(texte)
+text_content = svgDocument.createTextNode(Math.round(aff*100)/100);
+texte.appendChild(text_content);
+svgDocument.getElementById("dess").appendChild(texte);
 }
 function validesurface(evt)
 {
@@ -2312,7 +2313,7 @@ function validesurface(evt)
 		polyg="0 0,1 1";
 	}
 url="surface.php?polygo="+polyg+","+polyfin+"&sessionname=" + sessionname + "&sessionid=" + sessionid;
-getURL(url,retoursurface)
+getURL(url,retoursurface);
 }
 
 function retoursurface(x)
@@ -2340,12 +2341,12 @@ function clearobj()
 			svgdoc.getElementById("effacesurface").setAttribute("visibility","hidden");	
 			svgdoc.getElementById("validesurface").setAttribute("visibility","hidden");
 			}
-			traitpret=0
-			surface=1
-			lxdist=0
-			lx=0
-			ly=0
-			countsurface=0
+			traitpret=0;
+			surface=1;
+			lxdist=0;
+			lx=0;
+			ly=0;
+			countsurface=0;
 	}
 
 	if(countrait>0)
@@ -2355,15 +2356,15 @@ function clearobj()
 	objet=svgdoc.getElementById("distance"+j);
 	svgdoc.getElementById("dess").removeChild(objet);
 	objet=svgdoc.getElementById("tex"+indice+j);
-	svgdoc.getElementById("dess").removeChild(objet)
+	svgdoc.getElementById("dess").removeChild(objet);
 	}
 	objet=svgdoc.getElementById("traits2");
-	traitpret=0
-	distance=1
-	lxdist=0
-	lx=0
-ly=0
-countrait=0
+	traitpret=0;
+	distance=1;
+	lxdist=0;
+	lx=0;
+ly=0;
+countrait=0;
 	}
 	
 		if(svgdoc.getElementById("traits2"))
@@ -2374,6 +2375,7 @@ countrait=0
 }
 function activpoly(evt)
 {
+noactive=1;	
 clearobj();	
 svgdoc.getElementById("effacemesure").setAttribute("visibility","hidden");
 svgdoc.getElementById("dessin").setAttribute("pointer-events","none");
@@ -2395,17 +2397,20 @@ function validepoly(evt)
 var url="https://"+serveur+url_polygo+"?polygo="+polyg+","+polyfin+"&sessionname=" + sessionname + "&sessionid=" + sessionid;
 var zer="livalidepolygo";
 var param="_blank";
-ouvrepage(url,param,zer)
-clearobj()
+ouvrepage(url,param,zer);
+clearobj();
+couche_init=1;
+selectunique(evt);
+changecolor('boutonselect');
 }
 function enregistre()
 {
 	image="";
 	nom="";
-	var ladate=new Date()
-	var plus="M" + ladate.getMinutes() + "S" + ladate.getSeconds()
+	var ladate=new Date();
+	var plus="M" + ladate.getMinutes() + "S" + ladate.getSeconds();
 	nom=sessionid + plus;
-	animation()
+	animation();
 	var nb = layer.length;
 	couche_svg="";
 	for (b=0;b<nb;b++)
@@ -2420,12 +2425,12 @@ function enregistre()
 			{
 			couche_svg +=","+layer[b];
 			}
-			suppvarraster(layer[b])
+			suppvarraster(layer[b]);
 		}
 	}
 	var reg=new RegExp("( )", "g");
 	coucherasteraenvoyer=coucherastervisible.replace(reg,"_");
-	coucherasteraenvoyer=coucherasteraenvoyer.substr(0,coucherasteraenvoyer.length-1)
+	coucherasteraenvoyer=coucherasteraenvoyer.substr(0,coucherasteraenvoyer.length-1);
 	raster="";
 	if(coucherasteraenvoyer!="")
 							{
@@ -2434,12 +2439,11 @@ function enregistre()
 		}
 	
 	droite=svgdoc.getElementById("droite").getFirstChild().getData();
-	centre=svgdoc.getElementById("centre").getFirstChild().getData();
 	var reg=new RegExp("'", "g");
 	par=placid;
 	if(parce.replace(reg,"")!="")
 	{
-	par +=","+parce.replace(reg,"")
+	par +=","+parce.replace(reg,"");
 	}
 	if(nav!=0)
 	{
@@ -2454,7 +2458,7 @@ function enregistre()
 		}
 		couche_svg=convasc(couche_svg);
 		raster=convasc(raster);
-		var url="enregistre.php?centre="+centre+"&droite="+droite+"&nom=" +nom+"&svg="+couche_svg+"&raster="+raster+"&x="+ xnulcorner + "&y=" + ynulcorner + "&lar=" + nWidth  + "&hau=" + nHeight+ "&zoom=" + zoomVal  + "&xini=" + xini + "&yini=" + yini +"&nav="+nav+"&parce="+par+"&sessionname=";
+		var url="interface/enregistre.php?droite="+droite+"&nom=" +nom+"&svg="+couche_svg+"&raster="+raster+"&x="+ xnulcorner + "&y=" + ynulcorner + "&lar=" + nWidth  + "&hau=" + nHeight+ "&zoom=" + zoomVal  + "&xini=" + xini + "&yini=" + yini +"&nav="+nav+"&parce="+par+"&sessionname=";
 		
 	}
 	else
@@ -2469,18 +2473,18 @@ function enregistre()
 		getURL("cotation.php?eff=1",callback2);	
 		}	
 
-var url="enregistre.php?centre="+centre+"&droite="+droite+"&nom=" +nom+"&svg="+couche_svg+"&raster="+raster+"&x="+ xnulcorner + "&y=" + ynulcorner + "&lar=" + nWidth  + "&hau=" + nHeight+ "&zoom=" + zoomVal  + "&xini=" + xini + "&yini=" + yini +"&nav="+nav+"&parce="+par+"&sessionname=";
+var url="interface/enregistre.php?droite="+droite+"&nom=" +nom+"&svg="+couche_svg+"&raster="+raster+"&x="+ xnulcorner + "&y=" + ynulcorner + "&lar=" + nWidth  + "&hau=" + nHeight+ "&zoom=" + zoomVal  + "&xini=" + xini + "&yini=" + yini +"&nav="+nav+"&parce="+par+"&sessionname=";
 		}
 		setTimeout("cache()",6000);
 		var zer="lienre";
 var param="";
-ouvrepage(url,param,zer)
+ouvrepage(url,param,zer);
 	
 }
 function callback2(data)
 {
 if (!data.success) 
-	message("nok")
+	message("nok");
 }
 function callback(data)
 {
@@ -2488,7 +2492,7 @@ if (data.success){
 cache();
 }
 else
-{message('enregistrement imposssible')
+{message('enregistrement imposssible');
 }
 
 }
@@ -2496,29 +2500,29 @@ function construction_svg()
 {
 var str="";	
 str +=printNode(svgdoc.getElementById("dess"));
-return str
+return str;
 }
 function aide()
 {
-var url="https://" + serveur + "/interface/Manuel.pdf";
+var url="http://" + serveur + "/interface/Manuel.pdf";
 var param="_blank";
 var zer="aide";	
-ouvrepage(url,param,zer)	
+ouvrepage(url,param,zer);	
 }
 function contacte()
 {
-var url="https://" + serveur + "/interface/mail/mailto.php";
+var url="http://" + serveur + "/interface/mail/mailto.php";
 var param="_blank";
 var zer="contacte";	
-ouvrepage(url,param,zer)	
+ouvrepage(url,param,zer);	
 }
 function message(data)
 {
-hideinfotip(evt)
+hideinfotip(evt);
 var chaine=new Array;
 nbcaract=data.length;
 nbligne=Math.ceil(nbcaract/55);
-debu=0
+debu=0;
 for(a=0;a<nbligne;a++) 
 {
 	if(debu+55>nbcaract)
@@ -2539,13 +2543,13 @@ for(a=0;a<chaine.length;a++)
 texte=svgDocument.createElementNS(null, 'text');
 texte.setAttribute("pointer-events","none");
 texte.setAttribute("text-anchor","middle");
-texte.setAttribute("id","idmess"+a)
+texte.setAttribute("id","idmess"+a);
 texte.setAttribute("font-size","10");
 texte.setAttribute("x","316");
 texte.setAttribute("y",vy);
-text_content = svgDocument.createTextNode(chaine[a])
-texte.appendChild(text_content)
-svgDocument.getElementById("idmessage").appendChild(texte)
+text_content = svgDocument.createTextNode(chaine[a]);
+texte.appendChild(text_content);
+svgDocument.getElementById("idmessage").appendChild(texte);
 vy=vy+15;
 heightcont=115;
 yrectferm=155;
@@ -2569,4 +2573,82 @@ svgdoc.getElementById('message').getStyle().setProperty('visibility','hidden');
 svgdoc.getElementById('fermealerte').setAttributeNS(null,'y',"140");
 	svgdoc.getElementById('idcont').setAttributeNS(null,"height","100");
 	svgdoc.getElementById('idok').setAttributeNS(null,'y',"152.5");
+}
+function legende()
+{
+	if(svgdoc.getElementById('legende').getAttributeNS(null,'pointer-events')=='visible')
+{
+	svgdoc.getElementById('legende').setAttributeNS(null,'pointer-events',"none");
+	svgdoc.getElementById('legende').setAttributeNS(null,'opacity',"0");
+	svgdoc.getElementById('txt_vileg').setAttributeNS(null,'opacity',"0.4");
+}
+else
+{
+	svgdoc.getElementById('legende').setAttributeNS(null,'pointer-events',"visible");
+	svgdoc.getElementById('legende').setAttributeNS(null,'opacity',"1");
+	svgdoc.getElementById('txt_vileg').setAttributeNS(null,'opacity',"1");
+}
+}
+function navigation()
+{
+	if(svgdoc.getElementById('navigation').getAttributeNS(null,'pointer-events')=='visible')
+{
+	svgdoc.getElementById('navigation').setAttributeNS(null,'pointer-events',"none");
+	svgdoc.getElementById('navigation').setAttributeNS(null,'opacity',"0");
+	svgdoc.getElementById("t_navigation").getFirstChild().setData("m");
+	svgdoc.getElementById('t_navigation').setAttributeNS(null,'y',"53");
+	svgdoc.getElementById('retour_map').setAttributeNS(null,'x',"1000000");
+}
+else
+{
+	svgdoc.getElementById('navigation').setAttributeNS(null,'pointer-events',"visible");
+	svgdoc.getElementById('navigation').setAttributeNS(null,'opacity',"1");
+	svgdoc.getElementById("t_navigation").getFirstChild().setData("l");
+	svgdoc.getElementById('t_navigation').setAttributeNS(null,'y',"56");
+	svgdoc.getElementById('retour_map').setAttributeNS(null,'x',"0");
+}
+}
+function selec_appli()
+{
+if(va_appli>1)
+{
+if(svgdoc.getElementById('deroul_appli').getAttributeNS(null,'visibility')=='visible')
+{
+	svgdoc.getElementById('deroul_appli').setAttributeNS(null,'visibility',"hidden");
+}
+else
+{
+	svgdoc.getElementById('deroul_appli').setAttributeNS(null,'visibility',"visible");
+}
+}
+
+}
+function ouv_appli(bou,x,y,ul)
+{
+	if(ul.substr(0,1)=='/')
+	{
+		ul=ul.substr(1,ul.length);
+	}
+		var zer="liappli"+bou;
+		if(y==1)
+		{
+			var url="https://"+serveur+"/"+ul;
+			var param="_blank";
+ouvrepage(url,param,zer);
+		}
+		else
+		{
+					var url="https://"+serveur+"/interface/reload.php?appli="+x+"&sessionname=" + sessionname + "&sessionid=" + sessionid + "&code_insee=" + code_insee;
+			var param="";
+ouvrepage(url,param,zer);
+		}
+		svgdoc.getElementById('deroul_appli').setAttributeNS(null,'visibility',"hidden");
+}
+function fin_session()
+{
+	//alert('ok');
+	var zer="lifinsession";
+	var url="https://"+serveur+"/logout.php";
+			var param="";
+ouvrepage(url,param,zer);
 }

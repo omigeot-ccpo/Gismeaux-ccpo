@@ -31,13 +31,9 @@ sécurité de leurs systèmes et ou de leurs données et, plus généralement,
 Le fait que vous puissiez accéder à cet en-tête signifie que vous avez 
 pris connaissance de la licence CeCILL-C, et que vous en avez accepté les 
 termes.*/
-
-define('GIS_ROOT', '../..');
+/*define('GIS_ROOT', '../..');
 include_once(GIS_ROOT . '/inc/common.php');
-gis_session_start();
-
-
-
+gis_session_start();*/
 function supp_acc($texte)
 {
 $nom=str_replace("à","a",$texte);
@@ -53,18 +49,24 @@ $nom=str_replace(" ","_",$nom);
 return $nom;
 }
 $libappli="select application.libelle_appli from admin_svg.application where idapplication='".$_SESSION['appli']."'";
-$lib_appli=tab_result($pgx,$libappli);
+$lib_appli=$DB->tab_result($libappli);
 
-$liblar="select (xma::real-xmi::real) as lar from admin_svg.commune where idcommune='".$_SESSION['code_insee']."'";
-$lar=tab_result($pgx,$liblar);
+$liblar="select (xma::real-xmi::real) as lar from admin_svg.commune where idcommune='".$_SESSION["profil"]->insee."'";
+$lar=$DB->tab_result($liblar);
 $coef_echelle=$lar[0]['lar']*2.32;
 
 $mapcotation="LAYER \n";
 $mapcotation.="CONNECTIONTYPE postgis \n";
 $mapcotation.="NAME \"cotation\" group \"cotation\" \n";
-$mapcotation.="CONNECTION \"".$db_params."\" \n";
-$mapcotation.="DATA \"the_geom FROM admin_svg.temp_cotation using unique the_geom using SRID=-1\" \n";
+$mapcotation.="CONNECTION \"user=%user% password=%password% dbname=%dbname% host=%host%\" \n";
+$mapcotation.="DATA \"the_geom FROM admin_svg.temp_cotation using unique the_geom\" \n";
 $mapcotation.="STATUS on \n";
+$mapcotation.="PROJECTION \n";
+$mapcotation.="'proj=longlat' \n";
+$mapcotation.="'ellps=WGS84' \n";
+$mapcotation.="'datum=WGS84' \n";
+$mapcotation.="'no_defs' \n";
+$mapcotation.="END \n";
 $mapcotation.="TYPE line \n";
 $mapcotation.="FILTER \"session_temp like '%sess%'\" \n";
 $mapcotation.="LABELITEM valeur \n";
@@ -254,9 +256,9 @@ $map.="POINTS 1 1 END \n";
 $map.="FILLED TRUE \n";
 $map.="END \n";
 
-$req2="select appthe.idtheme,theme.libelle_them as nom_theme,theme.schema,theme.tabl,appthe.idappthe,col_theme.colonn,admin_svg.v_fixe(col_theme.valeur_texte),theme.raster as raster,style.fill as style_fill,style.symbole as style_symbole,style.opacity  as style_opacity,style.font_size  as style_fontsize,style.stroke_rgb  as style_stroke,style.stroke_width,appthe.objprincipal,appthe.objrecherche,theme.groupe,sinul(appthe.zoommin::character varying,theme.zoommin::character varying) as zoommin,sinul(appthe.zoommax::character varying,theme.zoommax::character varying) as zoommax from admin_svg.appthe join admin_svg.theme on appthe.idtheme=theme.idtheme join admin_svg.application on appthe.idapplication=application.idapplication left outer join  admin_svg.col_theme on appthe.idappthe=col_theme.idappthe left outer join admin_svg.style on appthe.idtheme=style.idtheme where appthe.idapplication=".$_SESSION['appli']." group by appthe.idtheme,theme.libelle_them,appthe.ordre,theme.schema,theme.tabl,col_theme.colonn,admin_svg.v_fixe(col_theme.valeur_texte),theme.raster,style.fill,style.symbole,style.opacity,style.font_size,style.stroke_rgb,appthe.idappthe,appthe.objprincipal,appthe.objrecherche,theme.groupe,appthe.zoommin,theme.zoommin,appthe.zoommax,theme.zoommax,style.stroke_width order by appthe.ordre desc";
+$req2="select appthe.idtheme,theme.libelle_them as nom_theme,theme.schema,theme.tabl,appthe.idappthe,col_theme.colonn,admin_svg.v_fixe(col_theme.valeur_texte),theme.raster as raster,style.fill as style_fill,style.symbole as style_symbole,style.opacity  as style_opacity,style.font_size  as style_fontsize,style.stroke_rgb  as style_stroke,style.stroke_width,appthe.objprincipal,appthe.objrecherche,theme.groupe,sinul(appthe.zoommin::character varying,theme.zoommin::character varying) as zoommin,sinul(appthe.zoommax::character varying,theme.zoommax::character varying) as zoommax from admin_svg.appthe join admin_svg.theme on appthe.idtheme=theme.idtheme join admin_svg.application on appthe.idapplication=application.idapplication left outer join  admin_svg.col_theme on appthe.idappthe=col_theme.idappthe left outer join admin_svg.style on appthe.idtheme=style.idtheme where appthe.idapplication='".$_SESSION["appli"]."' group by appthe.idtheme,theme.libelle_them,appthe.ordre,theme.schema,theme.tabl,col_theme.colonn,admin_svg.v_fixe(col_theme.valeur_texte),theme.raster,style.fill,style.symbole,style.opacity,style.font_size,style.stroke_rgb,appthe.idappthe,appthe.objprincipal,appthe.objrecherche,theme.groupe,appthe.zoommin,theme.zoommin,appthe.zoommax,theme.zoommax,style.stroke_width order by appthe.ordre desc";
 
-$cou=tab_result($pgx,$req2);
+$cou=$DB->tab_result($req2);
 
 for ($c=0;$c<count($cou);$c++)
 {
@@ -264,18 +266,18 @@ $clause="";
 $mapprincipal="";
 $maprecherche="";
 $d="select appel from admin_svg.col_sel where idtheme='".$cou[$c]['idtheme']."' and nom_as='geom'";
-		$col=tab_result($pgx,$d);
+		$col=$DB->tab_result($d);
 $dd="select appel from admin_svg.col_sel where idtheme='".$cou[$c]['idtheme']."' and nom_as='ad'";
-$co=tab_result($pgx,$dd);
+$co=$DB->tab_result($dd);
 $dd1="select appel from admin_svg.col_sel where idtheme='".$cou[$c]['idtheme']."' and nom_as='ident'";
-$co1=tab_result($pgx,$dd1);
+$co1=$DB->tab_result($dd1);
 if(count($col)>0)
 {
 $dd="select distinct geometrytype(".$col[0]['appel'].") as geome from ".$cou[$c]['schema'].".".$cou[$c]['tabl'];
-		$geo=tab_result($pgx,$dd);
+		$geo=$DB->tab_result($dd);
 }
 $j="select * from admin_svg.col_where where idtheme='".$cou[$c]['idtheme']."'";
-		$whr=tab_result($pgx,$j);
+		$whr=$DB->tab_result($j);
 		if (count($whr)>0)
 		{
 			$clause=" ".str_replace("VALEUR","'%insee%%'",$whr[0]['clause']);
@@ -296,7 +298,9 @@ else
 $type="polygon";
 $mapp="mappolygone";
 }
-$req1="select distinct (col_theme.intitule_legende) as intitule_legende,col_theme.valeur_texte,col_theme.valeur_mini,col_theme.valeur_maxi,col_theme.fill,col_theme.stroke_rgb,col_theme.stroke_width,col_theme.symbole,col_theme.font_size,col_theme.font_familly,col_theme.opacity,col_theme.ordre from admin_svg.appthe join admin_svg.col_theme on appthe.idappthe=col_theme.idappthe join admin_svg.theme on appthe.idtheme=theme.idtheme where appthe.idapplication=".$appli." and appthe.idtheme='".$cou[$c]['idtheme']."' order by col_theme.ordre asc";
+
+$req1="select distinct (col_theme.intitule_legende) as intitule_legende,col_theme.valeur_texte,col_theme.valeur_mini,col_theme.valeur_maxi,col_theme.fill,col_theme.stroke_rgb,col_theme.stroke_width,col_theme.symbole,col_theme.font_size,col_theme.font_familly,col_theme.opacity,col_theme.ordre from admin_svg.appthe join admin_svg.col_theme on appthe.idappthe=col_theme.idappthe join admin_svg.theme on appthe.idtheme=theme.idtheme where appthe.idapplication='".$_SESSION["appli"]."' and appthe.idtheme='".$cou[$c]['idtheme']."' order by col_theme.ordre asc";
+
 	$couch=$DB->tab_result($req1);
 	//$d="select * from admin_svg.col_sel where idtheme='".$cou[0]['idtheme']."'";
 		//$col=tab_result($pgx,$d);
@@ -309,16 +313,22 @@ $req1="select distinct (col_theme.intitule_legende) as intitule_legende,col_them
 			$maprecherche.="LAYER \n";
 			$maprecherche.="CONNECTIONTYPE postgis \n";
 			$maprecherche.="NAME \"".str_replace(" ","_",$couch[$r]['intitule_legende'])."\" group \"".str_replace(" ","_",$cou[$c]['nom_theme'])."\" \n";
-			$maprecherche.="CONNECTION \"".$db_params."\" \n";
+			$maprecherche.="CONNECTION \"user=%user% password=%password% dbname=%dbname% host=%host%\" \n";
 			if($clause=="")
 			{
-			$maprecherche.="DATA \"".str_replace(" ","",$col[0]['appel'])." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." using unique ".str_replace(" ","",$col[0]['appel'])." using SRID=-1\" \n";
+			$maprecherche.="DATA \"".str_replace(" ","",$col[0]['appel'])." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." using unique ".str_replace(" ","",$col[0]['appel'])."\" \n";
 			}
 			else
 			{
-			$maprecherche.="DATA \"".str_replace(" ","",$col[0]['appel'])." from (select ".str_replace(" ","",$col[0]['appel'])." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." where ".$clause." and ".$cou[$c]['tabl'].".code_insee like '%insee%%') as neo using unique ".str_replace(" ","",$col[0]['appel'])." using SRID=-1\" \n";
+			$maprecherche.="DATA \"".str_replace(" ","",$col[0]['appel'])." from (select ".str_replace(" ","",$col[0]['appel'])." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." where ".$clause." and ".$cou[$c]['tabl'].".code_insee like '%insee%%') as neo using unique ".str_replace(" ","",$col[0]['appel'])."\" \n";
 			}
 			$maprecherche.="STATUS on \n";
+			$maprecherche.="PROJECTION \n";
+			$maprecherche.="'proj=longlat' \n";
+			$maprecherche.="'ellps=WGS84' \n";
+			$maprecherche.="'datum=WGS84' \n";
+			$maprecherche.="'no_defs' \n";
+			$maprecherche.="END \n";
 			$maprecherche.="TYPE ".$type." \n";
 			if($clause=="")
 			{
@@ -346,16 +356,22 @@ $req1="select distinct (col_theme.intitule_legende) as intitule_legende,col_them
 			$mapprincipal.="LAYER \n";
 	$mapprincipal.="CONNECTIONTYPE postgis \n";
 	$mapprincipal.="NAME \"".str_replace(" ","_",$couch[$r]['intitule_legende'])."\" group \"".str_replace(" ","_",$cou[$c]['nom_theme'])."\" \n";
-	$mapprincipal.="CONNECTION \"".$db_params."\" \n";
+	$mapprincipal.="CONNECTION \"user=%user% password=%password% dbname=%dbname% host=%host%\" \n";
 	if($clause=="")
 	{
-	$mapprincipal.="DATA \"".str_replace(" ","",$col[0]['appel'])." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." using unique ".str_replace(" ","",$col[0]['appel'])." using SRID=-1\" \n";
+	$mapprincipal.="DATA \"".str_replace(" ","",$col[0]['appel'])." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." using unique ".str_replace(" ","",$col[0]['appel'])."\" \n";
 	}
 	else
 	{
-	$mapprincipal.="DATA \"".str_replace(" ","",$col[0]['appel'])." from (select ".str_replace(" ","",$col[0]['appel'])." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." where ".$clause." and ".$cou[$c]['tabl'].".code_insee like '%insee%%') as neo using unique ".str_replace(" ","",$col[0]['appel'])." using SRID=-1\" \n";
+	$mapprincipal.="DATA \"".str_replace(" ","",$col[0]['appel'])." from (select ".str_replace(" ","",$col[0]['appel'])." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." where ".$clause." and ".$cou[$c]['tabl'].".code_insee like '%insee%%') as neo using unique ".str_replace(" ","",$col[0]['appel'])."\" \n";
 	}
 	$mapprincipal.="STATUS on \n";
+	$mapprincipal.="PROJECTION \n";
+	$mapprincipal.="'proj=longlat' \n";
+	$mapprincipal.="'ellps=WGS84' \n";
+	$mapprincipal.="'datum=WGS84' \n";
+	$mapprincipal.="'no_defs' \n";
+	$mapprincipal.="END \n";
 	$mapprincipal.="TYPE ".$type." \n";
     if($clause=="" && $cou[$c]['schema']!="bd_topo")
 	{
@@ -371,16 +387,22 @@ $req1="select distinct (col_theme.intitule_legende) as intitule_legende,col_them
 			$$mapp.="LAYER \n";
 	$$mapp.="CONNECTIONTYPE postgis \n";
 	$$mapp.="NAME \"".str_replace(" ","_",$couch[$r]['intitule_legende'])."\" group \"".str_replace(" ","_",$cou[$c]['nom_theme'])."\" \n";
-	$$mapp.="CONNECTION \"".$db_params."\" \n";
+	$$mapp.="CONNECTION \"user=%user% password=%password% dbname=%dbname% host=%host%\" \n";
 	if($clause=="")
 	{
-	$$mapp.="DATA \"".str_replace(" ","",$col[0]['appel'])." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." using unique ".str_replace(" ","",$col[0]['appel'])." using SRID=-1\" \n";
+	$$mapp.="DATA \"".str_replace(" ","",$col[0]['appel'])." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." using unique ".str_replace(" ","",$col[0]['appel'])."\" \n";
 	}
 	else
 	{
-	$$mapp.="DATA \"".str_replace(" ","",$col[0]['appel'])." from (select ".str_replace(" ","",$col[0]['appel'])." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." where ".$clause." and ".$cou[$c]['tabl'].".code_insee like '%insee%%') as neo using unique ".str_replace(" ","",$col[0]['appel'])." using SRID=-1\" \n";
+	$$mapp.="DATA \"".str_replace(" ","",$col[0]['appel'])." from (select ".str_replace(" ","",$col[0]['appel'])." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." where ".$clause." and ".$cou[$c]['tabl'].".code_insee like '%insee%%') as neo using unique ".str_replace(" ","",$col[0]['appel'])."\" \n";
 	}
 	$$mapp.="STATUS on \n";
+	$$mapp.="PROJECTION \n";
+	$$mapp.="'proj=longlat' \n";
+	$$mapp.="'ellps=WGS84' \n";
+	$$mapp.="'datum=WGS84' \n";
+	$$mapp.="'no_defs' \n";
+	$$mapp.="END \n";
 	if($type=="point")
 	{
 	$$mapp.="TYPE annotation \n";
@@ -456,7 +478,7 @@ $req1="select distinct (col_theme.intitule_legende) as intitule_legende,col_them
 		}
 				
 	$$mapp.="END \n";
-	if($couch[$r]['opacity']!='' && $couch[$r]['opactity']!='none' )
+	if($couch[$r]['opacity']!='' && $couch[$r]['opactity']!='none' && $couch[$r]['opacity']!='1' )
 		{
 		$$mapp.="TRANSPARENCY ".($couch[$r]['opactity']*100)." \n";
 		}
@@ -471,16 +493,22 @@ $$mapp.="END \n \n";
 			$maprecherche.="LAYER \n";
 			$maprecherche.="CONNECTIONTYPE postgis \n";
 			$maprecherche.="NAME \"".str_replace(" ","_",$cou[$c]['nom_theme'])."\" group \"".str_replace(" ","_",$cou[$c]['nom_theme'])."\" \n";
-			$maprecherche.="CONNECTION \"".$db_params."\" \n";
+			$maprecherche.="CONNECTION \"user=%user% password=%password% dbname=%dbname% host=%host%\" \n";
 			if($clause=="")
 			{
-			$maprecherche.="DATA \"".str_replace(" ","",$col[0]['appel'])." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." using unique ".str_replace(" ","",$col[0]['appel'])." using SRID=-1\" \n";
+			$maprecherche.="DATA \"".str_replace(" ","",$col[0]['appel'])." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." using unique ".str_replace(" ","",$col[0]['appel'])."\" \n";
 			}
 			else
 			{
-			$maprecherche.="DATA \"".str_replace(" ","",$col[0]['appel'])." from (select ".str_replace(" ","",$col[0]['appel'])." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." where ".$clause." and ".$cou[$c]['tabl'].".code_insee like '%insee%%') as neo using unique ".str_replace(" ","",$col[0]['appel'])." using SRID=-1\" \n";
+			$maprecherche.="DATA \"".str_replace(" ","",$col[0]['appel'])." from (select ".str_replace(" ","",$col[0]['appel'])." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." where ".$clause." and ".$cou[$c]['tabl'].".code_insee like '%insee%%') as neo using unique ".str_replace(" ","",$col[0]['appel'])."\" \n";
 			}
 			$maprecherche.="STATUS on \n";
+			$maprecherche.="PROJECTION \n";
+			$maprecherche.="'proj=longlat' \n";
+			$maprecherche.="'ellps=WGS84' \n";
+			$maprecherche.="'datum=WGS84' \n";
+			$maprecherche.="'no_defs' \n";
+			$maprecherche.="END \n";
 			$maprecherche.="TYPE ".$type." \n";
 			if($clause=="")
 			{
@@ -507,16 +535,22 @@ $$mapp.="END \n \n";
 			$mapprincipal.="LAYER \n";
 			$mapprincipal.="CONNECTIONTYPE postgis \n";
 			$mapprincipal.="NAME \"".str_replace(" ","_",$cou[$c]['nom_theme'])."\" group \"".str_replace(" ","_",$cou[$c]['nom_theme'])."\" \n";
-			$mapprincipal.="CONNECTION \"".$db_params."\" \n";
+			$mapprincipal.="CONNECTION \"user=%user% password=%password% dbname=%dbname% host=%host%\" \n";
 			if($clause=="")
 			{
-			$mapprincipal.="DATA \"".str_replace(" ","",$col[0]['appel'])." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." using unique ".str_replace(" ","",$col[0]['appel'])." using SRID=-1\" \n";
+			$mapprincipal.="DATA \"".str_replace(" ","",$col[0]['appel'])." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." using unique ".str_replace(" ","",$col[0]['appel'])."\" \n";
 			}
 			else
 			{
-			$mapprincipal.="DATA \"".str_replace(" ","",$col[0]['appel'])." from (select ".str_replace(" ","",$col[0]['appel'])." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." where ".$clause." and ".$cou[$c]['tabl'].".code_insee like '%insee%%') as neo using unique ".str_replace(" ","",$col[0]['appel'])." using SRID=-1\" \n";
+			$mapprincipal.="DATA \"".str_replace(" ","",$col[0]['appel'])." from (select ".str_replace(" ","",$col[0]['appel'])." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." where ".$clause." and ".$cou[$c]['tabl'].".code_insee like '%insee%%') as neo using unique ".str_replace(" ","",$col[0]['appel'])."\" \n";
 			}
 			$mapprincipal.="STATUS on \n";
+			$mapprincipal.="PROJECTION \n";
+			$mapprincipal.="'proj=longlat' \n";
+			$mapprincipal.="'ellps=WGS84' \n";
+			$mapprincipal.="'datum=WGS84' \n";
+			$mapprincipal.="'no_defs' \n";
+			$mapprincipal.="END \n";
 			$mapprincipal.="TYPE ".$type." \n";
 			if($clause==""  && $cou[$c]['schema']!="bd_topo")
 			{
@@ -536,16 +570,22 @@ $$mapp.="END \n \n";
 		$$mapp.="LAYER \n";
 	$$mapp.="CONNECTIONTYPE postgis \n";
 	$$mapp.="NAME \"".str_replace(" ","_",$cou[$c]['nom_theme'])."\" group \"".str_replace(" ","_",$cou[$c]['nom_theme'])."\" \n";
-	$$mapp.="CONNECTION \"".$db_params."\" \n";
+	$$mapp.="CONNECTION \"user=%user% password=%password% dbname=%dbname% host=%host%\" \n";
 	if($clause=="")
 	{
-	$$mapp.="DATA \"".str_replace(" ","",$col[0]['appel'])." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." using unique ".str_replace(" ","",$col[0]['appel'])." using SRID=-1\" \n";
+	$$mapp.="DATA \"".str_replace(" ","",$col[0]['appel'])." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." using unique ".str_replace(" ","",$col[0]['appel'])."\" \n";
 	}
 	else
 	{
-	$$mapp.="DATA \"".str_replace(" ","",$col[0]['appel'])." from (select ".str_replace(" ","",$col[0]['appel'])." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." where ".$clause." and ".$cou[$c]['tabl'].".code_insee like '%insee%%') as neo using unique ".str_replace(" ","",$col[0]['appel'])." using SRID=-1\" \n";
+	$$mapp.="DATA \"".str_replace(" ","",$col[0]['appel'])." from (select ".str_replace(" ","",$col[0]['appel'])." from ".$cou[$c]['schema'].".".$cou[$c]['tabl']." where ".$clause." and ".$cou[$c]['tabl'].".code_insee like '%insee%%') as neo using unique ".str_replace(" ","",$col[0]['appel'])."\" \n";
 	}
 	$$mapp.="STATUS on \n";
+	$$mapp.="PROJECTION \n";
+	$$mapp.="'proj=longlat' \n";
+	$$mapp.="'ellps=WGS84' \n";
+	$$mapp.="'datum=WGS84' \n";
+	$$mapp.="'no_defs' \n";
+	$$mapp.="END \n";
 	
 	if($cou[$c]['style_symbole'] !="")
 	{
@@ -578,14 +618,14 @@ $$mapp.="END \n \n";
 	}
 	$$mapp.="CLASS \n";
 		
-		$$mapp.="text ([".str_replace("||","] [",$co[0]['appel'])."]) \n";
+		$$mapp.=str_replace("[' ']","","text ([".str_replace("||","] [",str_replace("","",$co[0]['appel']))."]) \n");
 		$$mapp.="label \n";
 		$$mapp.="angle auto \n";
 		$$mapp.="type truetype \n";
 		$$mapp.="font \"arial\" \n";
 		$$mapp.="position cc \n";
 		$$mapp.="size ".$cou[$c]['style_fontsize']." \n";
-		$$mapp.="COLOR ".str_replace(","," ",$cou[$c]['style_fill'])." \n";
+		$$mapp.="COLOR ".$cotext=str_replace(","," ",$cou[$c]['style_fill'])." \n";
 		$$mapp.="END \n";
 				
 	$$mapp.="END \n";
@@ -628,18 +668,18 @@ $$mapp.="END \n \n";
 	    if ($raster[0] == '/')
 	      {
 		$tileindex ="TILEINDEX \"".$raster."\" \n";
-		$mapraster ="";
+		//$mapraster ="";
 	      }
 	    else
 	      {
 		$tileindex ="TILEINDEX \"".$name."idx\" \n";
-		$mapraster = "LAYER \n"; 
+		$mapraster .= "LAYER \n"; 
 		$mapraster .= "NAME \"".$name."idx\" \n";
 		$mapraster .= "STATUS on \n";
 		$mapraster .= "TYPE polygon \n";
 		$mapraster .= "CONNECTIONTYPE postgis \n";
 		$mapraster .= "CONNECTION \"$db_params\" \n";
-		$mapraster .= "DATA \"the_geom from ".$raster." using unique the_geom using SRID=-1\" \n";
+		$mapraster .= "DATA \"the_geom from ".$raster." using unique the_geom\" \n";
 		$mapraster .= "END \n \n";
 	      }
 	    
@@ -653,9 +693,15 @@ $$mapp.="END \n \n";
 		$mapraster.="NAME \"".$name."\" group \"".str_replace(" ","_",$cou[$c]['nom_theme'])."\" \n";
 	      }
 	    $mapraster.="STATUS on \n";
+		$mapraster.="PROJECTION \n";
+		$mapraster.="'proj=longlat' \n";
+		$mapraster.="'ellps=WGS84' \n";
+		$mapraster.="'datum=WGS84' \n";
+		$mapraster.="'no_defs' \n";
+		$mapraster.="END \n";
 	    $mapraster.="TYPE raster \n";
-	    //	    $mapraster.="MAXSCALE ".ceil($coef_echelle*100/$cou[$c]['zoommin'])." \n";
-	    //	    $mapraster.="MINSCALE ".floor($coef_echelle*100/$cou[$c]['zoommax'])." \n";
+	    $mapraster.="MAXSCALE ".ceil($coef_echelle*100/$cou[$c]['zoommin'])." \n";
+	    $mapraster.="MINSCALE ".floor($coef_echelle*100/$cou[$c]['zoommax'])." \n";
 	    $mapraster.= $tileindex;
 	    $mapraster.="TILEITEM \"location\" \n";
 	    $mapraster.="END \n \n";
@@ -666,9 +712,11 @@ $$mapp.="END \n \n";
 $data=$map.$mapraster.$mappolygone.$mapline.$mappoint.$maprecherche.$mapprincipal.$mapcotation."END";
 
 $filename = "../../capm/".supp_acc($lib_appli[0]['libelle_appli']).".map";
-$myFile = fopen($filename, "w");  
+$myFile = fopen($filename, "w"); 
+ echo $filename;
 fputs($myFile, $data);
 fclose($myFile);
-//echo "Le fichier MAP de l'application ".$lib_appli[0]['libelle_appli']." a été généré avec success.<br>";
+
+echo "Le fichier MAP de l'application ".$_SESSION['appli']." a été généré avec success.<br>";
 //echo "<a href=\"./index.php\" target=\"_parent\">Retour</a>";
 ?> 

@@ -31,32 +31,33 @@ sécurité de leurs systèmes et ou de leurs données et, plus généralement,
 Le fait que vous puissiez accéder à cet en-tête signifie que vous avez 
 pris connaissance de la licence CeCILL-C, et que vous en avez accepté les 
 termes.*/
-session_start();
-include("../../connexion/deb.php");
-$requete="insert into admin_svg.theme (libelle_them,schema,tabl,raster,partiel,vu_initial,zoommin,zoommax,zoommax_raster) values('".$_GET["nomtheme"]."','".$_GET["schema"]."','".$_GET["table"]."','".$_GET["raster"]."','".$_GET["partiel"]."','".$_GET["initial"]."',".$_GET["zoommin"].",".$_GET["zoommax"].",'".$_GET["zoommaxr"]."')";
-pg_exec($pgx,$requete);
+define('GIS_ROOT', '../..');
+include_once(GIS_ROOT . '/inc/common.php');
+gis_session_start();
+$requete="insert into admin_svg.theme (libelle_them,schema,tabl,raster,partiel,vu_initial,zoommin,zoommax,zoommax_raster,force_chargement) values('".$_GET["nomtheme"]."','".$_GET["schema"]."','".$_GET["table"]."','".$_GET["raster"]."','".$_GET["partiel"]."','".$_GET["initial"]."',".$_GET["zoommin"].",".$_GET["zoommax"].",'".$_GET["zoommaxr"]."','".$_GET["force"]."')";
+$DB->exec($requete);
 if($_GET["ref"])
 {
-$requete="insert into admin_svg.col_sel (idtheme,appel,nom_as) values(currval('admin_svg.them'),'".$_GET["ref"]."','ident')";
-pg_exec($pgx,$requete);
+$requete="insert into admin_svg.col_sel (idtheme,appel,nom_as) values(currval('admin_svg.them')::character varying,'".$_GET["ref"]."','ident')";
+$DB->exec($requete);
 }
 if($_GET["libelle"])
 {
-$requete="insert into admin_svg.col_sel (idtheme,appel,nom_as) values(currval('admin_svg.them'),'".$_GET["libelle"]."','ad')";
-pg_exec($pgx,$requete);
+$requete="insert into admin_svg.col_sel (idtheme,appel,nom_as) values(currval('admin_svg.them')::character varying,'".$_GET["libelle"]."','ad')";
+$DB->exec($requete);
 }
 if($_GET["geom"])
 {
-$requete="insert into admin_svg.col_sel (idtheme,appel,nom_as) values(currval('admin_svg.them'),'".$_GET["geom"]."','geom')";
-pg_exec($pgx,$requete);
+$requete="insert into admin_svg.col_sel (idtheme,appel,nom_as) values(currval('admin_svg.them')::character varying,'".$_GET["geom"]."','geom')";
+$DB->exec($requete);
 }
 if($_GET["clause"])
 {
-$requete="insert into admin_svg.col_where (idtheme,clause) values(currval('admin_svg.them'),'".$_GET["clause"]."')";
-pg_exec($pgx,$requete);
+$requete="insert into admin_svg.col_where (idtheme,clause) values(currval('admin_svg.them')::character varying,'".$_GET["clause"]."')";
+$DB->exec($requete);
 }
-$d="select * from admin_svg.col_sel where idtheme=currval('admin_svg.them')";
-$col=tab_result($pgx,$d);
+$d="select * from admin_svg.col_sel where idtheme=currval('admin_svg.them')::character varying";
+$col=$DB->tab_result($d);
 for ($z=0;$z<count($col);$z++)
 {
 			if($col[$z]['nom_as']=='geom')
@@ -65,7 +66,7 @@ for ($z=0;$z<count($col);$z++)
 			}
 }
 $dd="select distinct geometrytype(".$geometrie.") as geome from ".$_GET["schema"].".".$_GET["table"];
-$geo=tab_result($pgx,$dd);
+$geo=$DB->tab_result($dd);
 
 if(eregi("line", $geo[0]['geome']))
 {
@@ -73,8 +74,8 @@ echo "line|".$col[0]['idtheme'];
 }
 elseif(eregi("polygon", $geo[0]['geome']))
 {
-$requete="insert into admin_svg.style (idtheme,fill,stroke_rgb,stroke_width,font_familly,font_size,font_weight,symbole,id_symbole,opacity,fill_rule,stroke_dasharray,stroke_dashoffset) values(currval('admin_svg.them'),'0,0,0','0,0,0','1','','','','','','1','','','')";
-pg_exec($pgx,$requete);
+$requete="insert into admin_svg.style (idtheme,fill,stroke_rgb,stroke_width,font_familly,font_size,font_weight,symbole,id_symbole,opacity,fill_rule,stroke_dasharray,stroke_dashoffset) values(currval('admin_svg.them')::character varying,'0,0,0','0,0,0','1','','','','','','1','','','')";
+$DB->exec($requete);
 echo "poly";
 }
 else

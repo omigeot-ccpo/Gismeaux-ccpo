@@ -41,6 +41,8 @@ $prev = $_SESSION['previous'];
 $_SESSION = array();
 session_destroy();
 //header("Location: http://".$_SERVER['SERVER_NAME'].$_SESSION['previous']);
-header("Location: ".$prev);
+if ($_GET['code'] == '2'){
+header("Location: index.php?authcode=".$_GET['code']);}else{
+header("Location: ".$prev);}
 
 ?>

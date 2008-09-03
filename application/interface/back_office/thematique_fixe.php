@@ -34,14 +34,18 @@ termes.*/
 define('GIS_ROOT', '../..');
 include_once(GIS_ROOT . '/inc/common.php');
 gis_session_start();
-$ordre=stripslashes($_GET["ordre"]);
-$couche=explode("|",$ordre);
-for($i=0;$i<count($couche);$i++)
-	{
-	$coucheposi=explode(".",$couche[$i]);
-	$req="UPDATE admin_svg.appthe SET ordre=".$coucheposi[1]." where idappthe=".$coucheposi[0].";";
-	$DB->exec($req);
-	}
+$req="select schema,tabl from admin_svg.theme where idtheme=".$_GET["idtheme"];
+$re=$DB->tab_result($req);
 
-include("./generemap.php");
+$req="select distinct ".$_GET["appel"]." as retour from ".$re[0]['schema'].".".$re[0]['tabl'];
+$col=$DB->tab_result($req);
+$d="";
+for ($z=0;$z<count($col);$z++)
+{
+if($col[$z]['retour']!="")
+{
+$d=$d.$col[$z]['retour'].'#';
+}
+}
+echo substr($d,0,$d.length-1);
 ?>

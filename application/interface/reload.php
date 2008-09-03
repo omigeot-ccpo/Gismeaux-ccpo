@@ -1,4 +1,5 @@
 <?php
+//phpinfo();
 /*Copyright Ville de Meaux 2004-2007
 contributeur: jean-luc Dechamp - robert Leguay 
 sig@meaux.fr
@@ -31,17 +32,10 @@ sécurité de leurs systèmes et ou de leurs données et, plus généralement,
 Le fait que vous puissiez accéder à cet en-tête signifie que vous avez 
 pris connaissance de la licence CeCILL-C, et que vous en avez accepté les 
 termes.*/
-define('GIS_ROOT', '../..');
+define('GIS_ROOT', '..');
 include_once(GIS_ROOT . '/inc/common.php');
 gis_session_start();
-$ordre=stripslashes($_GET["ordre"]);
-$couche=explode("|",$ordre);
-for($i=0;$i<count($couche);$i++)
-	{
-	$coucheposi=explode(".",$couche[$i]);
-	$req="UPDATE admin_svg.appthe SET ordre=".$coucheposi[1]." where idappthe=".$coucheposi[0].";";
-	$DB->exec($req);
-	}
-
-include("./generemap.php");
+//$_SESSION['code_insee']=$_GET['code_insse'];
+$_SESSION['profil']->appli=$_GET['appli'];
+header("Location:https://".$_SERVER['HTTP_HOST']."/");
 ?>

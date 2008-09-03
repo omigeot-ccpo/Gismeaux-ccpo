@@ -32,7 +32,7 @@ Le fait que vous puissiez accéder à cet en-tête signifie que vous avez
 pris connaissance de la licence CeCILL-C, et que vous en avez accepté les 
 termes.*/
 echo "<html><head>";
-echo "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf8\">";
+echo "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">";
 echo "<title>Erreur SIG</title>";
 echo "</head><body>";
 
@@ -44,7 +44,8 @@ if ($_GET['code'])
 	$err = "Problème de 'previous'";
 	break;
       case 2:
-	$err = "Erreur dans le processus d'authentification. Vérifiez votre mot de passe.";
+	include("logout.php");
+	$err = "Erreur dans le processus d'authentification. V&eacute;rifiez votre mot de passe.";
 	break;
       default:
 	$err = "Erreur inconnue";

@@ -31,8 +31,9 @@ sécurité de leurs systèmes et ou de leurs données et, plus généralement,
 Le fait que vous puissiez accéder à cet en-tête signifie que vous avez 
 pris connaissance de la licence CeCILL-C, et que vous en avez accepté les 
 termes.*/
-//ini_set('session.gc_maxlifetime', 3600);
-//session_start();
+define('GIS_ROOT', '../..');
+include_once(GIS_ROOT . '/inc/common.php');
+gis_session_start();
 function char($data)
 {
 $rast=str_replace("à","chr224",$data);
@@ -47,7 +48,6 @@ $rast=str_replace("û","chr251",$rast);
 
 return $rast;
 }
-include("../../connexion/deb.php");
 if($_GET['objkey']=="schema")
 {
 $result="SELECT pn.nspname as col FROM pg_catalog.pg_namespace pn WHERE nspname NOT LIKE 'pg_%' AND nspname != 'information_schema' ORDER BY nspname";
@@ -69,7 +69,7 @@ $result="SELECT a.attname as col FROM pg_catalog.pg_attribute a LEFT JOIN pg_cat
 }
 }
 
-$col=tab_result($pgx,$result);
+$col=$DB->tab_result($result);
 for ($z=0;$z<count($col);$z++)
 {
 $retour.=char($col[$z]['col'])."#";

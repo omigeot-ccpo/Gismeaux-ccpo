@@ -31,24 +31,25 @@ sécurité de leurs systèmes et ou de leurs données et, plus généralement,
 Le fait que vous puissiez accéder à cet en-tête signifie que vous avez 
 pris connaissance de la licence CeCILL-C, et que vous en avez accepté les 
 termes.*/
-session_start();
-include("../../connexion/deb.php");
+define('GIS_ROOT', '../..');
+include_once(GIS_ROOT . '/inc/common.php');
+gis_session_start();
 if($_GET["appli"] && $_GET["idtheme"])
 {
-$requete="insert into admin_svg.appthe (idtheme,idapplication,ordre,partiel,vu_initial,zoommin,zoommax,zoommaxraster) values ('".$_GET["idtheme"]."','".$_GET["appli"]."',(select sinul((max(ordre)+1)::character varying,1::character varying)::integer from admin_svg.appthe where idapplication=".$_GET["appli"]."),(select partiel from admin_svg.theme where idtheme=".$_GET["idtheme"]."),(select vu_initial from admin_svg.theme where idtheme=".$_GET["idtheme"]."),(select zoommin from admin_svg.theme where idtheme=".$_GET["idtheme"]."),(select zoommax from admin_svg.theme where idtheme=".$_GET["idtheme"]."),(select zoommax_raster::integer from admin_svg.theme where idtheme=".$_GET["idtheme"]."))";
-pg_exec($pgx,$requete);
+$requete="insert into admin_svg.appthe (idtheme,idapplication,ordre,partiel,vu_initial,zoommin,zoommax,zoommaxraster,force_chargement) values ('".$_GET["idtheme"]."','".$_GET["appli"]."',(select sinul((max(ordre)+1)::character varying,1::character varying)::integer from admin_svg.appthe where idapplication=".$_GET["appli"]."),(select partiel from admin_svg.theme where idtheme='".$_GET["idtheme"]."'),(select vu_initial from admin_svg.theme where idtheme='".$_GET["idtheme"]."'),(select zoommin from admin_svg.theme where idtheme=".$_GET["idtheme"]."),(select zoommax from admin_svg.theme where idtheme='".$_GET["idtheme"]."'),(select zoommax_raster::integer from admin_svg.theme where idtheme='".$_GET["idtheme"]."'),(select force_chargement from admin_svg.theme where idtheme='".$_GET["idtheme"]."'))";
+$DB->exec($requete);
 $d="select last_value from admin_svg.appth";
-$col=tab_result($pgx,$d);
+$col=$DB->tab_result($d);
 echo $col[0]['last_value'];
 //$_GET["requete"]=$requete;
 }
 if($_GET["choix"]=='supp' && $_GET["idappthe"])
 {
-$req="delete from admin_svg.col_theme where idappthe=".$_GET["idappthe"];
-pg_exec($pgx,$req);
+$req="delete from admin_svg.col_theme where idappthe='".$_GET["idappthe"]."'";
+$DB->exec($req);
 //pg_exec($pgx,$req);
-$requete="delete from admin_svg.appthe where idappthe=".$_GET["idappthe"];
-pg_exec($pgx,$requete);
+$requete="delete from admin_svg.appthe where idappthe='".$_GET["idappthe"]."'";
+$DB->exec($requete);
 //$_GET["requete"]=$requete;
 }
 //include("./execute_sql.php");

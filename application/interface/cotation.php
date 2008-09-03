@@ -31,8 +31,9 @@ sécurité de leurs systèmes et ou de leurs données et, plus généralement,
 Le fait que vous puissiez accéder à cet en-tête signifie que vous avez 
 pris connaissance de la licence CeCILL-C, et que vous en avez accepté les 
 termes.*/
-ini_set('session.gc_maxlifetime', 3600);
-session_start();
+define('GIS_ROOT', '..');
+include_once(GIS_ROOT . '/inc/common.php');
+gis_session_start();
 if($_GET['eff']==0)
 {
 if($_GET['num']==0)

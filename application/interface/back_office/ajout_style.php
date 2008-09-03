@@ -31,9 +31,9 @@ sécurité de leurs systèmes et ou de leurs données et, plus généralement,
 Le fait que vous puissiez accéder à cet en-tête signifie que vous avez 
 pris connaissance de la licence CeCILL-C, et que vous en avez accepté les 
 termes.*/
-session_start();
-include("../../connexion/deb.php");
-
+define('GIS_ROOT', '../..');
+include_once(GIS_ROOT . '/inc/common.php');
+gis_session_start();
 if($_GET["mod_theme"]=="creation")
 {
 	if($_GET["type"]=="point")
@@ -41,12 +41,12 @@ if($_GET["mod_theme"]=="creation")
 		if($_GET["affecte"]=="Texte")
 		{
 		$requete="insert into admin_svg.style (idtheme,fill,stroke_rgb,stroke_width,font_familly,font_size,font_weight,symbole,id_symbole,opacity,fill_rule,stroke_dasharray,stroke_dashoffset) values(".$_GET["idtheme"].",'0,0,0','0,0,0','','arial','10','','','','1','','','')";
-pg_exec($pgx,$requete);
+$DB->exec($requete);
 		}
 		else
 		{
 		$requete="insert into admin_svg.style (idtheme,fill,stroke_rgb,stroke_width,font_familly,font_size,font_weight,symbole,id_symbole,opacity,fill_rule,stroke_dasharray,stroke_dashoffset) values(".$_GET["idtheme"].",'0,0,0','','','','10','','y','y','1','','','')";
-pg_exec($pgx,$requete);
+$DB->exec($requete);
 		}
 	}
 	else //ligne
@@ -54,12 +54,12 @@ pg_exec($pgx,$requete);
 	if($_GET["affecte"]=="libelle")
 		{
 		$requete="insert into admin_svg.style (idtheme,fill,stroke_rgb,stroke_width,font_familly,font_size,font_weight,symbole,id_symbole,opacity,fill_rule,stroke_dasharray,stroke_dashoffset) values(".$_GET["idtheme"].",'0,0,0','0,0,0','','arial','10','','','','1','','','')";
-pg_exec($pgx,$requete);
+$DB->exec($requete);
 		}
 		else
 		{
 		$requete="insert into admin_svg.style (idtheme,fill,stroke_rgb,stroke_width,font_familly,font_size,font_weight,symbole,id_symbole,opacity,fill_rule,stroke_dasharray,stroke_dashoffset) values(".$_GET["idtheme"].",'','0,0,0','1','','','','','','1','','','')";
-pg_exec($pgx,$requete);
+$DB->exec($requete);
 		}
 	
 	}

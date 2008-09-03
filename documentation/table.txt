@@ -11,6 +11,7 @@ create sequence admin_svg.appli increment by 1 start with 1;
 create sequence admin_svg.appth increment by 1 start with 1;
 create sequence admin_svg.styl increment by 1 start with 1;
 create sequence admin_svg.them increment by 1 start with 1;
+create sequence admin_svg.util increment by 1 start with 1;
 
 CREATE TABLE admin_svg.application (
 	idapplication character varying(6) DEFAULT nextval('admin_svg.appli'::text) NOT NULL,
@@ -21,7 +22,8 @@ CREATE TABLE admin_svg.application (
 	zoom_ouverture integer,
 	zoom_min integer,
 	zoom_max integer,
-	url character varying);
+	url character varying,
+	type_appli character varying DEFAULT 0);
 ALTER TABLE admin_svg.application OWNER TO "+pg_utilis+";
 ALTER TABLE ONLY admin_svg.application ADD CONSTRAINT cleunik PRIMARY KEY (idapplication);
 ALTER INDEX admin_svg.cleunik OWNER TO "+pg_utilis+";
@@ -43,7 +45,10 @@ CREATE TABLE admin_svg.appthe (
 	zoommaxraster integer,
 	objselection boolean DEFAULT false,
 	objprincipal boolean DEFAULT false,
-	objrecherche boolean DEFAULT false);
+	objrecherche boolean DEFAULT false,
+	partiel character varying,
+  	vu_initial character varying,
+  	force_chargement character varying DEFAULT 0);
 ALTER TABLE admin_svg.appthe OWNER TO "+pg_utilis+";
 	
 CREATE TABLE admin_svg.apputi (
@@ -152,7 +157,9 @@ CREATE TABLE admin_svg.theme (
 	zoommin integer,
 	zoommax integer,
 	zoommax_raster character varying,
-	vu_anonyme boolean DEFAULT false);
+	vu_anonyme boolean DEFAULT false,
+	groupe character varying,
+  	force_chargement character varying DEFAULT 0);
 ALTER TABLE admin_svg.theme OWNER TO "+pg_utilis+";
 ALTER TABLE ONLY admin_svg.theme ADD CONSTRAINT pk_theme PRIMARY KEY (idtheme);
 ALTER INDEX admin_svg.pk_theme OWNER TO "+pg_utilis+";
@@ -164,7 +171,9 @@ CREATE TABLE admin_svg.utilisateur (
 	idcommune character varying(6),
 	login character varying(25),
 	psw character varying(10),
-	droit character varying(2));
+	droit character varying(2),
+	nom character varying,
+  	prenom character varying);
 ALTER TABLE admin_svg.utilisateur OWNER TO "+pg_utilis+";
 ALTER TABLE ONLY admin_svg.utilisateur ADD CONSTRAINT pk_util PRIMARY KEY (idutilisateur);
 ALTER INDEX admin_svg.pk_util OWNER TO "+pg_utilis+";
@@ -357,73 +366,73 @@ CREATE UNIQUE INDEX "testmenu.ndx" ON general.testmenu USING btree (id);
 
 SET search_path = admin_svg, pg_catalog;
 -- création renseignement d'urbanisme
-INSERT INTO application (libelle_appli, btn_polygo, libelle_btn_polygo, divers, zoom_ouverture, zoom_min, zoom_max, url) VALUES ('RU', '', '', '', 600, 600, 8000, 'interface/carto.php');
-INSERT INTO apputi VALUES (currval('admin_svg.appli'::text), '1', NULL, NULL, NULL, 1);
-INSERT INTO theme (libelle_them, schema, tabl, raster, partiel, vu_initial, couch_tjs_visible, zoommin, zoommax, zoommax_raster, vu_anonyme) VALUES ('batiment', 'cadastre', 'batiment', '', '1', '0', '', 200, 10000, '1200', false);
+INSERT INTO application (libelle_appli, btn_polygo, libelle_btn_polygo, divers, zoom_ouverture, zoom_min, zoom_max, url, type_appli) VALUES ('RU', '', '', '', 600, 600, 8000, 'interface/carto.php', '0');
+INSERT INTO apputi VALUES (currval('admin_svg.appli'::text), '1', 'a', NULL, NULL, 1);
+INSERT INTO theme (libelle_them, schema, tabl, raster, partiel, vu_initial, couch_tjs_visible, zoommin, zoommax, zoommax_raster, vu_anonyme, force_chargement) VALUES ('batiment', 'cadastre', 'batiment', '', '1', '0', '', 200, 10000, '1200', false, '0');
 INSERT INTO col_sel VALUES (currval('admin_svg.them'::text), 'the_geom', 'geom', '3');
-INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche) VALUES (currval('admin_svg.appli'::text), currval('admin_svg.them'::text), '', '', '', 2, 0, 0, '', false, NULL, NULL, NULL, false, false, false);
+INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche, partiel, vu_initial,force_chargement) VALUES (currval('admin_svg.appli'::text), currval('admin_svg.them'::text), '', '', '', 2, 0, 0, '', false, NULL, NULL, NULL, false, false, false, '1', '0', '0');
 INSERT INTO col_theme VALUES (currval('admin_svg.appth'::text), 'constructi', 'Bati leger', '', '', 'Bati leger', '221,174,205', 'none', '', '1', '', '', '', '', '', '-1', '', '', 2);
 INSERT INTO col_theme VALUES (currval('admin_svg.appth'::text), 'constructi', 'Bati dur', '', '', 'Bati dur', '184,84,149', 'none', '', '1', '', '', '', '', '', '-1', '', '', 1);
-INSERT INTO theme (libelle_them, schema, tabl, raster, partiel, vu_initial, couch_tjs_visible, zoommin, zoommax, zoommax_raster, vu_anonyme) VALUES ('ortho-photo', '', '', '/home/sig/intranet/capm/data/rast.shp', '', '0', '0', 200, 3400, NULL, false);
-INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche) VALUES (currval('admin_svg.appli'::text), currval('admin_svg.them'::text), '', '', '', 19, 0, 0, '', true, NULL, NULL, NULL, false, false, false);
-INSERT INTO theme (libelle_them, schema, tabl, raster, partiel, vu_initial, couch_tjs_visible, zoommin, zoommax, zoommax_raster, vu_anonyme) VALUES ('parcelle', 'cadastre', 'parcelle', '', '1', '1', '', 200, 10000, '600', false);
+INSERT INTO theme (libelle_them, schema, tabl, raster, partiel, vu_initial, couch_tjs_visible, zoommin, zoommax, zoommax_raster, vu_anonyme, force_chargement) VALUES ('ortho-photo', '', '', '/home/sig/gis/application/capm/data/rast50.shp', '', '0', '0', 200, 3400, NULL, false, '0');
+INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche, partiel, vu_initial,force_chargement) VALUES (currval('admin_svg.appli'::text), currval('admin_svg.them'::text), '', '', '', 19, 0, 0, '', true, NULL, NULL, NULL, false, false, false, '', '', '0');
+INSERT INTO theme (libelle_them, schema, tabl, raster, partiel, vu_initial, couch_tjs_visible, zoommin, zoommax, zoommax_raster, vu_anonyme, force_chargement) VALUES ('parcelle', 'cadastre', 'parcelle', '', '1', '1', '', 200, 10000, '600', false, '0');
 INSERT INTO col_sel VALUES (currval('admin_svg.them'::text), 'identifian', 'ident', '1');
 INSERT INTO col_sel VALUES (currval('admin_svg.them'::text), 'the_geom', 'geom', '2');
 INSERT INTO col_sel VALUES (currval('admin_svg.them'::text), 'identifian', 'ad', '3');
 INSERT INTO style VALUES (nextval('admin_svg.styl'::text), currval('admin_svg.them'::text), NULL, '255,128,0', '0,0,0', '0.2', '', '', '', '', '', '0.05', '', '', '');
-INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche) VALUES (currval('admin_svg.appli'::text), currval('admin_svg.them'::text), 'sur(evt,''red'')', 'lien(evt,''parcel'',''http://''+serveur+''/ru/requete.php?obj_keys='',''m'',''5'')', 'hors(evt)', 1, 0, 0, 'visible', false, NULL, NULL, NULL, false, true, true);
-INSERT INTO theme (libelle_them, schema, tabl, raster, partiel, vu_initial, couch_tjs_visible, zoommin, zoommax, zoommax_raster, vu_anonyme) VALUES ('Zone de bruit', 'geotest', 'zonebruit', '', '', '', '', 600, 10000, '0', false);
+INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche, partiel, vu_initial,force_chargement) VALUES (currval('admin_svg.appli'::text), currval('admin_svg.them'::text), 'sur(evt,''red'')', 'lien(evt,''parcel'',''http://''+serveur+''/apps/ru/requete.php?obj_keys='',''m'',''5'')', 'hors(evt)', 1, 0, 0, 'visible', false, NULL, NULL, NULL, false, true, true, '1', '1', '0');
+INSERT INTO theme (libelle_them, schema, tabl, raster, partiel, vu_initial, couch_tjs_visible, zoommin, zoommax, zoommax_raster, vu_anonyme, force_chargement) VALUES ('Zone de bruit', 'geotest', 'zonebruit', '', '', '', '', 600, 10000, '0', false, '0');
 INSERT INTO col_sel VALUES (currval('admin_svg.them'::text), 'the_geom', 'geom', '2');
 INSERT INTO col_sel VALUES (currval('admin_svg.them'::text), 'gid', 'ident', '1');
-INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche) VALUES (currval('admin_svg.appli'::text), currval('admin_svg.them'::text), '', '', '', 4, 0, 0, '', false, NULL, NULL, NULL, false, false, false);
+INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche, partiel, vu_initial,force_chargement) VALUES (currval('admin_svg.appli'::text), currval('admin_svg.them'::text), '', '', '', 4, 0, 0, '', false, NULL, NULL, NULL, false, false, false, '0', '0', '0');
 INSERT INTO col_theme VALUES (currval('admin_svg.appth'::text), 'type', 'Route 1', '', '', '1_route', '131,79,189', '0,0,0', '', '1', '', '', '', '', '', '-1', '', '', 1);
 INSERT INTO col_theme VALUES (currval('admin_svg.appth'::text), 'type', 'SNCF', '', '', '1_sncf', '111,62,162', '0,0,0', '', '1', '', '', '', '', '', '-1', '', '', 2);
 INSERT INTO col_theme VALUES (currval('admin_svg.appth'::text), 'type', 'Route 2', '', '', '2_route', '156,115,202', '0,0,0', '', '1', '', '', '', '', '', '-1', '', '', 3);
 INSERT INTO col_theme VALUES (currval('admin_svg.appth'::text), 'type', 'Route 3', '', '', '3_route', '204,183,227', '0,0,0', '', '1', '', '', '', '', '', '-1', '', '', 4);
 INSERT INTO col_theme VALUES (currval('admin_svg.appth'::text), 'type', 'Route 4', '', '', '4_route', '183,152,216', '0,0,0', '', '1', '', '', '', '', '', '-1', '', '', 5);
-INSERT INTO theme (libelle_them, schema, tabl, raster, partiel, vu_initial, couch_tjs_visible, zoommin, zoommax, zoommax_raster, vu_anonyme) VALUES ('Zone archeo', 'geotest', 'z_archeo', '', '', '', '', 600, 10000, '0', false);
+INSERT INTO theme (libelle_them, schema, tabl, raster, partiel, vu_initial, couch_tjs_visible, zoommin, zoommax, zoommax_raster, vu_anonyme, force_chargement) VALUES ('Zone archeo', 'geotest', 'z_archeo', '', '', '', '', 600, 10000, '0', false, '0');
 INSERT INTO col_sel VALUES (currval('admin_svg.them'::text), 'the_geom', 'geom', '1');
-INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche) VALUES (currval('admin_svg.appli'::text), currval('admin_svg.them'::text), '', '', '', 6, 0, 0, '', false, NULL, NULL, NULL, false, false, false);
+INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche, partiel, vu_initial,force_chargement) VALUES (currval('admin_svg.appli'::text), currval('admin_svg.them'::text), '', '', '', 6, 0, 0, '', false, NULL, NULL, NULL, false, false, false, '0', '0', '0');
 INSERT INTO col_theme VALUES (currval('admin_svg.appth'::text), 'nom', '1', '', '', '1', '215,99,50', '0,0,0', '', '1', '', '', '', '', '', '-1', '', '', 1);
 INSERT INTO col_theme VALUES (currval('admin_svg.appth'::text), 'nom', '2', '', '', '2', '251,243,96', '0,0,0', '', '1', '', '', '', '', '', '-1', '', '', 2);
-INSERT INTO theme (libelle_them, schema, tabl, raster, partiel, vu_initial, couch_tjs_visible, zoommin, zoommax, zoommax_raster, vu_anonyme) VALUES ('Emplacement reserve', 'geotest', 'emplreserve', '', '', '', '', 600, 10000, '0', false);
+INSERT INTO theme (libelle_them, schema, tabl, raster, partiel, vu_initial, couch_tjs_visible, zoommin, zoommax, zoommax_raster, vu_anonyme, force_chargement) VALUES ('Emplacement reserve', 'geotest', 'emplreserve', '', '', '', '', 600, 10000, '0', false, '0');
 INSERT INTO col_sel VALUES (currval('admin_svg.them'::text), 'the_geom', 'geom', '1');
 INSERT INTO style VALUES (nextval('admin_svg.styl'::text), currval('admin_svg.them'::text), NULL, '136,213,217', '136,213,217', '', '1', '', '', '', '', '', '-1', '', '');
-INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche) VALUES (currval('admin_svg.appli'::text), currval('admin_svg.them'::text), '', '', '', 8, 0, 0, '', false, NULL, NULL, NULL, false, false, false);
-INSERT INTO theme (libelle_them, schema, tabl, raster, partiel, vu_initial, couch_tjs_visible, zoommin, zoommax, zoommax_raster, vu_anonyme) VALUES ('Cimetiere', 'geotest', 'cimetiere', '', '', '', '', 600, 10000, '0', false);
+INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche, partiel, vu_initial,force_chargement) VALUES (currval('admin_svg.appli'::text), currval('admin_svg.them'::text), '', '', '', 8, 0, 0, '', false, NULL, NULL, NULL, false, false, false, '0', '0', '0');
+INSERT INTO theme (libelle_them, schema, tabl, raster, partiel, vu_initial, couch_tjs_visible, zoommin, zoommax, zoommax_raster, vu_anonyme, force_chargement) VALUES ('Cimetiere', 'geotest', 'cimetiere', '', '', '', '', 600, 10000, '0', false, '0');
 INSERT INTO col_sel VALUES (currval('admin_svg.them'::text), 'the_geom', 'geom', '1');
 INSERT INTO style VALUES (nextval('admin_svg.styl'::text), currval('admin_svg.them'::text), NULL, '252,247,35', '252,247,35', '', '1', '', '', '', '', '', '-1', '', '');
-INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche) VALUES (currval('admin_svg.appli'::text), currval('admin_svg.them'::text), '', '', '', 7, 0, 0, '', false, NULL, NULL, NULL, false, false, false);
-INSERT INTO theme (libelle_them, schema, tabl, raster, partiel, vu_initial, couch_tjs_visible, zoommin, zoommax, zoommax_raster, vu_anonyme) VALUES ('Zone inondable', 'geotest', 'zoneinondable', '', '', '', '', 600, 10000, '0', false);
+INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche, partiel, vu_initial,force_chargement) VALUES (currval('admin_svg.appli'::text), currval('admin_svg.them'::text), '', '', '', 7, 0, 0, '', false, NULL, NULL, NULL, false, false, false, '0', '0', '0');
+INSERT INTO theme (libelle_them, schema, tabl, raster, partiel, vu_initial, couch_tjs_visible, zoommin, zoommax, zoommax_raster, vu_anonyme, force_chargement) VALUES ('Zone inondable', 'geotest', 'zoneinondable', '', '', '', '', 600, 10000, '0', false, '0');
 INSERT INTO col_sel VALUES (currval('admin_svg.them'::text), 'the_geom', 'geom', '1');
-INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche) VALUES (currval('admin_svg.appli'::text), currval('admin_svg.them'::text), '', '', '', 9, 0, 0, '', false, NULL, NULL, NULL, false, false, false);
+INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche, partiel, vu_initial,force_chargement) VALUES (currval('admin_svg.appli'::text), currval('admin_svg.them'::text), '', '', '', 9, 0, 0, '', false, NULL, NULL, NULL, false, false, false, '0', '0', '0');
 INSERT INTO col_theme VALUES (currval('admin_svg.appth'::text), 'zone', 'Zone inondable A', '', '', 'A', '21,9,253', '21,9,253', '', '1', '', '', '', '', '', '-1', '', '', 1);
 INSERT INTO col_theme VALUES (currval('admin_svg.appth'::text), 'zone', 'Zone inondable B', '', '', 'B', '155,150,254', '155,150,254', '', '1', '', '', '', '', '', '-1', '', '', 2);
-INSERT INTO theme (libelle_them, schema, tabl, raster, partiel, vu_initial, couch_tjs_visible, zoommin, zoommax, zoommax_raster, vu_anonyme) VALUES ('Lisiere', 'geotest', 'lisiere', '', '', '', '', 600, 10000, '0', false);
+INSERT INTO theme (libelle_them, schema, tabl, raster, partiel, vu_initial, couch_tjs_visible, zoommin, zoommax, zoommax_raster, vu_anonyme, force_chargement) VALUES ('Lisiere', 'geotest', 'lisiere', '', '', '', '', 600, 10000, '0', false, '0');
 INSERT INTO col_sel VALUES (currval('admin_svg.them'::text), 'the_geom', 'geom', '1');
 INSERT INTO style VALUES (nextval('admin_svg.styl'::text), currval('admin_svg.them'::text), NULL, '50,164,21', '50,164,21', '', '1', '', '', '', '', '', '-1', '', '');
-INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche) VALUES (currval('admin_svg.appli'::text), currval('admin_svg.them'::text), '', '', '', 11, 0, 0, '', false, NULL, NULL, NULL, false, false, false);
-INSERT INTO theme (libelle_them, schema, tabl, raster, partiel, vu_initial, couch_tjs_visible, zoommin, zoommax, zoommax_raster, vu_anonyme) VALUES ('Lotissement', 'geotest', 'lotissement', '', '', '', '', 600, 10000, '0', false);
+INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche, partiel, vu_initial,force_chargement) VALUES (currval('admin_svg.appli'::text), currval('admin_svg.them'::text), '', '', '', 11, 0, 0, '', false, NULL, NULL, NULL, false, false, false, '0', '0', '0');
+INSERT INTO theme (libelle_them, schema, tabl, raster, partiel, vu_initial, couch_tjs_visible, zoommin, zoommax, zoommax_raster, vu_anonyme, force_chargement) VALUES ('Lotissement', 'geotest', 'lotissement', '', '', '', '', 600, 10000, '0', false, '0');
 INSERT INTO col_sel VALUES (currval('admin_svg.them'::text), 'the_geom', 'geom', '1');
 INSERT INTO style VALUES (nextval('admin_svg.styl'::text), currval('admin_svg.them'::text), NULL, '205,177,82', '205,177,82', '', '1', '', '', '', '', '', '-1', '', '');
-INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche) VALUES (currval('admin_svg.appli'::text), currval('admin_svg.them'::text), '', '', '', 12, 0, 0, '', false, NULL, NULL, NULL, false, false, false);
-INSERT INTO theme (libelle_them, schema, tabl, raster, partiel, vu_initial, couch_tjs_visible, zoommin, zoommax, zoommax_raster, vu_anonyme) VALUES ('PPMH', 'geotest', 'ppmh', '', '', '', '', 600, 10000, '0', false);
+INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche, partiel, vu_initial,force_chargement) VALUES (currval('admin_svg.appli'::text), currval('admin_svg.them'::text), '', '', '', 12, 0, 0, '', false, NULL, NULL, NULL, false, false, false, '0', '0', '0');
+INSERT INTO theme (libelle_them, schema, tabl, raster, partiel, vu_initial, couch_tjs_visible, zoommin, zoommax, zoommax_raster, vu_anonyme, force_chargement) VALUES ('PPMH', 'geotest', 'ppmh', '', '', '', '', 600, 10000, '0', false, '0');
 INSERT INTO col_sel VALUES (currval('admin_svg.them'::text), 'the_geom', 'geom', '1');
 INSERT INTO style VALUES (nextval('admin_svg.styl'::text), currval('admin_svg.them'::text), NULL, '163,71,156', '163,71,156', '', '1', '', '', '', '', '', '-1', '', '');
-INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche) VALUES (currval('admin_svg.appli'::text), currval('admin_svg.them'::text), '', '', '', 13, 0, 0, '', false, NULL, NULL, NULL, false, false, false);
-INSERT INTO theme (libelle_them, schema, tabl, raster, partiel, vu_initial, couch_tjs_visible, zoommin, zoommax, zoommax_raster, vu_anonyme) VALUES ('Risque technologique', 'geotest', 'sidobre', '', '', '', '', 600, 10000, '0', false);
+INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche, partiel, vu_initial,force_chargement) VALUES (currval('admin_svg.appli'::text), currval('admin_svg.them'::text), '', '', '', 13, 0, 0, '', false, NULL, NULL, NULL, false, false, false, '0', '0', '0' );
+INSERT INTO theme (libelle_them, schema, tabl, raster, partiel, vu_initial, couch_tjs_visible, zoommin, zoommax, zoommax_raster, vu_anonyme, force_chargement) VALUES ('Risque technologique', 'geotest', 'sidobre', '', '', '', '', 600, 10000, '0', false, '0');
 INSERT INTO col_sel VALUES (currval('admin_svg.them'::text), 'the_geom', 'geom', '1');
 INSERT INTO style VALUES (nextval('admin_svg.styl'::text), currval('admin_svg.them'::text), NULL, '255,0,0', '255,0,0', '', '1', '', '', '', '', '', '-1', '', '');
-INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche) VALUES (currval('admin_svg.appli'::text), currval('admin_svg.them'::text), '', '', '', 14, 0, 0, '', false, NULL, NULL, NULL, false, false, false);
-INSERT INTO theme (libelle_them, schema, tabl, raster, partiel, vu_initial, couch_tjs_visible, zoommin, zoommax, zoommax_raster, vu_anonyme) VALUES ('alignement', 'geotest', 'alignement', '', '0', '', '', 600, 10000, '0', false);
+INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche, partiel, vu_initial,force_chargement) VALUES (currval('admin_svg.appli'::text), currval('admin_svg.them'::text), '', '', '', 14, 0, 0, '', false, NULL, NULL, NULL, false, false, false, '0', '0', '0');
+INSERT INTO theme (libelle_them, schema, tabl, raster, partiel, vu_initial, couch_tjs_visible, zoommin, zoommax, zoommax_raster, vu_anonyme, force_chargement) VALUES ('alignement', 'geotest', 'alignement', '', '0', '', '', 600, 10000, '0', false, '0');
 INSERT INTO col_sel VALUES (currval('admin_svg.them'::text), 'gid', 'ident', '1');
 INSERT INTO col_sel VALUES (currval('admin_svg.them'::text), 'gid', 'ad', '2');
 INSERT INTO col_sel VALUES (currval('admin_svg.them'::text), 'the_geom', 'geom', '3');
 INSERT INTO style VALUES (nextval('admin_svg.styl'::text), currval('admin_svg.them'::text), NULL, '', '255,0,0', '0.5', '', '', '', '', '', '', '', '', '');
-INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche) VALUES (currval('admin_svg.appli'::text), currval('admin_svg.them'::text), '', '', '', 18, 0, 0, '', false, NULL, NULL, NULL, false, false, false);
-INSERT INTO theme (libelle_them, schema, tabl, raster, partiel, vu_initial, couch_tjs_visible, zoommin, zoommax, zoommax_raster, vu_anonyme) VALUES ('zonage', 'geotest', 'zonage', '', '', '', '', 600, 10000, '600', false);
+INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche, partiel, vu_initial,force_chargement) VALUES (currval('admin_svg.appli'::text), currval('admin_svg.them'::text), '', '', '', 18, 0, 0, '', false, NULL, NULL, NULL, false, false, false, '0', '0', '0');
+INSERT INTO theme (libelle_them, schema, tabl, raster, partiel, vu_initial, couch_tjs_visible, zoommin, zoommax, zoommax_raster, vu_anonyme, force_chargement) VALUES ('zonage', 'geotest', 'zonage', '', '', '', '', 600, 10000, '600', false, '0');
 INSERT INTO col_sel VALUES (currval('admin_svg.them'::text), 'the_geom', 'geom', '1');
-INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche) VALUES (currval('admin_svg.appli'::text), currval('admin_svg.them'::text), '', '', '', 3, 0, 0, '', false, NULL, NULL, NULL, false, false, false);
+INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche, partiel, vu_initial,force_chargement) VALUES (currval('admin_svg.appli'::text), currval('admin_svg.them'::text), '', '', '', 3, 0, 0, '', false, NULL, NULL, NULL, false, false, false, '0', '0', '0');
 INSERT INTO col_theme VALUES (currval('admin_svg.appth'::text), 'zone', 'AUB', '', '', 'AUB', '120,234,243', '0,0,0', '', '1', '', '', '', '', '', '-1', '', '', 1);
 INSERT INTO col_theme VALUES (currval('admin_svg.appth'::text), 'zone', 'AUCa', '', '', 'AUCa', '120,234,243', '0,0,0', '', '1', '', '', '', '', '', '-1', '', '', 2);
 INSERT INTO col_theme VALUES (currval('admin_svg.appth'::text), 'zone', 'AUCb', '', '', 'AUCb', '120,234,243', '0,0,0', '', '1', '', '', '', '', '', '-1', '', '', 3);
@@ -471,54 +480,54 @@ INSERT INTO col_theme VALUES (currval('admin_svg.appth'::text), 'zone', 'UXc', '
 INSERT INTO col_theme VALUES (currval('admin_svg.appth'::text), 'zone', 'UY', '', '', 'UY', '255,127,127', '0,0,0', '', '1', '', '', '', '', '', '-1', '', '', 45);
 INSERT INTO col_theme VALUES (currval('admin_svg.appth'::text), 'zone', 'UZa', '', '', 'UZa', '182,203,209', '0,0,0', '', '1', '', '', '', '', '', '-1', '', '', 46);
 INSERT INTO col_theme VALUES (currval('admin_svg.appth'::text), 'zone', 'UZb', '', '', 'UZb', '182,203,209', '0,0,0', '', '1', '', '', '', '', '', '-1', '', '', 47);
-INSERT INTO theme (libelle_them, schema, tabl, raster, partiel, vu_initial, couch_tjs_visible, zoommin, zoommax, zoommax_raster, vu_anonyme) VALUES ('Zone Boise', 'geotest', 'zoneboise', '', '', '', '', 600, 10000, '0', false);
+INSERT INTO theme (libelle_them, schema, tabl, raster, partiel, vu_initial, couch_tjs_visible, zoommin, zoommax, zoommax_raster, vu_anonyme, force_chargement) VALUES ('Zone Boise', 'geotest', 'zoneboise', '', '', '', '', 600, 10000, '0', false, '0');
 INSERT INTO col_sel VALUES (currval('admin_svg.them'::text), 'the_geom', 'geom', '1');
 INSERT INTO style VALUES (nextval('admin_svg.styl'::text), currval('admin_svg.them'::text), NULL, '0,128,0', '0,128,0', '', '1', '', '', '', '', '', '-1', '', '');
-INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche) VALUES (currval('admin_svg.appli'::text), currval('admin_svg.them'::text), '', '', '', 5, 0, 0, '', false, NULL, NULL, NULL, false, false, false);
-INSERT INTO theme (libelle_them, schema, tabl, raster, partiel, vu_initial, couch_tjs_visible, zoommin, zoommax, zoommax_raster, vu_anonyme) VALUES ('Site inscrit', 'geotest', 'siteinscrit', '', '', '', '', 600, 10000, '0', false);
+INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche, partiel, vu_initial,force_chargement) VALUES (currval('admin_svg.appli'::text), currval('admin_svg.them'::text), '', '', '', 5, 0, 0, '', false, NULL, NULL, NULL, false, false, false, '0', '0', '0');
+INSERT INTO theme (libelle_them, schema, tabl, raster, partiel, vu_initial, couch_tjs_visible, zoommin, zoommax, zoommax_raster, vu_anonyme, force_chargement) VALUES ('Site inscrit', 'geotest', 'siteinscrit', '', '', '', '', 600, 10000, '0', false, '0');
 INSERT INTO col_sel VALUES (currval('admin_svg.them'::text), 'the_geom', 'geom', '1');
 INSERT INTO style VALUES (nextval('admin_svg.styl'::text), currval('admin_svg.them'::text), NULL, '217,95,231', '217,95,231', '', '1', '', '', '', '', '', '-1', '', '');
-INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche) VALUES (currval('admin_svg.appli'::text), currval('admin_svg.them'::text), '', '', '', 10, 0, 0, '', false, NULL, NULL, NULL, false, false, false);
-INSERT INTO theme (libelle_them, schema, tabl, raster, partiel, vu_initial, couch_tjs_visible, zoommin, zoommax, zoommax_raster, vu_anonyme) VALUES ('Radio electrique', 'geotest', 'servradioelectrik', '', '', '', '', 600, 10000, '0', false);
+INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche, partiel, vu_initial,force_chargement) VALUES (currval('admin_svg.appli'::text), currval('admin_svg.them'::text), '', '', '', 10, 0, 0, '', false, NULL, NULL, NULL, false, false, false, '0', '0', '0')
+INSERT INTO theme (libelle_them, schema, tabl, raster, partiel, vu_initial, couch_tjs_visible, zoommin, zoommax, zoommax_raster, vu_anonyme, force_chargement) VALUES ('Radio electrique', 'geotest', 'servradioelectrik', '', '', '', '', 600, 10000, '0', false, '0');
 INSERT INTO col_sel VALUES (currval('admin_svg.them'::text), 'the_geom', 'geom', '1');
 INSERT INTO style VALUES (nextval('admin_svg.styl'::text), currval('admin_svg.them'::text), NULL, '83,131,242', '83,131,242', '', '1', '', '', '', '', '', '-1', '', '');
-INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche) VALUES (currval('admin_svg.appli'::text), currval('admin_svg.them'::text), '', '', '', 15, 0, 0, '', false, NULL, NULL, NULL, false, false, false);
-INSERT INTO theme (libelle_them, schema, tabl, raster, partiel, vu_initial, couch_tjs_visible, zoommin, zoommax, zoommax_raster, vu_anonyme) VALUES ('Zone non-aedificandi', 'geotest', 'zononaedificandi', '', '', '', '', 600, 10000, '0', false);
+INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche, partiel, vu_initial,force_chargement) VALUES (currval('admin_svg.appli'::text), currval('admin_svg.them'::text), '', '', '', 15, 0, 0, '', false, NULL, NULL, NULL, false, false, false, '0', '0', '0');
+INSERT INTO theme (libelle_them, schema, tabl, raster, partiel, vu_initial, couch_tjs_visible, zoommin, zoommax, zoommax_raster, vu_anonyme, force_chargement) VALUES ('Zone non-aedificandi', 'geotest', 'zononaedificandi', '', '', '', '', 600, 10000, '0', false, '0');
 INSERT INTO col_sel VALUES (currval('admin_svg.them'::text), 'the_geom', 'geom', '1');
 INSERT INTO style VALUES (nextval('admin_svg.styl'::text), currval('admin_svg.them'::text), NULL, '128,0,128', '128,0,128', '', '1', '', '', '', '', '', '-1', '', '');
-INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche) VALUES (currval('admin_svg.appli'::text), currval('admin_svg.them'::text), '', '', '', 16, 0, 0, '', false, NULL, NULL, NULL, false, false, false);
-INSERT INTO theme (libelle_them, schema, tabl, raster, partiel, vu_initial, couch_tjs_visible, zoommin, zoommax, zoommax_raster, vu_anonyme) VALUES ('Chemin de halage', 'geotest', 'halage', '', '', '', '', 600, 10000, '0', false);
+INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche, partiel, vu_initial,force_chargement) VALUES (currval('admin_svg.appli'::text), currval('admin_svg.them'::text), '', '', '', 16, 0, 0, '', false, NULL, NULL, NULL, false, false, false);
+INSERT INTO theme (libelle_them, schema, tabl, raster, partiel, vu_initial, couch_tjs_visible, zoommin, zoommax, zoommax_raster, vu_anonyme, force_chargement) VALUES ('Chemin de halage', 'geotest', 'halage', '', '', '', '', 600, 10000, '0', false, '0');
 INSERT INTO col_sel VALUES (currval('admin_svg.them'::text), 'the_geom', 'geom', '1');
 INSERT INTO style VALUES (nextval('admin_svg.styl'::text), currval('admin_svg.them'::text), NULL, '126,238,111', '126,238,111', '', '1', '', '', '', '', '', '-1', '', '');
-INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche) VALUES (currval('admin_svg.appli'::text), currval('admin_svg.them'::text), '', '', '', 17, 0, 0, '', false, NULL, NULL, NULL, false, false, false);
+INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche, partiel, vu_initial,force_chargement) VALUES (currval('admin_svg.appli'::text), currval('admin_svg.them'::text), '', '', '', 17, 0, 0, '', false, NULL, NULL, NULL, false, false, false, '0', '0', '0');
 
 --création cadastre cartographique
-INSERT INTO application (libelle_appli, btn_polygo, libelle_btn_polygo, divers, zoom_ouverture, zoom_min, zoom_max, url) VALUES ('cadastre', '', '', '', 600, 200, 8000, 'interface/carto.php');
-INSERT INTO apputi VALUES (currval('admin_svg.appli'::text), '1', NULL, NULL, NULL, 1);
-INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche) VALUES (currval('admin_svg.appli'::text), '1', '', '', '', 2, 0, 0, '', true, NULL, NULL, NULL, false, false, false);
+INSERT INTO application (libelle_appli, btn_polygo, libelle_btn_polygo, divers, zoom_ouverture, zoom_min, zoom_max, url, type_appli) VALUES ('cadastre', '', '', '', 600, 200, 8000, 'interface/carto.php', '0');
+INSERT INTO apputi VALUES (currval('admin_svg.appli'::text), '1', 'a', NULL, NULL, 1);
+INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche, partiel, vu_initial,force_chargement) VALUES (currval('admin_svg.appli'::text), '1', '', '', '', 2, 0, 0, '', true, NULL, NULL, NULL, false, false, false, '0', '0', '0');
 INSERT INTO col_theme VALUES (currval('admin_svg.appth'::text), 'constructi', 'Bati leger', '', '', 'Bati leger', '221,174,205', 'none', '', '1', '', '', '', '', '', '-1', '', '', 2);
 INSERT INTO col_theme VALUES (currval('admin_svg.appth'::text), 'constructi', 'Bati dur', '', '', 'Bati dur', '184,84,149', 'none', '', '1', '', '', '', '', '', '-1', '', '', 1);
-INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche) VALUES (currval('admin_svg.appli'::text), '2', '', '', '', 5, 0, 0, '', true, NULL, NULL, NULL, false, false, false);
-INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche) VALUES (currval('admin_svg.appli'::text), '3', 'sur(evt,''red'')', 'lien(evt,''parcel'',''https://''+serveur+''/cadastre/fich_parc.php?obj_keys='',''m'','''')', 'hors(evt)', 1, 0, 0, 'visible', true, NULL, NULL, NULL, false, true, true);
-INSERT INTO theme (libelle_them, schema, tabl, raster, partiel, vu_initial, couch_tjs_visible, zoommin, zoommax, zoommax_raster, vu_anonyme) VALUES ('Parcelle ville', 'cadastre', 'parcelle1', '', '1', '', '', 600, 10000, '600', false);
+INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche, partiel, vu_initial,force_chargement) VALUES (currval('admin_svg.appli'::text), '2', '', '', '', 5, 0, 0, '', true, NULL, NULL, NULL, false, false, false, '0', '0', '0');
+INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche, partiel, vu_initial,force_chargement) VALUES (currval('admin_svg.appli'::text), '3', 'sur(evt,''red'')', 'lien(evt,''parcel'',''https://''+serveur+''/apps/cadastre/fich_parc.php?obj_keys='',''m'','''')', 'hors(evt)', 1, 0, 0, 'visible', true, NULL, NULL, NULL, false, true, true, '0', '0', '0');
+INSERT INTO theme (libelle_them, schema, tabl, raster, partiel, vu_initial, couch_tjs_visible, zoommin, zoommax, zoommax_raster, vu_anonyme, force_chargement) VALUES ('Parcelle ville', 'cadastre', 'parcelle1', '', '1', '', '', 600, 10000, '600', false, '0');
 INSERT INTO col_sel VALUES (currval('admin_svg.them'::text), 'identifian', 'ident', '1');
 INSERT INTO col_sel VALUES (currval('admin_svg.them'::text), 'the_geom', 'geom', '2');
 INSERT INTO col_where VALUES (currval('admin_svg.them'::text), 'prop1 in(select prop1 from cadastre.propriet where ddenom like (select ''COMMUNE D%''||upper(nom)||''%'' from admin_svg.commune where idcommune like VALEUR))');
 INSERT INTO style VALUES (nextval('admin_svg.styl'::text), currval('admin_svg.them'::text), NULL, '131,214,164', '0,0,0', '', '1', '', '', '', '', '', '-1', '', '');
-INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche) VALUES (currval('admin_svg.appli'::text), currval('admin_svg.them'::text), '', '', '', 6, 0, 0, '', false, NULL, NULL, NULL, false, false, false);
-INSERT INTO theme (libelle_them, schema, tabl, raster, partiel, vu_initial, couch_tjs_visible, zoommin, zoommax, zoommax_raster, vu_anonyme) VALUES ('nom_voie', 'cadastre', 'nomvoie', '', '1', '', '', 200, 10000, '50000', false);
+INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche, partiel, vu_initial,force_chargement) VALUES (currval('admin_svg.appli'::text), currval('admin_svg.them'::text), '', '', '', 6, 0, 0, '', false, NULL, NULL, NULL, false, false, false, '0', '0', '0');
+INSERT INTO theme (libelle_them, schema, tabl, raster, partiel, vu_initial, couch_tjs_visible, zoommin, zoommax, zoommax_raster, vu_anonyme, force_chargement) VALUES ('nom_voie', 'cadastre', 'nomvoie', '', '1', '', '', 200, 10000, '50000', false, '0');
 INSERT INTO col_sel VALUES (currval('admin_svg.them'::text), 'texte||texte2||texte3||texte4||texte5||texte6||texte7||texte8||texte9||texte10', 'ad', '1');
 INSERT INTO col_sel VALUES (currval('admin_svg.them'::text), 'the_geom', 'geom', '2');
 INSERT INTO col_sel VALUES (currval('admin_svg.them'::text), 'rd2dg(rot_lab)', 'rotation', '3');
 INSERT INTO style VALUES (nextval('admin_svg.styl'::text), currval('admin_svg.them'::text), NULL, '0,0,0', '', '', 'arial', '4', '', '', '', '', '', '', '');
-INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche) VALUES (currval('admin_svg.appli'::text), currval('admin_svg.them'::text), '', '', '', 3, 0, 0, '', true, 200, 10000, 50000, true, false, false);
-INSERT INTO theme (libelle_them, schema, tabl, raster, partiel, vu_initial, couch_tjs_visible, zoommin, zoommax, zoommax_raster, vu_anonyme) VALUES ('num_voie', 'cadastre', 'numvoie', '', '1', '', '', 200, 10000, '50000', false);
+INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche, partiel, vu_initial,force_chargement) VALUES (currval('admin_svg.appli'::text), currval('admin_svg.them'::text), '', '', '', 3, 0, 0, '', true, 200, 10000, 50000, true, false, false, '0', '0', '0');
+INSERT INTO theme (libelle_them, schema, tabl, raster, partiel, vu_initial, couch_tjs_visible, zoommin, zoommax, zoommax_raster, vu_anonyme, force_chargement) VALUES ('num_voie', 'cadastre', 'numvoie', '', '1', '', '', 200, 10000, '50000', false, '0');
 INSERT INTO col_sel VALUES (currval('admin_svg.them'::text), 'texte', 'ad', '1');
 INSERT INTO col_sel VALUES (currval('admin_svg.them'::text), 'the_geom', 'geom', '2');
 INSERT INTO style VALUES (nextval('admin_svg.styl'::text), currval('admin_svg.them'::text), NULL, '0,0,255', '', '', 'arial', '2', '', '', '', '', '', '', '');
-INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche) VALUES (currval('admin_svg.appli'::text), currval('admin_svg.them'::text), '', '', '', 4, 0, 0, '', true, 200, 10000, 50000, true, false, false);
+INSERT INTO appthe (idapplication, idtheme, mouseover, click, mouseout, ordre, sordre, ordre_couche, pointer_events, raster, zoommin, zoommax, zoommaxraster, objselection, objprincipal, objrecherche, partiel, vu_initial,force_chargement) VALUES (currval('admin_svg.appli'::text), currval('admin_svg.them'::text), '', '', '', 4, 0, 0, '', true, 200, 10000, 50000, true, false, false, '0', '0', '0');
 
 --création cadastre littéral
-INSERT INTO application (libelle_appli, btn_polygo, libelle_btn_polygo, divers, zoom_ouverture, zoom_min, zoom_max, url) VALUES ('Cadastre', '', '', '', NULL, NULL, NULL, '/cadastre/index.php');
-INSERT INTO apputi VALUES (currval('admin_svg.appli'::text), '1', NULL, NULL, NULL, 1);
+INSERT INTO application (libelle_appli, btn_polygo, libelle_btn_polygo, divers, zoom_ouverture, zoom_min, zoom_max, url, type_appli) VALUES ('Cadastre', '', '', '', NULL, NULL, NULL, 'apps/cadastre/index.php','1');
+INSERT INTO apputi VALUES (currval('admin_svg.appli'::text), '1', 'a', NULL, NULL, 1);
 

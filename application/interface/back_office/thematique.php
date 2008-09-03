@@ -31,15 +31,16 @@ sécurité de leurs systèmes et ou de leurs données et, plus généralement,
 Le fait que vous puissiez accéder à cet en-tête signifie que vous avez 
 pris connaissance de la licence CeCILL-C, et que vous en avez accepté les 
 termes.*/
-session_start();
-include("../../connexion/deb.php");
+define('GIS_ROOT', '../..');
+include_once(GIS_ROOT . '/inc/common.php');
+gis_session_start();
 $req="select schema,tabl from admin_svg.theme where idtheme=".$_GET["idtheme"];
-$re=tab_result($pgx,$req);
+$re=$DB->tab_result($req);
 
 if($_GET["type"]=="fixe")
 {
 $req="select distinct ".$_GET["appel"]." as retour from ".$re[0]['schema'].".".$re[0]['tabl'];
-$col=tab_result($pgx,$req);
+$col=$DB->tab_result($req);
 $d="";
 for ($z=0;$z<count($col);$z++)
 {
@@ -57,7 +58,7 @@ if(eregi("area", $_GET["appel"]))
 $_GET["appel"]="abs(".$_GET["appel"].")";
 }
 $req="select min(".$_GET["appel"].") as val1,AVG(".$_GET["appel"].") as val2,max(".$_GET["appel"].") as val3 from ".$re[0]['schema'].".".$re[0]['tabl'];
-$col=tab_result($pgx,$req);
+$col=$DB->tab_result($req);
 $d="";
 echo $col[0]['val1'].'#'.$col[0]['val2'].'#'.$col[0]['val3'];
 }

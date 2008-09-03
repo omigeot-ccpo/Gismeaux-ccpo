@@ -31,10 +31,10 @@ sécurité de leurs systèmes et ou de leurs données et, plus généralement,
 Le fait que vous puissiez accéder à cet en-tête signifie que vous avez 
 pris connaissance de la licence CeCILL-C, et que vous en avez accepté les 
 termes.*/
-ini_set('session.gc_maxlifetime', 3600);
-session_start();
-include('../connexion/deb.php');
-$q="select area(GeometryFromtext('POLYGON((".$_GET['polygo']."))',-1)) as aire";
-$resultat = tab_result($pgx, $q);
+define('GIS_ROOT', '..');
+include_once(GIS_ROOT . '/inc/common.php');
+gis_session_start();
+$q="select area(GeometryFromtext('POLYGON((".$_GET['polygo']."))',".$projection.")) as aire";
+$resultat = $DB->tab_result($q);
 echo $resultat[0]['aire'];
 ?>

@@ -31,15 +31,16 @@ sécurité de leurs systèmes et ou de leurs données et, plus généralement,
 Le fait que vous puissiez accéder à cet en-tête signifie que vous avez 
 pris connaissance de la licence CeCILL-C, et que vous en avez accepté les 
 termes.*/
-session_start();
-include("../../connexion/deb.php");
+define('GIS_ROOT', '../..');
+include_once(GIS_ROOT . '/inc/common.php');
+gis_session_start();
 if($_GET["requete"])
 {
 $req=stripslashes($_GET["requete"]);
 $req=str_replace("c(plus)","+",$req);
 $req=str_replace("c(2p)",":",$req);
 
-pg_exec($pgx,$req);
+$DB->exec($req);
 }
 if($_GET["genere"]!='false')
 {

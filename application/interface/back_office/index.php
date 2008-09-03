@@ -1,40 +1,38 @@
 <?php
 define('GIS_ROOT', '../..');
 include_once(GIS_ROOT . '/inc/common.php');
-gis_init();
-check_auth();
-
-echo $_SESSION['user']->login;
-
+gis_session_start();
+if ((!$_SESSION['profil']->acces_ssl) || !in_array ("back_office", $_SESSION['profil']->liste_appli)){
+	die("Point d'entr&eacute;e r&eacute;glement&eacute;.<br> Accès interdit. <br>Veuillez vous connecter via <a href=\"https://".$_SERVER['HTTP_HOST']."\">serveur carto</a><SCRIPT language=javascript>setTimeout(\"window.location.replace('https://".$_SERVER['HTTP_HOST']."')\",3000)</SCRIPT>");
+}
 $_SESSION['appli']=$_GET["vale"];
 if ($_GET["act"]=="descrip"){
-  header("Location:./back_office.php");
- }
+header("Location:./back_office.php");
+}
+//include("../../../connexion/deb.php");
 if ($_GET["act"]=="ajout"){
-  $sql="insert into admin_svg.application (libelle_appli,btn_polygo,libelle_btn_polygo,zoom_ouverture,zoom_min,zoom_max,url) values ('".$_GET["lib"]."','".$_GET["bp"]."','".$_GET["lb"]."',".$_GET["zo"].",".$_GET["zn"].",".$_GET["zm"].",'".$_GET["url"]."')";
-  pg_exec($pgx,$sql);
-  $act="";
- }
+$sql="insert into admin_svg.application (libelle_appli,btn_polygo,libelle_btn_polygo,zoom_ouverture,zoom_min,zoom_max,url,type_appli) values ('".$_GET["lib"]."','".$_GET["bp"]."','".$_GET["lb"]."',".$_GET["zo"].",".$_GET["zn"].",".$_GET["zm"].",'".$_GET["url"]."','".$_GET["ap"]."')";
+$DB->exec($sql);
+$act="";
+}
 if ($_GET["act"]=="supp"){
-  $sql="delete from admin_svg.appthe where idapplication=".$_GET["vale"];
-  pg_exec($pgx,$sql);
-  $sql="delete from admin_svg.application where idapplication=".$_GET["vale"];
-  pg_exec($pgx,$sql);
-  $act="";     
- }
+$sql="delete from admin_svg.appthe where idapplication='".$_GET["vale"]."'";
+pg_exec($pgx,$sql);
+$sql="delete from admin_svg.application where idapplication='".$_GET["vale"]."'";
+$DB->exec($sql);
+$act="";     
+}
 if($_GET["act"]=="mod")
-  {
-    $req="UPDATE admin_svg.application SET libelle_appli='".$_GET["lib"]."',btn_polygo='".$_GET["bp"]."',libelle_btn_polygo='".$_GET["lb"]."',zoom_ouverture=".$_GET["zo"].",zoom_min=".$_GET["zn"].",zoom_max=".$_GET["zm"].",url='".$_GET["url"]."' where idapplication=".$_GET["vale"];
-    pg_exec($pgx,$req);
-  }
-?>
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+{
+$req="UPDATE admin_svg.application SET libelle_appli='".$_GET["lib"]."',btn_polygo='".$_GET["bp"]."',libelle_btn_polygo='".$_GET["lb"]."',zoom_ouverture=".$_GET["zo"].",zoom_min=".$_GET["zn"].",zoom_max=".$_GET["zm"].",url='".$_GET["url"]."',type_appli='".$_GET["ap"]."' where idapplication='".$_GET["vale"]."'";
+$DB->exec($req);
+}
+echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">
+<html xmlns=\"http://www.w3.org/1999/xhtml\">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\" />
 <title>Document sans titre</title>
-</head>
+</head>";?>
 <script>
 var selection='';
 function select_ligne(z,r,ap)
@@ -50,6 +48,7 @@ document.getElementById('zm'+i).disabled=true;
 document.getElementById('zn'+i).disabled=true;
 document.getElementById('lb'+i).disabled=true;
 document.getElementById('bp'+i).disabled=true;
+document.getElementById('ap'+i).disabled=true;
 }
 document.forms["ges_appli"]['lib'+z].disabled=false;
 //document.getElementById('lib'+z).disabled=false;
@@ -59,60 +58,68 @@ document.getElementById('zm'+z).disabled=false;
 document.getElementById('zn'+z).disabled=false;
 document.getElementById('lb'+z).disabled=false;
 document.getElementById('bp'+z).disabled=false;
+document.getElementById('ap'+z).disabled=false;
 }
 function ajout()
 {
 TxtMessage="";
 var reg=new RegExp("(carto.php)","g");
-if (reg.test(document.getElementById('ajouturl').value))
- { 
-	if (document.getElementById('ajoutlib').value == "")
-	TxtMessage = TxtMessage + " - Le nom application.\n";
-	if (document.getElementById('ajouturl').value == "")
-	TxtMessage = TxtMessage + " - url application.\n";
-	if (document.getElementById('ajoutzo').value == "")
-	TxtMessage = TxtMessage + " - Le zoom ouverture.\n";
-	if (document.getElementById('ajoutzm').value == "")
-	TxtMessage = TxtMessage + " - Le zoom max.\n";
-	if (document.getElementById('ajoutzn').value == "")
-	TxtMessage = TxtMessage + " - Le zoom min.\n";
+	if (reg.test(document.getElementById('ajouturl').value))
+ 	{ 
+		if (document.getElementById('ajoutlib').value == "")
+		TxtMessage = TxtMessage + " - Le nom application.\n";
+		if (document.getElementById('ajouturl').value == "")
+		TxtMessage = TxtMessage + " - url application.\n";
+		if (document.getElementById('ajoutzo').value == "")
+		TxtMessage = TxtMessage + " - Le zoom ouverture.\n";
+		if (document.getElementById('ajoutzm').value == "")
+		TxtMessage = TxtMessage + " - Le zoom max.\n";
+		if (document.getElementById('ajoutzn').value == "")
+		TxtMessage = TxtMessage + " - Le zoom min.\n";
+		if (document.getElementById('ajoutap').value == "")
+		TxtMessage = TxtMessage + " - Le type application.\n";
 	}
-	if (TxtMessage != "") {
+	
+	
+	if (TxtMessage != "") 
+	{
 		TxtMessage="Vous n'avez pas saisi les informations suivantes :\n" + TxtMessage;
 		alert (TxtMessage);
         document.getElementById('act').value='';
+	}
+	else 
+	{
+	document.getElementById('act').value='ajout';
+	document.getElementById('lib').value=document.getElementById('ajoutlib').value;
+	document.getElementById('url').value=document.getElementById('ajouturl').value;
+		if(document.getElementById('ajoutzo').value=="")
+		{
+			document.getElementById('zo').value='null'
 		}
-	else {
-document.getElementById('act').value='ajout'
-document.getElementById('lib').value=document.getElementById('ajoutlib').value
-document.getElementById('url').value=document.getElementById('ajouturl').value
-if(document.getElementById('ajoutzo').value=="")
-{
-document.getElementById('zo').value='null'
-}
-else
-{
-document.getElementById('zo').value=document.getElementById('ajoutzo').value
-}
-if(document.getElementById('ajoutzm').value=="")
-{
-document.getElementById('zm').value='null'
-}
-else
-{
-document.getElementById('zm').value=document.getElementById('ajoutzm').value
-}
-if(document.getElementById('ajoutzn').value=="")
-{
-document.getElementById('zn').value='null'
-}
-else
-{
-document.getElementById('zn').value=document.getElementById('ajoutzn').value
-}
-document.getElementById('lb').value=document.getElementById('ajoutlb').value
-document.getElementById('bp').value=document.getElementById('ajoutbp').value
-}
+		else
+		{
+			document.getElementById('zo').value=document.getElementById('ajoutzo').value;
+		}
+		if(document.getElementById('ajoutzm').value=="")
+		{
+		document.getElementById('zm').value='null';
+		}
+		else
+		{
+		document.getElementById('zm').value=document.getElementById('ajoutzm').value;
+		}
+		if(document.getElementById('ajoutzn').value=="")
+		{
+		document.getElementById('zn').value='null';
+		}
+		else
+		{
+		document.getElementById('zn').value=document.getElementById('ajoutzn').value;
+		}
+	document.getElementById('lb').value=document.getElementById('ajoutlb').value;
+	document.getElementById('bp').value=document.getElementById('ajoutbp').value;
+	document.getElementById('ap').value=document.getElementById('ajoutap').value;
+	}
 }
 function supp()
 {
@@ -154,6 +161,8 @@ function modif()
 	TxtMessage = TxtMessage + " - Le zoom max.\n";
 	if (document.getElementById('zn'+selection).value == "")
 	TxtMessage = TxtMessage + " - Le zoom min.\n";
+	if (document.getElementById('ap'+selection).value == "")
+	TxtMessage = TxtMessage + " - Le type application.\n";
 	if (TxtMessage != "") {
 		TxtMessage="Vous n'avez pas saisi les informations suivantes :\n" + TxtMessage;
 		alert (TxtMessage);
@@ -161,14 +170,15 @@ function modif()
 		}
 	else {
 		document.getElementById('act').value='mod';
-document.getElementById('lib').value=document.getElementById('lib'+selection).value
-document.getElementById('url').value=document.getElementById('url'+selection).value
-document.getElementById('zo').value=document.getElementById('zo'+selection).value
-document.getElementById('zm').value=document.getElementById('zm'+selection).value
-document.getElementById('zn').value=document.getElementById('zn'+selection).value
-document.getElementById('lb').value=document.getElementById('lb'+selection).value
-document.getElementById('bp').value=document.getElementById('bp'+selection).value
-           document.forms["ges_appli"].submit();
+document.getElementById('lib').value=document.getElementById('lib'+selection).value;
+document.getElementById('url').value=document.getElementById('url'+selection).value;
+document.getElementById('zo').value=document.getElementById('zo'+selection).value;
+document.getElementById('zm').value=document.getElementById('zm'+selection).value;
+document.getElementById('zn').value=document.getElementById('zn'+selection).value;
+document.getElementById('lb').value=document.getElementById('lb'+selection).value;
+document.getElementById('bp').value=document.getElementById('bp'+selection).value;
+document.getElementById('ap').value=document.getElementById('ap'+selection).value;
+document.forms["ges_appli"].submit();
 		}
 }
 function sur(z)
@@ -180,21 +190,22 @@ function hors(z)
 document.getElementById(z).style.background="#FFFFFF";
 }
 </script>
-<table border="0" cellspacing="0" cellpadding="0" align="center" >
-<tr><td colspan="7" align="center" ><img name="ges" src="./headbackoffice.PNG"/></td><tr>
-<tr><td colspan="7" align="center">&nbsp;</td><tr>
-<form name="ges_appli" action="index.php" method="get" >
-<input type="hidden" id="act" name="act" value="">
-<input type="hidden" id="vale" name="vale" value="">
-<input type="hidden" name="lib" id="lib" value=""></td>
-<input type="hidden" name="url" id="url" value=""></td>
-<input type="hidden" name="zo" id="zo" value=""></td>
-<input type="hidden" name="zm" id="zm" value=""></td>
-<input type="hidden" name="zn" id="zn" value=""></td>
-<input type="hidden" name="lb" id="lb" value=""></td>
-<input type="hidden" name="bp" id="bp" value=""></td>
+<?php echo "<table border=\"0\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\" >
+<tr><td colspan=\"8\" align=\"center\" ><img name=\"ges\" src=\"./headbackoffice.PNG\"/></td><tr>
+<tr><td colspan=\"8\" align=\"center\">&nbsp;</td><tr>
+<form name=\"ges_appli\" action=\"index.php\" method=\"get\" >
+<input type=\"hidden\" id=\"act\" name=\"act\" value=\"\">
+<input type=\"hidden\" id=\"vale\" name=\"vale\" value=\"\">
+<input type=\"hidden\" name=\"lib\" id=\"lib\" value=\"\">
+<input type=\"hidden\" name=\"url\" id=\"url\" value=\"\">
+<input type=\"hidden\" name=\"zo\" id=\"zo\" value=\"\">
+<input type=\"hidden\" name=\"zm\" id=\"zm\" value=\"\">
+<input type=\"hidden\" name=\"zn\" id=\"zn\" value=\"\">
+<input type=\"hidden\" name=\"lb\" id=\"lb\" value=\"\">
+<input type=\"hidden\" name=\"bp\" id=\"bp\" value=\"\">
+<input type=\"hidden\" name=\"ap\" id=\"ap\" value=\"\">
 
-<tr align="center">
+<tr align=\"center\">
     <td>Application</td>
     <td>url de l'application</td>
     <td>zoom_ouverture</td>
@@ -202,11 +213,12 @@ document.getElementById(z).style.background="#FFFFFF";
     <td>zoom_min</td>
     <td>texte_bouton</td>
     <td>bouton_polygone</td>
-  </tr>	
+	<td>Type application</td>
+  </tr>	";
   
-<?php
-$d="select * from admin_svg.application order by idapplication asc";
-$col=$DB->tab_result($d);
+
+$d_appli="select * from admin_svg.application order by idapplication desc";
+$col=$DB->tab_result($d_appli);
 for ($z=0;$z<count($col);$z++)
 {
 echo"  <tr id=\"".$z."\">
@@ -217,6 +229,7 @@ echo"  <tr id=\"".$z."\">
     <td><input type=\"text\" name=\"\" value=\"".$col[$z]['zoom_min']."\" disabled=\"true\"  id=\"zn".$z."\"></td>
     <td><input type=\"text\" name=\"\" value=\"".$col[$z]['libelle_btn_polygo']."\" disabled=\"true\"  id=\"lb".$z."\"></td>
     <td><input type=\"text\" name=\"\" value=\"".$col[$z]['btn_polygo']."\" disabled=\"true\"  id=\"bp".$z."\"></td>
+	<td><input type=\"text\" name=\"\" value=\"".$col[$z]['type_appli']."\" disabled=\"true\"  id=\"ap".$z."\"></td>
     <td><input type=\"radio\" name=\Groupe\" value=\"\" / onclick=\"select_ligne(".$z.",".count($col).",'".$col[$z]['idapplication']."')\"></td>
   </tr>		";	
 }
@@ -228,15 +241,14 @@ echo"  <tr id=\"ajoutid\" style=\"visibility:hidden\">
     <td><input type=\"text\" name=\"ajoutzn\" id=\"ajoutzn\" value=\"\"></td>
     <td><input type=\"text\" name=\"ajoutlb\" id=\"ajoutlb\" value=\"\"></td>
     <td><input type=\"text\" name=\"ajoutbp\" id=\"ajoutbp\" value=\"\"></td>
+	<td><input type=\"text\" name=\"ajoutap\" id=\"ajoutap\" value=\"\"></td>
     <td ><input type=\"button\" value=\"Valider\" onclick=\"ajout();submit();\"></td>
   </tr>		";
-?>
 
-
-<?php
-echo '<tr><td colspan="7" align="center"><input type="button" value="Description" onclick="attt();"><input type="button" value="Modifier" onclick="modif()">';
+echo '<tr><td colspan="8" align="center"><input type="button" value="Description" onclick="attt();"><input type="button" value="Modifier" onclick="modif()">';
 echo '<input type="button" value="Supprimer" onclick="supp();">';
-echo '<input type="button" value="Insérer" onclick="document.getElementById(\'ajoutid\').style.visibility=\'visible\';"></td></tr>';
+echo '<input type="button" value="Ins&eacute;rer" onclick="document.getElementById(\'ajoutid\').style.visibility=\'visible\';"></td></tr>';
+
+echo "</form>";
+echo "</html>";
 ?>
-</form>
-</html>

@@ -31,12 +31,13 @@ sécurité de leurs systèmes et ou de leurs données et, plus généralement,
 Le fait que vous puissiez accéder à cet en-tête signifie que vous avez 
 pris connaissance de la licence CeCILL-C, et que vous en avez accepté les 
 termes.*/
-session_start();
-include("../../connexion/deb.php");
-$requete="UPDATE admin_svg.theme SET libelle_them='".$_GET["nomtheme"]."',schema='".$_GET["schema"]."',tabl='".$_GET["table"]."',raster='".$_GET["raster"]."',partiel='".$_GET["partiel"]."',vu_initial='".$_GET["initial"]."',zoommin=".$_GET["zoommin"].",zoommax=".$_GET["zoommax"].",zoommax_raster='".$_GET["zoommaxr"]."' where idtheme=".$_GET["idtheme"];
-pg_exec($pgx,$requete);
+define('GIS_ROOT', '../..');
+include_once(GIS_ROOT . '/inc/common.php');
+gis_session_start();
+$requete="UPDATE admin_svg.theme SET libelle_them='".$_GET["nomtheme"]."',schema='".$_GET["schema"]."',tabl='".$_GET["table"]."',raster='".$_GET["raster"]."',partiel='".$_GET["partiel"]."',vu_initial='".$_GET["initial"]."',zoommin=".$_GET["zoommin"].",zoommax=".$_GET["zoommax"].",zoommax_raster='".$_GET["zoommaxr"]."',force_chargement='".$_GET["force"]."' where idtheme=".$_GET["idtheme"];
+$DB->exec($requete);
 $req="select appel,nom_as from admin_svg.col_sel where idtheme=".$_GET["idtheme"];
-$col1=tab_result($pgx,$req);
+$col1=$DB->tab_result($req);
 for ($z=0;$z<count($col1);$z++)
 {
 			if($col1[$z]['nom_as']=='geom')
@@ -57,12 +58,12 @@ if($colonnegeom=="true")
 	if($_GET["geom"])
 	{
 	$requete="update admin_svg.col_sel set appel='".$_GET["geom"]."' where idtheme=".$_GET["idtheme"]." and nom_as='geom'";
-	pg_exec($pgx,$requete);
+	$DB->exec($requete);
 	}
 	else
 	{
 	$requete="delete from admin_svg.col_sel where idtheme=".$_GET["idtheme"]." and nom_as='geom'";
-	pg_exec($pgx,$requete);
+	$DB->exec($requete);
 	}
 	
 }
@@ -71,7 +72,7 @@ else
 	if($_GET["geom"])
 	{
 	$requete="insert into admin_svg.col_sel (idtheme,appel,nom_as) values(".$_GET["idtheme"].",'".$_GET["geom"]."','geom')";
-	pg_exec($pgx,$requete);
+	$DB->exec($requete);
 	}
 }
 
@@ -80,12 +81,12 @@ if($colonneref=="true")
 	if($_GET["ref"])
 	{
 	$requete="update admin_svg.col_sel set appel='".$_GET["ref"]."' where idtheme=".$_GET["idtheme"]." and nom_as='ident'";
-	pg_exec($pgx,$requete);
+	$DB->exec($requete);
 	}
 	else
 	{
 	$requete="delete from admin_svg.col_sel where idtheme=".$_GET["idtheme"]." and nom_as='ident'";
-	pg_exec($pgx,$requete);
+	$DB->exec($requete);
 	}
 	
 }
@@ -94,7 +95,7 @@ else
 	if($_GET["ref"])
 	{
 	$requete="insert into admin_svg.col_sel (idtheme,appel,nom_as) values(".$_GET["idtheme"].",'".$_GET["ref"]."','ident')";
-	pg_exec($pgx,$requete);
+	$DB->exec($requete);
 	}
 }
 
@@ -103,12 +104,12 @@ if($colonnelibelle=="true")
 	if($_GET["libelle"])
 	{
 	$requete="update admin_svg.col_sel set appel='".$_GET["libelle"]."' where idtheme=".$_GET["idtheme"]." and nom_as='ad'";
-	pg_exec($pgx,$requete);
+	$DB->exec($requete);
 	}
 	else
 	{
 	$requete="delete from admin_svg.col_sel where idtheme=".$_GET["idtheme"]." and nom_as='ad'";
-	pg_exec($pgx,$requete);
+	$DB->exec($requete);
 	}
 	
 }
@@ -117,24 +118,24 @@ else
 	if($_GET["libelle"])
 	{
 	$requete="insert into admin_svg.col_sel (idtheme,appel,nom_as) values(".$_GET["idtheme"].",'".$_GET["libelle"]."','ad')";
-	pg_exec($pgx,$requete);
+	$DB->exec($requete);
 	}
 }
 
 $req="select clause from admin_svg.col_where where idtheme=".$_GET["idtheme"];
-$col1=tab_result($pgx,$req);
+$col1=$DB->tab_result($req);
 
 if($col1[0]['clause'])
 {
 	if($_GET["clause"])
 	{
 	$requete="update admin_svg.col_where set clause='".$_GET["clause"]."' where idtheme=".$_GET["idtheme"];
-	pg_exec($pgx,$requete);
+	$DB->exec($requete);
 	}
 	else
 	{
 	$requete="delete from admin_svg.col_where where idtheme=".$_GET["idtheme"];
-	pg_exec($pgx,$requete);
+	$DB->exec($requete);
 	}
 	
 }
@@ -143,7 +144,7 @@ else
 	if($_GET["clause"])
 	{
 	$requete="insert into admin_svg.col_where (idtheme,clause) values(".$_GET["idtheme"].",'".$_GET["clause"]."')";
-	pg_exec($pgx,$requete);
+	$DB->exec($requete);
 	}
 }
 ?>

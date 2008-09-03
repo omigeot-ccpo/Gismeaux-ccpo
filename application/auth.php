@@ -62,7 +62,7 @@ function buildprofiles() // Attention : ici les profils potentiels sont vérifi�
   $profiles[] = new InternetProfile("Visiteur");
   //  $profiles[] = new TestingProfile("OM");
   $profiles[] = new IntranetProfile();
-  $profiles[] = new CertifiedProfile();
+  //$profiles[] = new CertifiedProfile();
   return $profiles;
 }
 
@@ -73,8 +73,8 @@ function currentUser()
   else
     die("ERROR pas d'utilisateur");
 }
-
-if (!$_SESSION['profil'])
+//===============================================
+if (!$_SESSION['profil']) // On vérifie que le profil est instancié, on l'instancie sinon.
   selectprofile(buildprofiles());
 
 if ($_SESSION['profil']->is_identified())

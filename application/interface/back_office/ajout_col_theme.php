@@ -31,14 +31,15 @@ sécurité de leurs systèmes et ou de leurs données et, plus généralement,
 Le fait que vous puissiez accéder à cet en-tête signifie que vous avez 
 pris connaissance de la licence CeCILL-C, et que vous en avez accepté les 
 termes.*/
-session_start();
-include("../../connexion/deb.php");
+define('GIS_ROOT', '../..');
+include_once(GIS_ROOT . '/inc/common.php');
+gis_session_start();
 $coulfill='none';
 $coulstroke='none';
 //$requete="select idappthe from admin_svg.appthe where idtheme=".$_GET["idtheme"]." and idapplication=".$_GET["appli"];
 //$co=tab_result($pgx,$requete);
-$requete="select fill,stroke_rgb,font_size,symbole,id_symbole,opacity from admin_svg.style where idtheme=".$_GET["idtheme"];
-$col=tab_result($pgx,$requete);
+$requete="select fill,stroke_rgb,font_size,symbole,id_symbole,opacity from admin_svg.style where idtheme='".$_GET["idtheme"]."'";
+$col=$DB->tab_result($requete);
 if($col[0]['fill']!='' && $col[0]['fill']!='none')
 {
 $coulfill=$_GET["couleur"];
@@ -67,6 +68,6 @@ else
 $requete="insert into admin_svg.col_theme (idappthe,colonn,intitule_legende,valeur_texte,fill,stroke_rgb,font_size,symbole,id_symbole,opacity,ordre) values('".$_GET["idappthe"]."','".$_GET["colonn"]."','".$_GET["legende"]."','".$_GET["valtexte"]."','".$coulfill."','".$coulstroke."','".$col[0]['font_size']."','".$col[0]['symbole']."','".$col[0]['id_symbole']."','".$col[0]['opacity']."',".$_GET["ordre"].")";
 }
 //echo $requete;
-pg_exec($pgx,$requete);
+$DB->exec($requete);
 
 ?>

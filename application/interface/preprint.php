@@ -34,8 +34,6 @@ termes.*/
 define('GIS_ROOT', '..');
 include_once(GIS_ROOT . '/inc/common.php');
 gis_session_start();
-
-
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -46,6 +44,7 @@ gis_session_start();
 function init()
 {
 window.resizeTo(440,500);
+
  }
  
  function modif(form) {
@@ -135,7 +134,7 @@ else
 {
 $raster=$_GET['raster'];
 }
-print("<form id=\"form1\" name=\"form1\" target=\"_parent\" method=\"post\" action=\"./printpdf.php?raster=".$raster."&x=".$_GET['x']."&y=".$_GET['y']."&lar=".$_GET['lar']."&hau=".$_GET['hau']."&zoom=".$_GET['zoom']."&xini=".$_GET['xini']."&yini=".$_GET['yini']."&parce=".stripslashes($_GET['parce'])."\" onload=\"modif(this.form)\">");
+print("<form id=\"form1\" name=\"form1\" target=\"_parent\" method=\"GET\" action=\"./printpdf.php\" onload=\"modif(this.form)\">");
 ?>
 
   <div style="position:absolute;left:50px;top:15px">
@@ -149,12 +148,12 @@ print("<form id=\"form1\" name=\"form1\" target=\"_parent\" method=\"post\" acti
     </select>
   </div>
    <div style="position:absolute;left:50px;top:45px">
-    Modèle
+    Mod&egrave;le
     <select name="legende" onchange="prev();">
-	<option value=1 selected="selected">Paysage avec légende</option>
-      <option value=2>Paysage sans légende</option>
-      <option value=3>Portrait avec légende</option>
-      <option value=4>Portrait sans légende</option>
+	<option value=1 selected="selected">Paysage avec l&eacute;gende</option>
+      <option value=2>Paysage sans l&eacute;gende</option>
+      <option value=3>Portrait avec l&eacute;gende</option>
+      <option value=4>Portrait sans l&eacute;gende</option>
       
     </select>
 </div> 
@@ -165,13 +164,22 @@ print("<form id=\"form1\" name=\"form1\" target=\"_parent\" method=\"post\" acti
     <div style="position:absolute;left:50px;top:250px">
     Titre
     <input name="titre" type="text" size="30" maxlength="40" />
+	<input name="raster" type="hidden" value="<?php echo $raster;?>" />
+	<input name="x" type="hidden" value="<?php echo $_GET['x'];?>" />
+	<input name="y" type="hidden" value="<?php echo $_GET['y'];?>" />
+	<input name="lar" type="hidden" value="<?php echo $_GET['lar'];?>" />
+	<input name="hau" type="hidden" value="<?php echo $_GET['hau'];?>" />
+	<input name="zoom" type="hidden" value="<?php echo $_GET['zoom'];?>" />
+	<input name="xini" type="hidden" value="<?php echo $_GET['xini'];?>" />
+	<input name="yini" type="hidden" value="<?php echo $_GET['yini'];?>" />
+	<input name="parce" type="hidden" value="<?php echo stripslashes($_GET['parce']);?>" />
   </div>
   <div style="position:absolute;left:50px;top:280px">
-    Vous êtes à une échelle:1/<?php echo round($_GET['echini']);?>
+    Vous &ecirc;tes &agrave; une &eacute;chelle:1/<?php echo round($_GET['echini']);?>
   </div>
 	<div style="position:absolute;left:50px;top:310px">
     Echelle:1/
-    <input name="echelle" type="text" value="<?php echo round($_GET['echini'])?>" size="4" maxlength="5" />*Laissez la valeur si pas de mise à l'echelle
+    <input name="echelle" type="text" value="<?php echo round($_GET['echini'])?>" size="4" maxlength="5" />*Laissez la valeur si pas de mise &agrave; l'echelle
   </div>
   </div>
 	<div style="position:absolute;left:120px;top:340px"><input name="Valider" type="submit" value="Valider" /></div>
