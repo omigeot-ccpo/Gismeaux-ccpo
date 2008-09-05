@@ -1,71 +1,71 @@
 #!/usr/bin/perl
 #
-# m�tadonn�es pour l'�diteur utilis� (gvim)
+# mï¿½tadonnï¿½es pour l'ï¿½diteur utilisï¿½ (gvim)
 # vim: tabstop=4 sw=4
 #
 # edi2mif.pl version 1.1 (C) Michel WURTZ 15/7/2006
 # Convertisseur simple EDIGEO PCI vers MIF/MID
 #
-# Utilisation : perl edi2mif.pl <r�pertoire contenant les fichiers EdiGEO> <r�pertoire pour les fichiers MIF/MID>
+# Utilisation : perl edi2mif.pl <rï¿½pertoire contenant les fichiers EdiGEO> <rï¿½pertoire pour les fichiers MIF/MID>
 #
 #----------------------------------------------------------------------------
-# ajout du traitement pour Postgr�SQL+PostGis @robert Leguay 20/2/2007
+# ajout du traitement pour Postgrï¿½SQL+PostGis @robert Leguay 20/2/2007
 #
-#Utilisation : perl edi2mif.pl <r�pertoire contenant le fichier EdiGEO> <r�pertoire pour les fichiers SQL> <Sch�ma Postgr�SQL d'insertion> <d�partement(2c)+agglo(1c)> <interrupteur de cr�ation des tables>
+#Utilisation : perl edi2mif.pl <rï¿½pertoire contenant le fichier EdiGEO> <rï¿½pertoire pour les fichiers SQL> <Schï¿½ma Postgrï¿½SQL d'insertion> <dï¿½partement(2c)+agglo(1c)> <interrupteur de crï¿½ation des tables> <projection>
 #
 # ---------------------------------------------------------------------------
-# Ce logiciel est diffus� sous les termes et conditions de la licence CECILL
-# Voir le fichier joint Licence_CeCILL_V2-fr.txt pour plus de d�tails
+# Ce logiciel est diffusï¿½ sous les termes et conditions de la licence CECILL
+# Voir le fichier joint Licence_CeCILL_V2-fr.txt pour plus de dï¿½tails
 # ---------------------------------------------------------------------------
 #
-# Simple = pas de v�rification de l'�change et r�sultats impr�visibles en cas
-# de donn�es non coh�rentes en entr�e... r�alis� essentiellement d'apr�s de
-# vagues reminiscences (12 ans) sur EDIG�O, la lecture des fichiers DGI et
-# quelques coups d'oeil sur un exemplaire de la norme NF Z 52000 retrouv�
-# dans mes archives et dat� de novembre 1998 (donc avant son introduction
+# Simple = pas de vï¿½rification de l'ï¿½change et rï¿½sultats imprï¿½visibles en cas
+# de donnï¿½es non cohï¿½rentes en entrï¿½e... rï¿½alisï¿½ essentiellement d'aprï¿½s de
+# vagues reminiscences (12 ans) sur EDIGï¿½O, la lecture des fichiers DGI et
+# quelques coups d'oeil sur un exemplaire de la norme NF Z 52000 retrouvï¿½
+# dans mes archives et datï¿½ de novembre 1998 (donc avant son introduction
 # officielle), probablement le draft final du groupe de travail CEN/TC 287
 #
 # Simple = un seul format de sortie : MIF/MID
 #
-# Simple = surement pas tr�s optimis� pour la rapidit� et gournand en m�moire
+# Simple = surement pas trï¿½s optimisï¿½ pour la rapiditï¿½ et gournand en mï¿½moire
 #
-# Simple = �crit en perl basique pour la portabilit� et en perl parce que
-# finalement ce n'est que du traitement de texte un peu sophistiqu� pour
-# passer du format EDIG�O au format MIF/MID
+# Simple = ï¿½crit en perl basique pour la portabilitï¿½ et en perl parce que
+# finalement ce n'est que du traitement de texte un peu sophistiquï¿½ pour
+# passer du format EDIGï¿½O au format MIF/MID
 #
 # Bon, maintenant, c'est du logiciel "libre" (Cf ci-dessus), et donc si vous
-# voulez mieux, � vous de vous retrousser les manches...
+# voulez mieux, ï¿½ vous de vous retrousser les manches...
 #
-# Pour des messages en cas de probl�me, mettre debug_on � une valeur > 0
+# Pour des messages en cas de problï¿½me, mettre debug_on ï¿½ une valeur > 0
 
 # TODO list : 
-# - ajouter une interface permettant la conversion d'un ensemble de r�peroires
+# - ajouter une interface permettant la conversion d'un ensemble de rï¿½peroires
 # - Internationaliser ?
 # - ajouter une interface graphique ?
 
-# -- D�but des param�tres modifiables -----------------------------------------
-# mettre $midmif � 0 pour ne pas extraire au format mapinfo
+# -- Dï¿½but des paramï¿½tres modifiables -----------------------------------------
+# mettre $midmif ï¿½ 0 pour ne pas extraire au format mapinfo
 $midmif=0;
 
-# mettre $postgres � 0 pour ne pas executer le traitement
+# mettre $postgres ï¿½ 0 pour ne pas executer le traitement
 $postgres=1;
 
-# mettre $debug_on � 1 ou plus pour des infos suppl�mentaires dans le log
+# mettre $debug_on ï¿½ 1 ou plus pour des infos supplï¿½mentaires dans le log
 $debug_on = 3;
 
-# mettre $mif2tab � 0 pour ne pas convertir les mif/mid au format natif MapInfo
-# Si $mif2tab est � 1, il est n�cessaire d'installer le programme tab2tab
+# mettre $mif2tab ï¿½ 0 pour ne pas convertir les mif/mid au format natif MapInfo
+# Si $mif2tab est ï¿½ 1, il est nï¿½cessaire d'installer le programme tab2tab
 # (voir http://mitab.maptools.org)
 $mif2tab = 0;
 
-# Pour modifier la taille des �critures � l'�cran (1.3 => + gros)
+# Pour modifier la taille des ï¿½critures ï¿½ l'ï¿½cran (1.3 => + gros)
 $echelle_texte = 1.0;
 
-# Quelques tables (hash) utiles, �ventuellement modifiables :
+# Quelques tables (hash) utiles, ï¿½ventuellement modifiables :
 
-# table des projections (� compl�ter si n�cessaire avec MAPINFOW.PRJ et
-# la doc EDIG�O).  Les valeurs de Bounds permettent de conserver la r�solution
-# des coordonn�es PCI (cm ?) : ces valeurs donnent 1 mm, par d�faut MapInfo ne
+# table des projections (ï¿½ complï¿½ter si nï¿½cessaire avec MAPINFOW.PRJ et
+# la doc EDIGï¿½O).  Les valeurs de Bounds permettent de conserver la rï¿½solution
+# des coordonnï¿½es PCI (cm ?) : ces valeurs donnent 1 mm, par dï¿½faut MapInfo ne
 # donnat qu'environ 12 cm
 %tproj=(
 	'LAMB1', '3, 1002, 7, 0, 49.5, 48.59852278,50.39591167, 600000, 200000 Bounds (0.0, 0.0) (2000000.0, 2000000.0)',
@@ -75,11 +75,11 @@ $echelle_texte = 1.0;
 	'LAMBE', '3, 1002, 7, 0, 46.8, 45.89891889,47.69601444, 600000, 2200000 Bounds (0.0, 1000000.0) (2000000.0, 3000000.0)'
 );
 
-# table des couches MapInfo / objets EDIG�O PCI...
-# Le nom des tables peut �tre ajust� si besoin...
+# table des couches MapInfo / objets EDIGï¿½O PCI...
+# Le nom des tables peut ï¿½tre ajustï¿½ si besoin...
 #
-# Les �critures sont r�cup�r�es dans la table associ�e � 'Z_1_2_2' sous forme
-# d'objets texte si le nom est diff�rent de '-' (ici on a pris 'ECRITURES')
+# Les ï¿½critures sont rï¿½cupï¿½rï¿½es dans la table associï¿½e ï¿½ 'Z_1_2_2' sous forme
+# d'objets texte si le nom est diffï¿½rent de '-' (ici on a pris 'ECRITURES')
 
 %tfimi=(
 	'Z_1_2_2', 'ECRITURES',
@@ -106,8 +106,8 @@ $echelle_texte = 1.0;
 	'A_1_0_5', 'ZONE_COMMUNIC'
 );
 
-# table des symboles � utiliser pour les diff�rents th�mes.
-# A compl�ter si besoin...  Il faut mettre la ou les lignes � utiliser
+# table des symboles ï¿½ utiliser pour les diffï¿½rents thï¿½mes.
+# A complï¿½ter si besoin...  Il faut mettre la ou les lignes ï¿½ utiliser
 # dans le .mif, y compris la fin de ligne (\n)
 
 %tsymbol=(
@@ -116,23 +116,24 @@ $echelle_texte = 1.0;
 	'I_2_4_0', "    Symbol (38,9445631,9)\n",
 	'E_2_1_0', "    Pen (1,2,16711680)\n    Brush (17,16711680)\n"
 );
-# -- Fin des param�tres modifiables -------------------------------------------
+# -- Fin des paramï¿½tres modifiables -------------------------------------------
 
 # -- Programme principal ------------------------------------------------------
 
-# Param�trage minimal...
-die "Usage : edi2mif <r�pertoire source> <r�pertoire destination>\n" if ($ARGV >= 1);
+# Paramï¿½trage minimal...
+die "Usage : edi2mif <rï¿½pertoire source> <rï¿½pertoire destination>\n" if ($ARGV >= 1);
 
 $dirbase=@ARGV[0];
 $dirdest=@ARGV[1];
 $schemapg=@ARGV[2];
 $commune=@ARGV[3];
 $inter=@ARGV[4];
+$projection=@ARGV[5];
 if (length($schemapg)==0){$schemapg=cadastre;}
 
-# Ouverture du r�pertoire d'entr�e, cr�ation de la liste des �changes (.THF)
-# et cr�ation du r�pertoire de sortie
-opendir (IN, $dirbase) || die "$dirbase n'est pas un r�pertoire valide\n";
+# Ouverture du rï¿½pertoire d'entrï¿½e, crï¿½ation de la liste des ï¿½changes (.THF)
+# et crï¿½ation du rï¿½pertoire de sortie
+opendir (IN, $dirbase) || die "$dirbase n'est pas un rï¿½pertoire valide\n";
 @liste = readdir( IN);
 
 # if (substr($liste[2],0,6)=="feuille"){
@@ -150,18 +151,18 @@ opendir (IN, $dirbase) || die "$dirbase n'est pas un r�pertoire valide\n";
 		push(@thf, $_) if (/.THF$/);
 	}
 #}
-die "$dirbase ne contient pas d'�change EDIG�O\n" if ($#thf < 0);
+die "$dirbase ne contient pas d'ï¿½change EDIGï¿½O\n" if ($#thf < 0);
 if (! -d $dirdest) {
-	mkdir ($dirdest) || die "Impossible de cr�er $dirdest\n";
+	mkdir ($dirdest) || die "Impossible de crï¿½er $dirdest\n";
 }
 
-# En th�orie, il faudrait cr�er autant de groupes de fichiers mif/mid qu'il y
-# a de .THF ou plut�t de groupes LONSA dans les fichiers .THF (par exemple
-# dans n r�pertoires...  Comme la structuration des donn�es DGI est plut�t
-# stables, on fait la supposition (hardie ?) que le sch�ma de donn�es et le
-# dictionaire sont toujours les m�mes, et donc qu'on n'a besoin de lire que
+# En thï¿½orie, il faudrait crï¿½er autant de groupes de fichiers mif/mid qu'il y
+# a de .THF ou plutï¿½t de groupes LONSA dans les fichiers .THF (par exemple
+# dans n rï¿½pertoires...  Comme la structuration des donnï¿½es DGI est plutï¿½t
+# stables, on fait la supposition (hardie ?) que le schï¿½ma de donnï¿½es et le
+# dictionaire sont toujours les mï¿½mes, et donc qu'on n'a besoin de lire que
 # le premier, qui restera valable pour tous les autres...
-# => on �vite de dupliquer la cr�ation du mod�le...
+# => on ï¿½vite de dupliquer la crï¿½ation du modï¿½le...
 
 $creermodele=1;
 
@@ -171,14 +172,14 @@ foreach (@thf) {
 	close(THF);
 }
 
-# Tout le travail a �t� fait par la fonction lirethf().
-# Il reste � nettoyer les fichiers vides en fin de travail
-# (si le .MID est vide, il n'y a pas de donn�es)
-# La conversion des .mif en .tab est confi�e � tab2tab.exe
+# Tout le travail a ï¿½tï¿½ fait par la fonction lirethf().
+# Il reste ï¿½ nettoyer les fichiers vides en fin de travail
+# (si le .MID est vide, il n'y a pas de donnï¿½es)
+# La conversion des .mif en .tab est confiï¿½e ï¿½ tab2tab.exe
 # (voir http://mitab.maptools.org/)
 
 if ($mif2tab == 1) {
-	print "Suppression des fichiers vides et cr�ation des .TAB\n";
+	print "Suppression des fichiers vides et crï¿½ation des .TAB\n";
 } else {
 	print "Suppression des fichiers vides\n";
 }
@@ -190,20 +191,20 @@ while (($fic,$nommid) = each (%tficmid)) {
 	} elsif ($mif2tab == 1) {
 		$nomtab = $nommif;
 		$nomtab =~ s/MIF/TAB/;
-		print "cr�ation de $nomtab\n";
+		print "crï¿½ation de $nomtab\n";
 		system ("tab2tab $nommif $nomtab");
 	}
 }
 
 print "------------------------------\n";
-print "Importation termin�e\n";
+print "Importation terminï¿½e\n";
 exit;
 
 # -- Fonction lirethf() -------------------------------------------------------
 
-# On ne retire de l'ent�te que les noms des fichiers utiles : .DIC, .GEO,
-# .SCD et .VEC.  Sont en particulier ignor�s les fichiers .GEN (g�n�ralit�s),
-# .REL (relation), .QAL (qualit�) et .MAT (donn�es raster)
+# On ne retire de l'entï¿½te que les noms des fichiers utiles : .DIC, .GEO,
+# .SCD et .VEC.  Sont en particulier ignorï¿½s les fichiers .GEN (gï¿½nï¿½ralitï¿½s),
+# .REL (relation), .QAL (qualitï¿½) et .MAT (donnï¿½es raster)
 sub lirethf()
 {
 	print "lecture $_ :\n";
@@ -212,8 +213,8 @@ sub lirethf()
 		$_=substr(@_[0],0,5);
 		$taille=int(substr(@_[0],5,2));
 		if (/^LONSA/) {
-			# plusieurs s�ries dans un seul thf...
-			# utile en th�orie. Pas utilis� par la DGI ?
+			# plusieurs sï¿½ries dans un seul thf...
+			# utile en thï¿½orie. Pas utilisï¿½ par la DGI ?
 			if (length($nombase) != 0) {
 				if ($creermodele == 1 ) {
 					extractmodele();
@@ -234,14 +235,14 @@ sub lirethf()
 		} elsif (/^SCISA/) {
 			$idscd = substr(@_[1],0,$taille);
 		} elsif (/^GDNSA/) {
-			$nomvec=$nombase . substr(@_[1],0,$taille) . ".vec";
+			$nomvec=$nombase . substr(@_[1],0,$taille) . ".VEC";
 			push(@listvec, $nomvec);
 		} elsif (/^GDISA/) {
 			push(@idvec, substr(@_[1],0,$taille));
 		} elsif (/^TRLST/) {
 			print "Contenu : @_[1]";
 		} elsif (/^CSET /) {
-			print "Jeu de caract�re : @_[1]";
+			print "Jeu de caractï¿½re : @_[1]";
 		} elsif (/^ADRST/) {
 			print "Origine : @_[1]";
 		} elsif (/^TDASD/) {
@@ -259,10 +260,10 @@ sub lirethf()
 
 # -- Fonction extractmodele() -------------------------------------------------
 
-# extraction des donn�es d'un �change EDIGeO
+# extraction des donnï¿½es d'un ï¿½change EDIGeO
 sub extractmodele()
 {
-	# lecture projection � utiliser dans le .GEO
+	# lecture projection ï¿½ utiliser dans le .GEO
 	open(GEO,"$dirbase/$nomgeo") || die ("$dirbase/$nomgeo introuvable");
 	while(<GEO>) {
 		if (/^RELSA/) {
@@ -300,7 +301,7 @@ sub extractmodele()
 			split(/:/);
 			$idic=substr(@_[1], 0, $taille);
 		} elsif (/^LABSA/) {
-			# nom et symbole � utiliser
+			# nom et symbole ï¿½ utiliser
 			$taille=int(substr($_,5,2));
 			split(/:/);
 			$nmdic=substr(@_[1], 0, $taille);
@@ -309,7 +310,7 @@ sub extractmodele()
 				$nmdic=$tfimi{$nmdic};
 			}
 		} elsif (/^TYPSA/) {
-			# Type des donn�es (seuls types utiles ?)
+			# Type des donnï¿½es (seuls types utiles ?)
 			$taille=int(substr($_,5,2));
 			split(/:/);
 			$typ=substr(@_[1], 0, $taille);
@@ -346,8 +347,8 @@ sub extractmodele()
 	print "------------------------------\n";
 	close(DIC);
 
-	# lecture sch�ma de donn�es pour le contenu attributaire des tables
-	# et les attributs (remplis avec le dictionnaire de donn�es) : .SCD
+	# lecture schï¿½ma de donnï¿½es pour le contenu attributaire des tables
+	# et les attributs (remplis avec le dictionnaire de donnï¿½es) : .SCD
 	$typatt{"IDENT"}="GB_IDENT char (40)";
 	$typatt{"IDNUM"}="GB_IDNUM integer";
 	@tatt=("IDENT","IDNUM");
@@ -432,12 +433,12 @@ sub extractmodele()
 		print "------------------------------\n";
 	}
 
-	# creation des fichiers MIF/MID n�cessaires
+	# creation des fichiers MIF/MID nï¿½cessaires
 	#
 	if ($midmif==1){
 		while (($c,$v) = each (%tobj)) {
 		split(/:/,$v);
-		next if (@_[1] eq '-'); # si on ne veut pas des �critures
+		next if (@_[1] eq '-'); # si on ne veut pas des ï¿½critures
 		$indfic{$c} = @_[1];
 		$objatt{$c} = @_[-1];
 
@@ -451,7 +452,7 @@ sub extractmodele()
 		$tficmif{@_[1]} = $nommif;
 
 		if ($debug_on >= 4) {
-			print "Cr�ation du fichier $dirdest/$nommif ($c) :\n";
+			print "Crï¿½ation du fichier $dirdest/$nommif ($c) :\n";
 			print "------------------------------\n";
 		}
 		print $fmif "Version 300\n";
@@ -470,15 +471,18 @@ sub extractmodele()
 	if ($postgres==1){
 		while (($c,$v) = each (%tobj)) {
 		split(/:/,$v);
-		next if (@_[1] eq '-'); # si on ne veut pas des �critures
+		next if (@_[1] eq '-'); # si on ne veut pas des ï¿½critures
 		$indfic{$c} = @_[1];
 		$objatt{$c} = @_[-1];
 
 		$nommid="$dirdest/@_[1].sql";
-		if ($inter==0) {open($fsql,">$nommid");}else{open($fsql,">>$nommid");};
+		if ($inter==0) {open($fsql, ">$nommid");}else{open($fsql, ">>$nommid");};
 		$tficsql{@_[1]} = $nommid;
 		@lst = split(/;/,@_[-1]);
-		if ($inter==0) {print $fsql "Create table $schemapg.".lc(@_[1])." (" ;}
+			print $fsql "Set client_encoding ='ISO-8859-1';" ;
+		if ($inter==0) {
+			print $fsql "Create table $schemapg.".lc(@_[1])." (" ;
+		}
 		$txt="";
 		for $i (@lst) {
 #			print $fsql $typatt{$i} . ",";
@@ -492,7 +496,7 @@ sub extractmodele()
 		}elsif  (@_[2]=~/Point/) {
 			$txttyp=MULTIPOINT;
 		}
-		if ($inter==0){print $fsql $txt.",code_insee character varying(6));\nSELECT AddGeometryColumn('$schemapg','".lc(@_[1])."','the_geom',-1,'".$txttyp."',2);\n";}
+		if ($inter==0){print $fsql $txt.",code_insee character varying(6));\nSELECT AddGeometryColumn('$schemapg','".lc(@_[1])."','the_geom','".$projection."','".$txttyp."',2);\n";}
 		# "COPY cadastre.@_[1] (";
 		$txt="insert into $schemapg.".lc(@_[1])." (";
 		for $i (@lst) {
@@ -506,7 +510,7 @@ sub extractmodele()
 		close($fsql);
 
 		if ($debug_on >= 4) {
-			print "Cr�ation du fichier $dirdest/$nommid ($c) :\n";
+			print "Crï¿½ation du fichier $dirdest/$nommid ($c) :\n";
 			print "------------------------------\n";
 		}
 	}
@@ -523,8 +527,15 @@ sub extractvect()
 {
 	for ($i=0; $i <= $#listvec; $i++) {
 		print "---> @listvec[$i] - @idvec[$i]\n";
-		open (VEC, $dirbase.'/'.@listvec[$i]) || die "@listvec[$i] Impossible � ouvrir\n";
-		lirevec();	# il vaut mieux faire cela � part !
+		#open (VEC,'<:encoding(iso-8859-1)', $dirbase.'/'.@listvec[$i]) || die "@listvec[$i] Impossible ï¿½ ouvrir\n";
+		#open (SOR, '>:encoding(utf-8)', $dirbase.'/'.@listvec[$i].'.utf') || die "@listvec[$i] Impossible ï¿½ ouvrir\n";
+		#while (<VEC>){ 
+		#	print SOR $_;
+		#}
+		#close(VEC);
+		#close(SOR);
+		open (VEC, $dirbase.'/'.@listvec[$i]) || die "@listvec[$i] Impossible ï¿½ ouvrir\n";
+		lirevec();	# il vaut mieux faire cela ï¿½ part !
 		close(VEC);
 	}
 
@@ -537,15 +548,15 @@ sub extractvect()
 # -- Fonction lirevec() -------------------------------------------------------
 
 # lecture des fichiers vecteurs et remplissage des mif/mid
-# et l�, c'est le bazar.  S'attendre � bouffer de la m�moire...
-# Les seuls objets � traiter directement sont les FEA (objets g�ographiques)
-# Pour les objets ponctuels, les coordonn�es sont dans le FEA (cas simple).
-# Par le biais des objets LNK (liens), ils font r�f�rence � des lignes dans le
-# cas des objets lin�aires et des faces dans le cas des objets surfaciques
-# Pour les objets surfaciques, les faces font r�f�rences � des arcs qu'il faut
-# cha�ner pour obtenir une "r�gion" MapInfo.  Le centro�de est � r�cup�rer dans
-# le FEA du toponyme associ� (non fait pour le moment)
-# Enfin, il faut dispatcher les objets dans les tables cr��es au d�part...
+# et lï¿½, c'est le bazar.  S'attendre ï¿½ bouffer de la mï¿½moire...
+# Les seuls objets ï¿½ traiter directement sont les FEA (objets gï¿½ographiques)
+# Pour les objets ponctuels, les coordonnï¿½es sont dans le FEA (cas simple).
+# Par le biais des objets LNK (liens), ils font rï¿½fï¿½rence ï¿½ des lignes dans le
+# cas des objets linï¿½aires et des faces dans le cas des objets surfaciques
+# Pour les objets surfaciques, les faces font rï¿½fï¿½rences ï¿½ des arcs qu'il faut
+# chaï¿½ner pour obtenir une "rï¿½gion" MapInfo.  Le centroï¿½de est ï¿½ rï¿½cupï¿½rer dans
+# le FEA du toponyme associï¿½ (non fait pour le moment)
+# Enfin, il faut dispatcher les objets dans les tables crï¿½ï¿½es au dï¿½part...
 #
 sub lirevec()
 {
@@ -605,11 +616,11 @@ sub lirevec()
 			$ptrtxtatt=@index[-1];
 			push(@attrib, "$nmatt;$ptrtxtatt");
 			if ($debug_on >= 6) {
-				print "ptr �tiquette = \"$ptrtxtatt\"\n";
+				print "ptr ï¿½tiquette = \"$ptrtxtatt\"\n";
 			}
 		} elsif (/^ATVS/) {
 			$valatt=$val;
-			# On corrige les probl�mes �ventuels en �liminant les caract�res
+			# On corrige les problï¿½mes ï¿½ventuels en ï¿½liminant les caractï¿½res
 			# causant des soucis (solution a priori brutale, mais efficace)...
 			$valatt=~s/"//g;
 			$valatt=~s/\\//g;
@@ -621,7 +632,7 @@ sub lirevec()
 			@index=split(/;/,$val);
 			$idobj=@index[-1];
 			if ($debug_on >= 6) {
-				print "R�f�rence = @index[2] : $idobj\n";
+				print "Rï¿½fï¿½rence = @index[2] : $idobj\n";
 			}
 		} elsif (/^FTPCP/) {
 			@index=split(/;/,$val);
@@ -638,10 +649,10 @@ sub lirevec()
 			}
 		} elsif (/^QACSN/) {
 			if ($typobj=~/FEA/) {
-				# objet g�ographique trouv� : enregistrement des param�tres...
+				# objet gï¿½ographique trouvï¿½ : enregistrement des paramï¿½tres...
 				$attstring=join(';',@attrib);
-				# Les objets Z_1_2_2 sont transform�s en textes ssi le nom du
-				# fichier associ� est diff�rent de '-'
+				# Les objets Z_1_2_2 sont transformï¿½s en textes ssi le nom du
+				# fichier associï¿½ est diffï¿½rent de '-'
 				@tst=split(/:/,$tobj{$idobj});
 				if ($tdic{@tst[0]} ne '-') {
 					$tabfea{$nomobj} = join(';', $idobj, @attrib);
@@ -655,7 +666,7 @@ sub lirevec()
 				# et toponyme/localisation...
 				$lnkdest = join(';',@lnklst);
 				if ($lnktyp=~/^FEAFEA/ && $idobj=~/_IWW$/) {
-					# Les seuls liens trait�s sont les toponymes pour cr�er
+					# Les seuls liens traitï¿½s sont les toponymes pour crï¿½er
 					# des tables textes (multiples localisation si le toponyme
 					# se trouve dans plusieurs champs TEXn).
 					# $tabfeatpn{$lnkdest} = $lnkobj;
@@ -667,7 +678,7 @@ sub lirevec()
 				} elsif ($lnktyp=~/^FEAPNO/) {
 					$tabfeapno{$lnkobj} = $lnkdest;
 				} elsif ($lnktyp=~/^PARPFE/) {
-					# on indique si la face est � gauche ou � droite...
+					# on indique si la face est ï¿½ gauche ou ï¿½ droite...
 					$tflink = $lnkobj . ":" . substr($idobj,13,1) . ";";
 					$tabpfepar{$lnkdest} .= $tflink;
 				} elsif ($lnktyp=~/^PARPNO/) {
@@ -681,14 +692,14 @@ sub lirevec()
 					print "LNK : type $idobj : $lnkobj ($lnktyp) -> ($lnkdest)\n";
 				}
 			} elsif ($typobj=~/PAR/) {
-				# descripteur des arcs et mise en m�moire de leur longueur
+				# descripteur des arcs et mise en mï¿½moire de leur longueur
 				$tabcoor{$nomobj} = join(':', @coord);
 				$arcsize{$nomobj} = $#coord;
 				if ($debug_on >= 6) {
 					print "PAR : $nomobj ($npts points) = $#coord\n";
 				}
 			} elsif ($typobj=~/PNO/) {
-				# "centro�de" dans le cas des Regions MapInfo
+				# "centroï¿½de" dans le cas des Regions MapInfo
 				$co=pop(@coord);
 				$tabpno{$nomobj} = $co;
 				if ($debug_on >= 6) {
@@ -699,7 +710,7 @@ sub lirevec()
 		}
 	}
 
-	# On recr�e les objets geographiques en bouclant sur les FEA
+	# On recrï¿½e les objets geographiques en bouclant sur les FEA
 	if ($midmif==1){
 		while (($obj,$fea) = each (%tabfea)) {
 			@index = split(/;/, $fea);
@@ -711,7 +722,7 @@ sub lirevec()
 			open( $fmid, ">>$tficmid{$fic}");
 			open( $fmif, ">>$tficmif{$fic}");
 	
-			# �criture des attributs
+			# ï¿½criture des attributs
 			@lst = split(/;/,$objatt{$ific});
 			%att=@index;
 			@attlst=();
@@ -737,7 +748,7 @@ sub lirevec()
 			$attstring = join("\t",@attlst);
 			print $fmid "$attstring\n";
 	
-			# �criture de la g�om�trie
+			# ï¿½criture de la gï¿½omï¿½trie
 			# on fait en fonction du type d'objet...
 			$objpnt = $tabfeapno{$obj};
 			$objpar = $tabfeapar{$obj};
@@ -745,9 +756,9 @@ sub lirevec()
 			$objlie = $tabfeafea{$obj};
 	
 			if (length($objlie) > 0) {
-				# Texte associ� � un autre objet : pointeur sur attribut �
-				# afficher et lien vers un point � l'endroit du toponyme...
-				# on r�cup�re d'abord les caract�ristiques du texte..
+				# Texte associï¿½ ï¿½ un autre objet : pointeur sur attribut ï¿½
+				# afficher et lien vers un point ï¿½ l'endroit du toponyme...
+				# on rï¿½cupï¿½re d'abord les caractï¿½ristiques du texte..
 				while (($c,$v) = each (%att)) {
 					if ($c =~ /_FON$/) {
 						$font=$v;
@@ -769,9 +780,9 @@ sub lirevec()
 				}
 				$ptrtxtatt = $tabtxt{$obj};
 				$texte = $att{$ptrtxtatt};
-				# Si la taille affich�e ne plait pas, on peut la modifier
+				# Si la taille affichï¿½e ne plait pas, on peut la modifier
 				$taille *= $echelle_texte;
-				# la biblioth�que mitab a un probl�me si le texte est de
+				# la bibliothï¿½que mitab a un problï¿½me si le texte est de
 				# longueur nulle...
 				if (length($texte) == 0) {
 					$texte = " ";
@@ -794,7 +805,7 @@ sub lirevec()
 				$xy = $tabpno{$objpnt};
 				print $fmif "Point $xy\n";
 			} elsif (length($objpar) > 0) {
-				# objet lin�aire ... il peut y en avoir plusieurs
+				# objet linï¿½aire ... il peut y en avoir plusieurs
 				@lin = split(/;/, $objpar);
 				$nblin = $#lin + 1;
 				if ($nblin > 1) {
@@ -812,23 +823,23 @@ sub lirevec()
 				}
 			} elsif (length($objpfe) > 0) {
 				# Ah, des polygones... un peu plus complexe : il peut y avoir
-				# plusieurs r�gions (au sens MapInfo), chacune form�e par plusieurs
-				# arcs.  Il faut donc refaire le cha�nage des arcs pour un contour
-				# ferm�...
+				# plusieurs rï¿½gions (au sens MapInfo), chacune formï¿½e par plusieurs
+				# arcs.  Il faut donc refaire le chaï¿½nage des arcs pour un contour
+				# fermï¿½...
 				#
 				# Dans le cas des parcelles et autres gros objets, on peut faire
-				# les liens avec les noeuds de d�but et de fin d'arc...
-				# mais �a ne marche pas avec tous les polygones (p.ex. b�timents) !
+				# les liens avec les noeuds de dï¿½but et de fin d'arc...
+				# mais ï¿½a ne marche pas avec tous les polygones (p.ex. bï¿½timents) !
 				@reg = split(/;/,$objpfe);
 				$nbreg = $#reg + 1;
 	#			print "DEBUG Region $nbreg ($objpfe)\n";
 	
-				# On ne peut pas �crire la ligne "Region R" maintenant, car les
-				# trous dans les objets sont g�r�s au niveau de la liste d'arcs
-				# dans EDIG�O, mais sont inclus dans le compte des contours dans
-				# les r�gions MapInfo... donc R peut augmenter...
-				# Pour le d�bug du cha�nage, on ne l'imprime qu'en cas de soucis
-				# � la fin du travail pour �viter de faire grossir les logs...
+				# On ne peut pas ï¿½crire la ligne "Region R" maintenant, car les
+				# trous dans les objets sont gï¿½rï¿½s au niveau de la liste d'arcs
+				# dans EDIGï¿½O, mais sont inclus dans le compte des contours dans
+				# les rï¿½gions MapInfo... donc R peut augmenter...
+				# Pour le dï¿½bug du chaï¿½nage, on ne l'imprime qu'en cas de soucis
+				# ï¿½ la fin du travail pour ï¿½viter de faire grossir les logs...
 				$nbreg=-1;
 				@tchain=();
 				@tdirec=();
@@ -836,18 +847,18 @@ sub lirevec()
 				for $j (@reg) {
 					@tabarcdir=split(/;/,$tabpfepar{$j});
 					$debug_list = "DEBUG $tabpfepar{$j}\n";
-					# Dans certains cas, un arc est pr�sent 2, voire 3 fois pour
-					# la m�me face [Ceci n'est pas normal : bug du programme de
-					# cr�ation de l'�change ?].  On l'�limine donc (sinon erreur
-					# de cha�nage) si le nombre d'occurence est pair...
+					# Dans certains cas, un arc est prï¿½sent 2, voire 3 fois pour
+					# la mï¿½me face [Ceci n'est pas normal : bug du programme de
+					# crï¿½ation de l'ï¿½change ?].  On l'ï¿½limine donc (sinon erreur
+					# de chaï¿½nage) si le nombre d'occurence est pair...
 					for $a (@tabarcdir) {
 						($arc,$dir) = split(/:/, $a);
 						if ($tabarc{$arc} ne "") {
 							if ($tabarc{$arc} ne "#") {
-								print "Doublon d'arc EDIG�O d�tect� pour $obj ($j) : $arc\n";
+								print "Doublon d'arc EDIGï¿½O dï¿½tectï¿½ pour $obj ($j) : $arc\n";
 								$tabarc{$arc} = "#";
 							} else {
-								print "Erreur corrig�e : Arc $arc restaur�\n";
+								print "Erreur corrigï¿½e : Arc $arc restaurï¿½\n";
 								$tabarc{$arc} = "@";
 							}
 						} else {
@@ -859,17 +870,17 @@ sub lirevec()
 						$arc = @tarc[$a];
 						if ($tabarc{$arc} eq "#" ) {
 							splice (@tarc, $a, 1);
-							print "Erreur corrig�e : Arc $arc �limin�\n";
+							print "Erreur corrigï¿½e : Arc $arc ï¿½liminï¿½\n";
 						}
 						$debug_list .= "DEBUG $arc $tabarc{$arc} [$arcsize{$arc}] $tabarcdeb{$arc} $tabarcfin{$arc} \n";
 					}
-					# Il arrive que le cha�nage soit incoh�rent (arc manquant) [L�
-					# aussi, bug du programme de cr�ation de l'�change ?]
-					# Dans ce cas, certains noeuds ne sont cit�s qu'une seule fois.
-					# On recherche alors un �ventuel arc les joignants...
-					# TODO : am�liorer l'algorithme de correction du cha�nage)
-					# On en profite pour fabriquer les �l�ments de cha�nage dans le
-					# cas des �l�ments ne poss�dant pas une topologie compl�te...
+					# Il arrive que le chaï¿½nage soit incohï¿½rent (arc manquant) [Lï¿½
+					# aussi, bug du programme de crï¿½ation de l'ï¿½change ?]
+					# Dans ce cas, certains noeuds ne sont citï¿½s qu'une seule fois.
+					# On recherche alors un ï¿½ventuel arc les joignants...
+					# TODO : amï¿½liorer l'algorithme de correction du chaï¿½nage)
+					# On en profite pour fabriquer les ï¿½lï¿½ments de chaï¿½nage dans le
+					# cas des ï¿½lï¿½ments ne possï¿½dant pas une topologie complï¿½te...
 					%tverif=();
 					@bad=();
 					for $arc (@tarc) {
@@ -889,17 +900,17 @@ sub lirevec()
 					}
 					if ($#bad >= 0) {
 						$b=join(";",@bad);
-						print "Erreur de cha�nage � cause de noeuds isol�s : $b\n";
+						print "Erreur de chaï¿½nage ï¿½ cause de noeuds isolï¿½s : $b\n";
 						AJOUT: while (($a, $v) = each (%tabarcdeb)) {
 							if (($v eq @bad[0] && $tabarcfin{$a} eq @bad[1]) ||
 								($v eq @bad[1] && $tabarcfin{$a} eq @bad[0]) ) {
 								unshift(@tarc, $a);
-								print "Tentative de correction du cha�nage par ajout de l'arc $a\n";
+								print "Tentative de correction du chaï¿½nage par ajout de l'arc $a\n";
 								last AJOUT;
 							}
 						}
 					}
-					# on recalcule cha�nage et nombre de r�gions
+					# on recalcule chaï¿½nage et nombre de rï¿½gions
 					$arc=pop(@tarc);
 					push (@tchain, $arc);
 					push (@tdirec, -1);
@@ -915,7 +926,7 @@ sub lirevec()
 						} else {
 							$ndtst=$tabarcdeb{$arc};
 						}
-						# si on n'a pas reboucl�, recherche de l'arc suivant
+						# si on n'a pas rebouclï¿½, recherche de l'arc suivant
 						if ($ndini ne $ndtst) {
 							$sens=-1;
 							CHERCH : for ($k=$#tarc; $k >=0;  $k--) {
@@ -935,7 +946,7 @@ sub lirevec()
 							if ($sens < 0) {
 								print $debug_list if ($debug_on > 0);
 								$debug_list="";
-								print "ERREUR de cha�nage pour $obj (arc $arc) non corrigible !!!\n";
+								print "ERREUR de chaï¿½nage pour $obj (arc $arc) non corrigible !!!\n";
 	
 								$nbreg++;
 								$arc=pop(@tarc);
@@ -969,11 +980,11 @@ sub lirevec()
 						}
 					}
 				}
-				# il reste � �crire les coordonn�es en respectant le sens des arcs
-				# le premier arc est pr�c�d� du total du nombre de points
+				# il reste ï¿½ ï¿½crire les coordonnï¿½es en respectant le sens des arcs
+				# le premier arc est prï¿½cï¿½dï¿½ du total du nombre de points
 				$nbreg++;
 				if ($debug_on >= 6) {
-					print "DEBUG R�gions $nbreg taille @regsize @tchain @tdirec\n";
+					print "DEBUG Rï¿½gions $nbreg taille @regsize @tchain @tdirec\n";
 				}
 				print $fmif "Region $nbreg\n";
 				$k=-1;
@@ -995,13 +1006,13 @@ sub lirevec()
 							print $fmif "@coord[$l]\n";
 						}
 					}	
-				} # fin �criture coordonn�es
+				} # fin ï¿½criture coordonnï¿½es
 				# Ecriture symbolisation s'il y a lieu
 				if ($symbol ne "") {
 					print $fmif "$symbol";
 				}
 			} else {
-				print "ERREUR INATTENDUE! $obj dans $fic sans g�om�trie !\n";
+				print "ERREUR INATTENDUE! $obj dans $fic sans gï¿½omï¿½trie !\n";
 			}
 		}
 		close($fmid);
@@ -1017,7 +1028,7 @@ sub lirevec()
 	
 			open( $fsql, ">>$tficsql{$fic}");
 	$chn_txt=$chene{$fic};
-			# �criture des attributs
+			# ï¿½criture des attributs
 			@lst = split(/;/,$objatt{$ific});
 			%att=@index;
 			@attlst=();
@@ -1035,7 +1046,12 @@ sub lirevec()
  			}
 			for $j (@lst) {
 				if ($typatt{$j} =~ /char/) {
-					push(@attlst, "\"$att{$j}\"");
+					if (length($att{$j}) > 0){
+						#push(@attlst, "convert(\"$att{$j}\",'LATIN1','UTF8')");
+						push(@attlst, "\"$att{$j}\"");
+					}else{
+						push(@attlst, "\"$att{$j}\"");
+					}
 				} else {
 					push(@attlst, $att{$j});
 				}
@@ -1048,7 +1064,7 @@ sub lirevec()
 			$attstring =~ s/\s+/ /g;
 			print $fsql $chn_txt."$attstring".",'".$commune."',";
 	
-			# �criture de la g�om�trie
+			# ï¿½criture de la gï¿½omï¿½trie
 			# on fait en fonction du type d'objet...
 			$objpnt = $tabfeapno{$obj};
 			$objpar = $tabfeapar{$obj};
@@ -1056,9 +1072,9 @@ sub lirevec()
 			$objlie = $tabfeafea{$obj};
 	
 			if (length($objlie) > 0) {
-				# Texte associ� � un autre objet : pointeur sur attribut �
-				# afficher et lien vers un point � l'endroit du toponyme...
-				# on r�cup�re d'abord les caract�ristiques du texte..
+				# Texte associï¿½ ï¿½ un autre objet : pointeur sur attribut ï¿½
+				# afficher et lien vers un point ï¿½ l'endroit du toponyme...
+				# on rï¿½cupï¿½re d'abord les caractï¿½ristiques du texte..
 				while (($c,$v) = each (%att)) {
 					if ($c =~ /_FON$/) {
 						$font=$v;
@@ -1080,9 +1096,9 @@ sub lirevec()
 				}
 				$ptrtxtatt = $tabtxt{$obj};
 				$texte = $att{$ptrtxtatt};
-				# Si la taille affich�e ne plait pas, on peut la modifier
+				# Si la taille affichï¿½e ne plait pas, on peut la modifier
 				$taille *= $echelle_texte;
-				# la biblioth�que mitab a un probl�me si le texte est de
+				# la bibliothï¿½que mitab a un problï¿½me si le texte est de
 				# longueur nulle...
 				if (length($texte) == 0) {
 					$texte = " ";
@@ -1103,9 +1119,9 @@ sub lirevec()
 			} elsif (length($objpnt) > 0) {
 				# objet ponctuel ... le plus simple...
 				$xy = $tabpno{$objpnt};
-				print $fsql "geometryfromtext('MultiPoint( $xy)',-1));\n";
+				print $fsql "geometryfromtext('MultiPoint( $xy)','".$projection."'));\n";
 			} elsif (length($objpar) > 0) {
-				# objet lin�aire ... il peut y en avoir plusieurs
+				# objet linï¿½aire ... il peut y en avoir plusieurs
 				@lin = split(/;/, $objpar);
 				$nblin = $#lin + 1;
 				if ($nblin > 1) {
@@ -1126,26 +1142,26 @@ sub lirevec()
 					$atxt=substr($atxt,0,length($atxt)-1)."),(";
 				}
 				$atxt=substr($atxt,0,length($atxt)-3);
-				print $fsql $atxt."))',-1));\n";
+				print $fsql $atxt."))','".$projection."'));\n";
 			} elsif (length($objpfe) > 0) {
 				# Ah, des polygones... un peu plus complexe : il peut y avoir
-				# plusieurs r�gions (au sens MapInfo), chacune form�e par plusieurs
-				# arcs.  Il faut donc refaire le cha�nage des arcs pour un contour
-				# ferm�...
+				# plusieurs rï¿½gions (au sens MapInfo), chacune formï¿½e par plusieurs
+				# arcs.  Il faut donc refaire le chaï¿½nage des arcs pour un contour
+				# fermï¿½...
 				#
 				# Dans le cas des parcelles et autres gros objets, on peut faire
-				# les liens avec les noeuds de d�but et de fin d'arc...
-				# mais �a ne marche pas avec tous les polygones (p.ex. b�timents) !
+				# les liens avec les noeuds de dï¿½but et de fin d'arc...
+				# mais ï¿½a ne marche pas avec tous les polygones (p.ex. bï¿½timents) !
 				@reg = split(/;/,$objpfe);
 				$nbreg = $#reg + 1;
 	#			print "DEBUG Region $nbreg ($objpfe)\n";
 	
-				# On ne peut pas �crire la ligne "Region R" maintenant, car les
-				# trous dans les objets sont g�r�s au niveau de la liste d'arcs
-				# dans EDIG�O, mais sont inclus dans le compte des contours dans
-				# les r�gions MapInfo... donc R peut augmenter...
-				# Pour le d�bug du cha�nage, on ne l'imprime qu'en cas de soucis
-				# � la fin du travail pour �viter de faire grossir les logs...
+				# On ne peut pas ï¿½crire la ligne "Region R" maintenant, car les
+				# trous dans les objets sont gï¿½rï¿½s au niveau de la liste d'arcs
+				# dans EDIGï¿½O, mais sont inclus dans le compte des contours dans
+				# les rï¿½gions MapInfo... donc R peut augmenter...
+				# Pour le dï¿½bug du chaï¿½nage, on ne l'imprime qu'en cas de soucis
+				# ï¿½ la fin du travail pour ï¿½viter de faire grossir les logs...
 				$nbreg=-1;
 				@tchain=();
 				@tdirec=();
@@ -1153,18 +1169,18 @@ sub lirevec()
 				for $j (@reg) {
 					@tabarcdir=split(/;/,$tabpfepar{$j});
 					$debug_list = "DEBUG $tabpfepar{$j}\n";
-					# Dans certains cas, un arc est pr�sent 2, voire 3 fois pour
-					# la m�me face [Ceci n'est pas normal : bug du programme de
-					# cr�ation de l'�change ?].  On l'�limine donc (sinon erreur
-					# de cha�nage) si le nombre d'occurence est pair...
+					# Dans certains cas, un arc est prï¿½sent 2, voire 3 fois pour
+					# la mï¿½me face [Ceci n'est pas normal : bug du programme de
+					# crï¿½ation de l'ï¿½change ?].  On l'ï¿½limine donc (sinon erreur
+					# de chaï¿½nage) si le nombre d'occurence est pair...
 					for $a (@tabarcdir) {
 						($arc,$dir) = split(/:/, $a);
 						if ($tabarc{$arc} ne "") {
 							if ($tabarc{$arc} ne "#") {
-								print "Doublon d'arc EDIG�O d�tect� pour $obj ($j) : $arc\n";
+								print "Doublon d'arc EDIGï¿½O dï¿½tectï¿½ pour $obj ($j) : $arc\n";
 								$tabarc{$arc} = "#";
 							} else {
-								print "Erreur corrig�e : Arc $arc restaur�\n";
+								print "Erreur corrigï¿½e : Arc $arc restaurï¿½\n";
 								$tabarc{$arc} = "@";
 							}
 						} else {
@@ -1176,7 +1192,7 @@ sub lirevec()
 						$arc = @tarc[$a];
 						if ($tabarc{$arc} eq "#" ) {
 							splice (@tarc, $a, 1);
-							print "Erreur corrig�e : Arc $arc �limin�\n";
+							print "Erreur corrigï¿½e : Arc $arc ï¿½liminï¿½\n";
 						}
 						$debug_list .= "DEBUG $arc $tabarc{$arc} [$arcsize{$arc}] $tabarcdeb{$arc} $tabarcfin{$arc} \n";
 					}
@@ -1199,17 +1215,17 @@ sub lirevec()
 					}
 					if ($#bad >= 0) {
 						$b=join(";",@bad);
-						print "Erreur de cha�nage � cause de noeuds isol�s : $b\n";
+						print "Erreur de chaï¿½nage ï¿½ cause de noeuds isolï¿½s : $b\n";
 						AJOUT: while (($a, $v) = each (%tabarcdeb)) {
 							if (($v eq @bad[0] && $tabarcfin{$a} eq @bad[1]) ||
 								($v eq @bad[1] && $tabarcfin{$a} eq @bad[0]) ) {
 								unshift(@tarc, $a);
-								print "Tentative de correction du cha�nage par ajout de l'arc $a\n";
+								print "Tentative de correction du chaï¿½nage par ajout de l'arc $a\n";
 								last AJOUT;
 							}
 						}
 					}
-					# on recalcule cha�nage et nombre de r�gions
+					# on recalcule chaï¿½nage et nombre de rï¿½gions
 					$arc=pop(@tarc);
 					push (@tchain, $arc);
 					push (@tdirec, -1);
@@ -1225,7 +1241,7 @@ sub lirevec()
 						} else {
 							$ndtst=$tabarcdeb{$arc};
 						}
-						# si on n'a pas reboucl�, recherche de l'arc suivant
+						# si on n'a pas rebouclï¿½, recherche de l'arc suivant
 						if ($ndini ne $ndtst) {
 							$sens=-1;
 							CHERCH : for ($k=$#tarc; $k >=0;  $k--) {
@@ -1245,7 +1261,7 @@ sub lirevec()
 							if ($sens < 0) {
 								print $debug_list if ($debug_on > 0);
 								$debug_list="";
-								print "ERREUR de cha�nage pour $obj (arc $arc) non corrigible !!!\n";
+								print "ERREUR de chaï¿½nage pour $obj (arc $arc) non corrigible !!!\n";
 	
 								$nbreg++;
 								$arc=pop(@tarc);
@@ -1279,11 +1295,11 @@ sub lirevec()
 						}
 					}
 				}
-				# il reste � �crire les coordonn�es en respectant le sens des arcs
-				# le premier arc est pr�c�d� du total du nombre de points
+				# il reste ï¿½ ï¿½crire les coordonnï¿½es en respectant le sens des arcs
+				# le premier arc est prï¿½cï¿½dï¿½ du total du nombre de points
 				$nbreg++;
 				if ($debug_on >= 6) {
-					print "DEBUG R�gions $nbreg taille @regsize @tchain @tdirec\n";
+					print "DEBUG Rï¿½gions $nbreg taille @regsize @tchain @tdirec\n";
 				}
 #				print $fmif "Region $nbreg\n";
 				$k=-1;
@@ -1339,23 +1355,23 @@ sub lirevec()
 							}
 						}
 					}
-				} # fin �criture coordonn�es
+				} # fin ï¿½criture coordonnï¿½es
 				if ($tri>1){
 					$txt=substr($txt,0,length($txt)-3);
 				}else{
 					$txt=substr($txt,0,length($txt)-1);
 				}
-				print $fsql $txt.")))',-1));\n";
+				print $fsql $txt.")))','".$projection."'));\n";
 				# Ecriture symbolisation s'il y a lieu
 				if ($symbol ne "") {
 					#print $fsql "$symbol";
 				}
 			} else {
-				print "ERREUR INATTENDUE! $obj dans $fic sans g�om�trie !\n";
+				print "ERREUR INATTENDUE! $obj dans $fic sans gï¿½omï¿½trie !\n";
 			}
 		}
 		close($fsql);
 	}
-#pr�voir terminaison des fichiers sql
+#prï¿½voir terminaison des fichiers sql
 }
 

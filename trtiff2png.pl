@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #
-die "Usage : trtiff2png<répertoire source> <répertoire destination> <echelle 1>...<echelle n>\n" if ($ARGV >= 2);
+die "Usage : trtiff2png<rï¿½pertoire source> <rï¿½pertoire destination> <echelle 1>...<echelle n>\n" if ($ARGV >= 2);
 
 $dirbase=@ARGV[0];
 $dirdest=@ARGV[1];
@@ -8,7 +8,7 @@ $n=2;
 while (@ARGV[$n]){
 	$echelle=@ARGV[$n];
 	mkdir "$dirbase/$dirdest$echelle";
-	opendir(IN,$dirbase) || die "$dirbase n'est pas un répertoire valide\n";
+	opendir(IN,$dirbase) || die "$dirbase n'est pas un rï¿½pertoire valide\n";
 	@liste = readdir(IN);
 	foreach (@liste){
 		$fic=$_;
@@ -50,7 +50,7 @@ while (@ARGV[$n]){
 			close(tfw);
 		}
 	}
-	$ch="/home/sig/capm_ortho_foto/transformetiff2png.sh $dirbase $dirdest $echelle $echelle";
+	$ch="/home/sig/gis/transformetiff2png.sh $dirbase $dirdest$echelle $echelle";
 	print $ch;
 	exec $ch;
 	$n++;
