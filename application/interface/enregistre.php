@@ -37,22 +37,6 @@ gis_session_start();
 ini_set("memory_limit" , "24M");
 set_time_limit(0);
 $extra_url = "&user=".$DB->db_user."&password=".$DB->db_passwd."&dbname=".$DB->db_name."&host=".$DB->db_host;
-/*if($SERVER_PORT!=443)
-{
-ini_set('session.gc_maxlifetime', 3600);
-session_start();
-}*/
-//else
-//{
-//$_SESSION['xini']=& $_GET['xini'];
-//$_SESSION['yini']=& $_GET['yini'];
-//$_SESSION['code_insee']=& $code_insee;
-//}
-//$_SESSION['zoommm'] =& $_GET['zoom'];
-//$_SESSION['boitex'] =& $_GET['x'];
-//$_SESSION['boitey'] =& $_GET['y'];
-//$_SESSION['boitelarg'] =& $_GET['lar'];
-//$_SESSION['boitehaut'] =& $_GET['hau'];
 $countlayer=1;
 $serv=$_SERVER["SERVER_NAME"];
 $placeid=explode(",",$_GET['parce']);
@@ -85,7 +69,7 @@ $str1.="<sodipodi:namedview
 	 borderlayer=\"true\"
      inkscape:showpageshadow=\"false\"
 	 />";
-$str1.="<svg  id=\"cartographie\" x=\"92\" y=\"8\" width=\"868\" height=\"728\" viewBox=\"".$_GET['x']." ".$_GET['y']." ".$_GET['lar']." ".$_GET['hau']."\">\n";
+$str1.="<svg  id=\"cartographie\" x=\"26.18\" y=\"22.045\" width=\"1000\" height=\"700\" viewBox=\"".$_GET['x']." ".$_GET['y']." ".$_GET['lar']." ".$_GET['hau']."\">\n";
 $str1.="<metadata
        id=\"metadata8\">
       <rdf:RDF>
@@ -160,11 +144,11 @@ $application=str_replace(" ","_",$application);
 if(substr($_SESSION['profil']->insee, -3)=='000')
 	{
 				
-$url="http://".$serv."/cgi-bin/mapserv?map=".$fs_root."capm/".$application.".map&map_imagetype=jpeg&insee=".substr($_SESSION['profil']->insee,0,3)."&layer=".$raster."&minx=".$xm."&miny=".$ym."&maxx=".$xma."&maxy=".$yma."&parce=('')".$extra_url;
+$url="http://".$serv."/cgi-bin/mapserv?map=".$fs_root."capm/".$application.".map&map_imagetype=jpeg&insee=".substr($_SESSION['profil']->insee,0,3)."&layer=".$raster."&minx=".$xm."&miny=".$ym."&maxx=".$xma."&maxy=".$yma."&mapsize=1200%20840&parce=('')".$extra_url;
 }
 else
 {
-$url="http://".$serv."/cgi-bin/mapserv?map=".$fs_root."capm/".$application.".map&map_imagetype=jpeg&insee=".$_SESSION['profil']->insee."&layer=".$raster."&minx=".$xm."&miny=".$ym."&maxx=".$xma."&maxy=".$yma."&parce=('')".$extra_url;
+$url="http://".$serv."/cgi-bin/mapserv?map=".$fs_root."capm/".$application.".map&map_imagetype=jpeg&insee=".$_SESSION['profil']->insee."&layer=".$raster."&minx=".$xm."&miny=".$ym."&maxx=".$xma."&maxy=".$yma."&mapsize=1200%20840&parce=('')".$extra_url;
 }
 		$contenu=file($url);
        		while (list($ligne,$cont)=each($contenu)){
@@ -418,13 +402,10 @@ $str3.="<rect y='".($_GET['y']-600)."' x='".($_GET['x']-1200)."' height='600' wi
 $str3.="<rect y='".($_GET['y']+$_GET['hau'])."' x='".($_GET['x']-600)."' height='600' width='".($_GET['lar']+1800)."' style='fill:white;stroke:none'/>";
 $str3.="</g>";
 $str3.="</svg>";
-$str3.="<rect style='fill:white;stroke:blue' width='126' height='18' x='100' y='694'/>";
-$str3.="<rect y='703' x='100' height='9' width='63' style='fill:blue'/>";
-$str3.="<rect y='694' x='163' height='9' width='63' style='fill:blue'/>";
-$str3.="<text y='723' x='163' style='stroke:black;text-anchor:middle;stroke-width:0.5;font-size:12px;fill-opacity:1'>KM</text>";
-$str3.="<text id='gauche' y='692' x='100' style='stroke:black;text-anchor:middle;stroke-width:0.5;font-size:12px;fill-opacity:1'>0</text>";
-$str3.="<text id='centre' y='692' x='163' style='stroke:black;text-anchor:middle;stroke-width:0.5;font-size:12px;fill-opacity:1'>".$_GET['centre']."</text>";
-$str3.="<text id='droite' y='692' x='226' style='stroke:black;text-anchor:middle;stroke-width:0.5;font-size:12px;fill-opacity:1'>".$_GET['droite']."</text>";
+$str3.="<text y=\"710\" x=\"65\" style=\"fill:#008;text-anchor:middle;font-size:8px\">M&#x00E9;tres</text>";
+$str3.="<text id=\"gauche\" y=\"694\" x=\"40\" style=\"fill:#008;text-anchor:middle;font-size:8px\">0</text>";
+$str3.="<text id=\"droite\" y=\"694\" x=\"90\" style=\"fill:#008;text-anchor:middle;font-size:8px\">".$_GET['droite']."</text>";
+$str3.="<path d=\"M 40,695 40,700 L 90,700 90,695  \" fill=\"none\" stroke=\"#008\"/>";
 $dess="<g inkscape:groupmode=\"layer\"
      id=\"layer".$countlayer."\"
      inkscape:label=\"cotation\" stroke-width=\"0.2\">";
