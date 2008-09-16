@@ -539,7 +539,7 @@ if(nblayer>1)
 								}
 							}
 							lecture_control();
-							couche_init=0;
+							
 				if(svgdoc.getElementById('d'+parseInt(tablayers[0])).getStyle().getPropertyValue('visibility') == 'hidden')
 				{
 					for(i=0;i<nblayer;i++)
@@ -587,9 +587,10 @@ if(nblayer>1)
 								zlayer[libelle].svg_visible='true';
 							}
 							lecture_control();
-							couche_init=0;
+							
 			}
 		}
+	
 }
 
 function extraction(x)
@@ -617,6 +618,7 @@ var url='charge.php?type=svg&raster='+ cou +'&layer=' + x + '&x='+ xnulcorner + 
 	getURL(url,retour_extract);
 	couchesvgvisible="";
 	}
+	couche_init=0;	
 }
 
 function convasc(data)
@@ -943,12 +945,16 @@ function beginPan(evt)
 	pressed = 1;
 	rectOvewidth = parseFloat(svgRect.getAttributeNS(null,'width'));
 	rectOveheight = parseFloat(svgRect.getAttributeNS(null,'height'));
-	evtX = parseFloat(evt.getClientX());
-	evtY = parseFloat(evt.getClientY());
-	evtX =(evtX-offsetXmap)/ratio;
-	evtY =(evtY-offsetYmap)/ratio;
 	rectUlXCorner = parseFloat(svgRect.getAttributeNS(null,'x'));
 	rectUlYCorner = parseFloat(svgRect.getAttributeNS(null,'y'));
+	root=svgdoc.getElementById("overviewmap");
+	scale=root.currentScale;
+	tx=root.currentTranslate.x;
+	ty=root.currentTranslate.y;
+	evtX=evt.getClientX()-tx;
+	evtY=evt.getClientY()-ty;
+
+	
 	rect1Ovewidth = parseFloat(Rect1.getAttributeNS(null,'width'));
 	rect1Oveheight = parseFloat(Rect1.getAttributeNS(null,'height'));
 	rect1UlXCorner = parseFloat(Rect1.getAttributeNS(null,'x'));
@@ -959,19 +965,39 @@ function doPan(evt)
 {
 	if (pressed == 1) 
 		{
+			rectOvewidth = parseFloat(svgRect.getAttributeNS(null,'width'));
+	rectOveheight = parseFloat(svgRect.getAttributeNS(null,'height'));
+	rectUlXCorner = parseFloat(svgRect.getAttributeNS(null,'x'));
+	rectUlYCorner = parseFloat(svgRect.getAttributeNS(null,'y'));
+	root=svgdoc.getElementById("overviewmap");
+	scale=root.currentScale;
+	tx=root.currentTranslate.x;
+	ty=root.currentTranslate.y;
+	newEvtX=evt.getClientX()-tx;
+	newEvtY=evt.getClientY()-ty;
 		overviewViewport = svgdoc.getElementById("overviewmap");		
 		pluginPixWidth = overviewViewport.getAttribute("width");
 		pluginPixHeight = overviewViewport.getAttribute("height");
 		var allWidth = largeurini;
 		var allHeight = hauteurini;
-		newEvtX = parseFloat(evt.getClientX());
-		newEvtY = parseFloat(evt.getClientY());
-		newEvtX =(newEvtX-offsetXmap)/ratio;
-		newEvtY =(newEvtY-offsetYmap)/ratio;
-		toMoveX = rectUlXCorner + (newEvtX - evtX)* allWidth / pluginPixWidth;
-		toMoveY = rectUlYCorner+(newEvtY - evtY)* allHeight / pluginPixHeight;
-		toMoveX1 = rect1UlXCorner + (newEvtX - evtX)* allWidth / pluginPixWidth;
-		toMoveY1 = rect1UlYCorner+(newEvtY - evtY)* allHeight / pluginPixHeight;
+	
+		if(hauteurini*ratiovue>largeurini)
+	{
+		twidth = allHeight*ratiovue;
+		theight = allHeight;
+		
+	}
+	else
+	{
+		twidth = allWidth;
+		theight = allWidth/ratiovue;
+	}
+		toMoveX = rectUlXCorner + ((newEvtX - evtX)/ratio)* twidth / pluginPixWidth;
+		toMoveY = rectUlYCorner+((newEvtY - evtY)/ratio)* theight / pluginPixHeight;
+		toMoveX1 = rect1UlXCorner + ((newEvtX - evtX)/ratio)* twidth / pluginPixWidth;
+		toMoveY1 = rect1UlYCorner+((newEvtY - evtY)/ratio)* theight / pluginPixHeight;
+		
+		
 		if (toMoveX < rectXcorner) 
 		{
 			svgRect.setAttributeNS(null,'x',rectXcorner);
@@ -983,8 +1009,8 @@ function doPan(evt)
 			{
 			svgRect.setAttributeNS(null,'x',rectXcorner + allWidth - rectOvewidth);
 			Rect1.setAttributeNS(null,'x',rectXcorner + allWidth - rectOvewidth+(rectOvewidth/2)-(rect1Ovewidth/2));
-			lin1.setAttributeNS(null,'x',rectXcorner + allWidth - rectXcorner+(rectOvewidth/2)-(rect1Ovewidth/2));
-			lin2.setAttributeNS(null,'x',rectXcorner + allWidth - rectXcorner+(rectOvewidth/2));
+			lin1.setAttributeNS(null,'x',rectXcorner + allWidth - rectOvewidth+(rectOvewidth/2)-(rect1Ovewidth/2));
+			lin2.setAttributeNS(null,'x',rectXcorner + allWidth - rectOvewidth+(rectOvewidth/2));
 			}
 		else 
 			{
@@ -998,7 +1024,7 @@ function doPan(evt)
 			svgRect.setAttributeNS(null,'y',rectYcorner);
 			Rect1.setAttributeNS(null,'y',rectYcorner+(rectOveheight/2)-(rect1Oveheight/2));
 			lin1.setAttributeNS(null,'y',rectYcorner+(rectOveheight/2));
-			lin2.setAttributeNS(null,'y',rectYcorner+(rectOveheight/2)+(rect1Oveheight/2));
+			lin2.setAttributeNS(null,'y',rectYcorner+(rectOveheight/2)-(rect1Oveheight/2));
 			
 			}
 		else if ((toMoveY + rectOveheight) > (allHeight)) 
@@ -1006,8 +1032,8 @@ function doPan(evt)
 			{
 			svgRect.setAttributeNS(null,'y',rectYcorner + allHeight - rectOveheight);
 			Rect1.setAttributeNS(null,'y',rectYcorner + allHeight - rectOveheight+(rectOveheight/2)-(rect1Oveheight/2));
-			lin1.setAttributeNS(null,'y',rectYcorner + allHeight - rectYcorner+(rectOveheight/2));
-			lin2.setAttributeNS(null,'y',rectYcorner + allHeight - rectYcorner+(rectOveheight/2)+(rect1Oveheight/2));
+			lin1.setAttributeNS(null,'y',rectYcorner + allHeight - (rectOveheight/2));
+			lin2.setAttributeNS(null,'y',rectYcorner + allHeight - (rectOveheight/2)-(rect1Oveheight/2));
 			}
 		else 
 			{
@@ -1578,11 +1604,11 @@ function impression()
 	var nb = varcotations.length;
 		for(a=0;a<nb;a++)
 		{
-		getURL("cotation.php?eff=0&num="+a+"&cot="+varcotations[a],callback2);
+		//getURL("cotation.php?eff=0&num="+a+"&cot="+varcotations[a],callback2);
 		}
 		if(nb==0)
 		{
-		getURL("cotation.php?eff=1",callback2);	
+		//getURL("cotation.php?eff=1",callback2);	
 		}
 		if(parce!="")
 		{

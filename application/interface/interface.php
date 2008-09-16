@@ -92,21 +92,6 @@ $mn_droit=$DB->tab_result($sql_droit);
 $_SESSION["profil"]->droit_appli=$mn_droit[0]['droit'];
 }
 }
-/*else
-{
-$_SESSION['code_insee']=770284;
-$_SESSION['appli']=13;
-}*/
-/*if($_GET["appli"]=='')
-{
-$_SESSION['code_insee']=770284;
-$_SESSION['appli']=12;
-}
-else
-{
-$_SESSION['appli']=$_GET["appli"];
-}*/
-
 
 $reqcom="select (commune.xma::real - commune.xmi::real) as largeur,commune.xmi as xini, (commune.yma::real - commune.ymi::real) as hauteur ,commune.yma as yini, (commune.xmi::real + (commune.xma::real - commune.xmi::real)/2) as xcenter,(commune.ymi::real + (commune.yma::real - commune.ymi::real)/2) as ycentre,logo,idagglo from admin_svg.commune where commune.idcommune like '".$_SESSION["profil"]->insee."'";
 		$vu=$DB->tab_result($reqcom);
@@ -207,8 +192,7 @@ $debut1=$debut+$intervale;
 			$debut=$debut+$intervale;
 			$debut1=$debut1+$intervale;
 		}
-//$deter_zoom_ouv=round($cou[0]['zoom_ouverture_appli']/$intervale);
-//$zoomouv=$zoommin+($intervale*$deter_zoom_ouv);
+
 }
 else
 {
@@ -470,7 +454,7 @@ $data.="<svg id=\"svg2\" xmlns:xlink='http://www.w3.org/1999/xlink' width=\"100%
 $data.="<rect id=\"rectdefond\" width=\"100%\" height=\"100%\" x=\"0\" y=\"0\" fill=\"white\"/>"; 
 $data.="<script xlink:href=\"script.js\" language=\"JavaScript\"></script>";
 $data.="<script><![CDATA[\n";
-$data.="nav=".$nav."\n";
+$data.="nav=".$nav.";\n";
 $data.=$tab_layer."\n";
 $data.=$layer."\n";
 $data.=$lay."\n"; 
@@ -674,11 +658,11 @@ $data.="</g>
 	<g onmousedown=\"beginPan(evt)\" onmousemove=\"doPan(evt)\" onmouseup=\"endPan(evt)\" onmouseout=\"endPan(evt)\">
 	<rect id=\"Rect1\" cursor=\"move\" style=\"fill:rgb(255,0,0);stroke-width:20;stroke:rgb(0,0,0);fill-opacity:0.4\" x=\"0\" y=\"0\"
  width=\"".$_SESSION['large']."\" height=\"".$_SESSION['haute']."\" visibility=\"hidden\" />
- <rect id=\"lin1\" stroke-width=\"20\" fill=\"rgb(0,0,0)\" x=\"0\" y=\"".($_SESSION['haute']/2)."\" width=\"".$_SESSION['large']."\" height=\"20\" visibility=\"hidden\"/>
- <rect id=\"lin2\" stroke-width=\"20\" fill=\"rgb(0,0,0)\" x=\"".($_SESSION['large']/2)."\" y=\"0\" width=\"20\" height=\"".$_SESSION['haute']."\" visibility=\"hidden\"/>
+ <rect id=\"lin1\" stroke-width=\"20\" fill=\"rgb(0,0,0)\" x=\"0\" y=\"".($_SESSION['haute']/2)."\" width=\"".$_SESSION['large']."\" height=\"20\" visibility=\"hidden\" pointer-events=\"none\"/>
+ <rect id=\"lin2\" stroke-width=\"20\" fill=\"rgb(0,0,0)\" x=\"".($_SESSION['large']/2)."\" y=\"0\" width=\"20\" height=\"".$_SESSION['haute']."\" visibility=\"hidden\" pointer-events=\"none\"/>
 
 	<rect id=\"locationRect\" cursor=\"move\" class=\"fillfonce\" style=\"fill-opacity:0.5\" x=\"0\" y=\"0\"
- width=\"".$_SESSION['large']."\" height=\"".$_SESSION['haute']."\"  visibility=\"hidden\"/>
+ width=\"".$_SESSION['large']."\" height=\"".$_SESSION['haute']."\"  visibility=\"hidden\" />
  </g>	
 	
 	</svg><rect id=\"locamap\" width=\"157\" height=\"109.9\" x=\"628\" y=\"56\" fill=\"none\" pointer-events=\"none\"/></g>
