@@ -298,6 +298,84 @@ if(is_array($tableau))
 	  }
 	
 	
+	
+	$polygo=$x1." ".$y1.",".$x2." ".$y2;
+	$sql="insert into admin_svg.temp_cotation (the_geom,valeur,session_temp,type) values(GeometryFromtext('MULTILINESTRING((".$polygo."))',-1),'".$coor[7]."','".session_id()."','line')";
+	$DB->exec($pgx,$sql);
+	$sql="insert into admin_svg.temp_cotation (the_geom,session_temp,type) values(GeometryFromtext('MULTILINESTRING((".$x1." ".$y1.",".$dx." ".$dy."),(".$x1." ".$y1.",".$dx1." ".$dy1."),(".$x2." ".$y2.",".$dx2." ".$dy2."),(".$x2." ".$y2.",".$dx3." ".$dy3."))',-1),'".session_id()."','fleche')";
+	$DB->exec($sql);
+      }
+  }
+  {
+    for($ij=0;$ij<count($tableau);$ij++)
+      {
+	$coor=explode("|",$tableau[$ij]);
+	$x1=$_GET['xini']+$coor[0];
+	$y1=$_GET['yini']-$coor[1];
+	$x2=$_GET['xini']+$coor[2];
+	$y2=$_GET['yini']-$coor[3];
+	
+	$lo=2;
+	
+	$angl="";
+	if($x1<=$x2 && $y2<=$y1)
+	  {
+	    $cosfl=($x2-$x1)/$coor[7];
+	    $anglfl=rad2deg(acos($cosfl));
+	    $dx=$x1+($lo*cos(deg2rad($anglfl+30)));
+	    $dy=$y1-($lo*sin(deg2rad($anglfl+30)));
+	    $dx1=$x1+($lo*cos(deg2rad($anglfl-30)));
+	    $dy1=$y1-($lo*sin(deg2rad($anglfl-30)));
+	    $dx2=$x2+($lo*cos(deg2rad($anglfl+210)));
+	    $dy2=$y2-($lo*sin(deg2rad($anglfl+210)));
+	    $dx3=$x2+($lo*cos(deg2rad($anglfl+150)));
+	    $dy3=$y2-($lo*sin(deg2rad($anglfl+150)));
+	    
+	  }
+	else if($x1<=$x2 && $y2>=$y1)
+	  {
+	    $cosfl=($x2-$x1)/$coor[7];
+	    $anglfl=rad2deg(acos($cosfl));
+	    $dx=$x1+($lo*cos(deg2rad($anglfl+30)));
+	    $dy=$y1+($lo*sin(deg2rad($anglfl+30)));
+	    $dx1=$x1+($lo*cos(deg2rad($anglfl-30)));
+	    $dy1=$y1+($lo*sin(deg2rad($anglfl-30)));
+	    $dx2=$x2+($lo*cos(deg2rad($anglfl+210)));
+	    $dy2=$y2+($lo*sin(deg2rad($anglfl+210)));
+	    $dx3=$x2+($lo*cos(deg2rad($anglfl+150)));
+	    $dy3=$y2+($lo*sin(deg2rad($anglfl+150)));
+	    
+	  }
+	else if($x1>=$x2 && $y2<=$y1)
+	  {
+	    $cosfl=($x2-$x1)/$coor[7];
+	    $anglfl=rad2deg(acos($cosfl));
+	    $dx=$x1+($lo*cos(deg2rad($anglfl+30)));
+	    $dy=$y1-($lo*sin(deg2rad($anglfl+30)));
+	    $dx1=$x1+($lo*cos(deg2rad($anglfl-30)));
+	    $dy1=$y1-($lo*sin(deg2rad($anglfl-30)));
+	    $dx2=$x2+($lo*cos(deg2rad($anglfl+210)));
+	    $dy2=$y2-($lo*sin(deg2rad($anglfl+210)));
+	    $dx3=$x2+($lo*cos(deg2rad($anglfl+150)));
+	    $dy3=$y2-($lo*sin(deg2rad($anglfl+150)));
+	    
+	  }
+	else
+	  {
+	    $cosfl=($x2-$x1)/$coor[7];
+	    $anglfl=rad2deg(acos($cosfl));
+	    $dx=$x1+($lo*cos(deg2rad($anglfl+30)));
+	    $dy=$y1+($lo*sin(deg2rad($anglfl+30)));
+	    $dx1=$x1+($lo*cos(deg2rad($anglfl-30)));
+	    $dy1=$y1+($lo*sin(deg2rad($anglfl-30)));
+	    $dx2=$x2+($lo*cos(deg2rad($anglfl+210)));
+	    $dy2=$y2+($lo*sin(deg2rad($anglfl+210)));
+	    $dx3=$x2+($lo*cos(deg2rad($anglfl+150)));
+	    $dy3=$y2+($lo*sin(deg2rad($anglfl+150)));
+	    
+	  }
+	
+	
 	$polygo=$x1." ".$y1.",".$x2." ".$y2;
 	$sql="insert into admin_svg.temp_cotation (the_geom,valeur,session_temp,type) values(GeometryFromtext('MULTILINESTRING((".$polygo."))',-1),'".$coor[7]."','".session_id()."','line')";
 	$DB->exec($sql);
@@ -516,7 +594,8 @@ $ech="&mapxy=".($xm+($xma-$xm)/2).'%20'.($ym+($yma-$ym)/2)."&SCALE=".($_GET['ech
 //$raster=str_replace(";","&layer=",$raster);
 //$erreur=error_reporting ();
 //error_reporting (1);
-$serv=$_SERVER["SERVER_NAME"];
+//$serv=$_SERVER["SERVER_NAME"];
+$serv="127.0.0.1";
 if(substr($_SESSION['profil']->insee, -3)=='000')
   {
     $code_insee=substr($_SESSION['profil']->insee,0,3);
@@ -534,8 +613,6 @@ $application=$app[0]['libelle_appli'];
 $url='http://'.$serv.'/cgi-bin/mapserv?map='.$fs_root.'/capm/'.$application.'.map&insee='.$code_insee.'&sess='.session_id().'&parce='.stripslashes($_GET['parce']).'&layer=cotation&layer='.$raster.$ech.$mapsize.$extra_url;
 if ($_SESSION['profil']->getUserName() == 'Olivier Migeot')
   $url ='http://'.$serv.'/cgi-bin/mapserv?map='.$fs_root.'/capm/'.$application.'.map&idparc=1260000Z0262&insee='.$code_insee.'&sess='.session_id().'&parce='.stripslashes($_GET['parce']).'&layer=cotation&layer='.$raster.$ech.$mapsize;
-
-
 $contenu=file($url);
 while (list($ligne,$cont)=each($contenu)){
   $numligne[$ligne]=$cont;
@@ -583,7 +660,7 @@ if($_GET['echelle']==0)
 if ($print_basic_copyright)
 {
   $pdf->SetFont('arial','',6);
-  $pdf->RotatedText(5, 5, "Les photographies sont propriété de l'IGN, les données cadastrales sont propriété de la DGI. Reproduction interdite.",0);
+  $pdf->RotatedText(5, 5, "Les photographies sont propriétées de l'IGN, les données cadastrales sont propriétées de la DGI. Reproduction interdite.",0);
 }
 
 $pdf->SetDrawColor(0);

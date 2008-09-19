@@ -210,13 +210,20 @@ $req1="select distinct (col_theme.intitule_legende) as intitule_legende,col_them
 	if($cou[$c]['v_fixe']=='1' and $cou[$c]['colonn']<>'')
 	{
 	$req1.=" join ".$cou[$c]['schema'].".".$cou[$c]['tabl']." on col_theme.valeur_texte=".$cou[$c]['tabl'].".".$cou[$c]['colonn']." where 					appthe.idapplication=".$_SESSION["profil"]->appli." and theme.libelle_them='".$cou[$c]['nom_theme']."'";
-	if(substr($_SESSION["profil"]->insee, -3)!='000' && $cou[$c]['schema']!="bd_topo")
+	/*if(substr($_SESSION["profil"]->insee, -3)!='000' && $cou[$c]['schema']!="bd_topo")
 	{
 	$req1.=" and (".$cou[$c]['tabl'].".code_insee like '".$_SESSION["profil"]->insee."'  or code_insee is null) ";
 	 }
 	 $req1.=" order by col_theme.ordre asc";
+	}*/
+	if($cou[$c]['schema']!="bd_topo")
+	{
+		if(substr($_SESSION["profil"]->insee, -3)!='000' )
+				{$req1.=" and (".$cou[$c]['tabl'].".code_insee like '".$_SESSION["profil"]->insee."'  or code_insee is null) ";}
+		else{$req1.=" and (".$cou[$c]['tabl'].".code_insee like '".substr($_SESSION["profil"]->insee,0,3)."%'  or code_insee is null) ";}
+	 }
+	 $req1.=" order by col_theme.ordre asc";
 	}
-	
 	else
 	{
 	$req1.=" where appthe.idapplication=".$_SESSION["profil"]->appli." and theme.libelle_them='".$cou[$c]['nom_theme']."' order by col_theme.ordre asc";

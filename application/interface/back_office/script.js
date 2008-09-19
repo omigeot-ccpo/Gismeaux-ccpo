@@ -657,7 +657,6 @@ function retour_extract(data)
     if(data.success) 
 	{
     string = data.content;
-	//alert(string)
 	if(string!="")
 	{
 	var docFragment=parseXML(string, document);
@@ -2934,11 +2933,11 @@ var url="sql.php?objkey=schema&d="+d.getHours()+'_'+d.getMinutes()+'_'+d.getSeco
 }
 else if(x=="table")
 {
-var url="sql.php?objkey=table_"+pro_schema+"&d="+d.getHours()+'_'+d.getMinutes()+'_'+d.getSeconds();	
+var url="sql.php?objkey=table|"+pro_schema+"&d="+d.getHours()+'_'+d.getMinutes()+'_'+d.getSeconds();	
 }
 else
 {
-var url="sql.php?objkey="+pro_tabl+"_"+pro_schema+"&d="+d.getHours()+'_'+d.getMinutes()+'_'+d.getSeconds();	
+var url="sql.php?objkey="+pro_tabl+"|"+pro_schema+"&d="+d.getHours()+'_'+d.getMinutes()+'_'+d.getSeconds();	
 }
 getURL(url,retour_deroul);
 }

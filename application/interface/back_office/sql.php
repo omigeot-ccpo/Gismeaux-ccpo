@@ -58,7 +58,7 @@ $result="SELECT libelle_them||'.'||idtheme as col FROM admin_svg.theme";
 }
 else
 {
-$test_table=explode("_",$_GET['objkey']);
+$test_table=explode("|",$_GET['objkey']);
 if($test_table[0]=="table")
 {
 $result="SELECT c.relname as col FROM pg_catalog.pg_class c LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace WHERE (c.relkind = 'r' or (c.relkind = 'v')) AND nspname='".$test_table[1]."' ORDER BY c.relname";
