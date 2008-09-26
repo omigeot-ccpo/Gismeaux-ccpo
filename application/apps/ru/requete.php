@@ -44,7 +44,7 @@ $appli = $_SESSION['profil']->appli;
 if ((!$_SESSION['profil']->idutilisateur) ){	//|| !in_array ("RU", $_SESSION['profil']->liste_appli)
 	die("Point d'entr&eacute;e r&eacute;glement&eacute;.<br> Accès interdit. <br>Veuillez vous connecter via <a href=\"https://".$_SERVER['HTTP_HOST']."\">serveur carto</a><SCRIPT language=javascript>setTimeout(\"window.location.replace('https://".$_SERVER['HTTP_HOST']."')\",3000)</SCRIPT>");
 }
-
+$extra_url = "&user=".$DB->db_user."&password=".$DB->db_passwd."&dbname=".$DB->db_name."&host=".$DB->db_host;
 $aph=4; //espace avant paragraphe
 $alig=5; //espace entre ligne
 $acel=2; //espace entre deux ligne dans la meme cellule
@@ -53,7 +53,7 @@ require(GIS_ROOT . '/fpdf/afpdf.php');
 //include("connexion/deb.php");
 $nocoche="deco.png";
 $coche="okcoche.png";
-$q="SELECT  nom_voie,dnuvoi,dindic,identifian FROM cadastre.parcelle1 WHERE identifian in ('";
+$q="SELECT distinct nom_voie,dnuvoi,dindic,identifian FROM cadastre.parcelle1 WHERE identifian in ('";
 $wh=""; $q2="";
 //if ($OBJ_KEYS){	$obj_keys=$OBJ_KEYS;}
 //if ($_GET["obj_keys"]){ $obj_keys=$_GET["obj_keys"];}
@@ -117,8 +117,11 @@ else{
 	 $q1="select nom,tel_urba,horaire_urba,plu_pos,approb,modif,larg_logo from admin_svg.commune where idcommune = '".$codeinsee."'";
      $r1=$DB->tab_result($q1);
 //======================	 
-	 $table=array("zonebruit","ppri2","zoneboise","lisiere","ppmh","sidobre","emplreserve","z_archeo","siteinscrit","servradioelectrik","zononaedificandi","alignement","halage","cimetiere","lotissement","ligne_ht");
-     $tabl=array("bruit","idinond","bois","lisiere","ppmh","sidobre","empl","archeo","inscrit","radio","sncf","alignement","halage","cimet","idlotiss","lg_ht");
+	 //$table=array("zonebruit","ppri2","zoneboise","lisiere","ppmh","sidobre","emplreserve","z_archeo","siteinscrit","servradioelectrik","zononaedificandi","alignement","halage","cimetiere","lotissement","ligne_ht");
+     //$tabl=array("bruit","idinond","bois","lisiere","ppmh","sidobre","empl","archeo","inscrit","radio","sncf","alignement","halage","cimet","idlotiss","lg_ht");
+$table=array("zonebruit","ppri2","zoneboise","lisiere","ppmh","sidobre","emplreserve","z_archeo","siteinscrit","servradioelectrik","zononaedificandi","alignement","halage","cimetiere","lotissement");
+     $tabl=array("bruit","idinond","bois","lisiere","ppmh","sidobre","empl","archeo","inscrit","radio","sncf","alignement","halage","cimet","idlotiss");
+
 
      $nb=count($table);$idlotiss="";$dloti="";$ppmh="";$alignement="";$inscrit="";$idinond="";$qinon=Array();$sncf="";$sidobre="";$lg_ht="";$bois="";$cimet="";$lisiere="";$radio="";$halage="";$edf="";$carriere="";$rinon="";$qphec="";$empl="";
      $cinon=0;
@@ -180,7 +183,7 @@ $pdf->SetFont('times','',11);
      $pdf->SetFillColor(225);
      $pdf->cell(85,5,'Adresse Parcellaire',1,1,'C',1);
 	 for ($i=0; $i<count($rq); $i++){
-         $adresse1=number_format($rq[$i][1]).' '.$rq[$i][2].', '.ucwords(strtolower($rq[$i][0]));
+         $adresse1=number_format($rq[$i][1]).' '.$rq[$i][2].', '.ucwords(strtolower(utf8_decode($rq[$i][0])));
          $y=$pdf->GetY();
          $pdf->Setxy(85,$y);
          $pdf->SetFillColor(255);
@@ -301,12 +304,12 @@ else{
        ereg("[A-Z]{1,}",$zone[$p],$vr);
       $pdf-> Setxy(135+(15*$p),$y1);
 	   
-	     $pdf->PutLink('http://'.$_SERVER['SERVER_NAME'].'/doc_commune/'.$codeinsee.'/ru/'.$vr[0].'.pdf',$zone[$p]);
+	     $pdf->PutLink('http://'.$_SERVER['HTTP_HOST'].'/doc_commune/'.$codeinsee.'/ru/'.$vr[0].'.pdf',$zone[$p]);
     }
 	$idlotiss="deco.png";
     $plu="okcoche.png";
     $approu="(Approuvé le ".$r1[0]['approb'];
-    if ($r1[0]['modif']!=""){$approu.=" - Modifié le ".$r1[0]['modif'];}
+    if ($r1[0]['modif']!=""){$approu.=" - Révisé le ".$r1[0]['modif'];}
     $approu.=")";
     //création de l'encart Secteur
     $pdf->Setxy(122,$y1);
@@ -321,7 +324,7 @@ else{
     $pdf->Setxy(25,$y);
     $pdf->SetFont('','IU',8);
     $pdf->SetTextColor(0,0,255);
-    $pdf->Write(3,'ici','http://'.$_SERVER['SERVER_NAME'].'/doc_commune/'.$codeinsee.'/ru/REGLEMENT.pdf');
+    $pdf->Write(3,'ici','http://'.$_SERVER['HTTP_HOST'].'/doc_commune/'.$codeinsee.'/ru/REGLEMENT.pdf');
     $pdf->SetFont('','I',8);
     $pdf->SetTextColor(0);
     $pdf->Setxy(29,$y);
@@ -411,12 +414,15 @@ if($idinond=="true"){
 $pdf->Image($inond,75,$y,3,3,'','');
 $pdf->Setxy(80,$y);
 $pdf->Write(3,'Concerné ');
-if ((($_SESSION["profil"]->droit=='AD') or ($_SESSION["profil"]->droit_appli=='e')) and (count($qinon)!=0)){
+/*if ((($_SESSION["profil"]->droit=='AD') or ($_SESSION["profil"]->droit_appli=='e') or ($_SESSION["profil"]->droit_appli=='a')) and (count($qinon)!=0)){
 	$pdf->Write(3,'(PHEC= '.$qphec[0]['phec'].') ');
 	$pdf->Write(3,'par la ');
 }else{
 	$pdf->Write(3,'par le ');
-}
+}*/
+if ((($_SESSION["profil"]->droit=='AD') or ($_SESSION["profil"]->droit_appli=='e') or ($_SESSION["profil"]->droit_appli=='a')) and (count($qinon)!=0)){
+	$pdf->Write(3,'(PHEC= '.$qphec[0]['phec'].') ');}
+	$pdf->Write(3,'par la ');
 if($sncf=="true"){$sncf="okcoche.png";}else{$sncf="deco.png";}
 $pdf->Image($sncf,140,$y,3,3,'','');
 $pdf->Setxy(145,$y);
@@ -430,12 +436,12 @@ $pdf->Image($nocoche,10,$y,3,3,'','');
 $pdf->Setxy(15,$y);
 $pdf->Write(3,'Site Classé');
 $pdf->Setxy(75,$y1);
-if ((($_SESSION["profil"]->droit=='AD') or ($_SESSION["profil"]->droit_appli=='e')) and (count($qinon)!=0)){
+/*if ((($_SESSION["profil"]->droit=='AD') or ($_SESSION["profil"]->droit_appli=='e')) and (count($qinon)!=0)){
 	$pdf->Write(3,$rinon.' du ');
 }else{
 	$pdf->write(3, 'Plan de Prévention de Risque Naturel');
-}
-
+}*/
+$pdf->Write(3,$rinon.' du ');
 if($sidobre=="true"){$sidobre="okcoche.png";}else{$sidobre="deco.png";}
 $pdf->Image($sidobre,140,$y,3,3,'','');
 $pdf->Setxy(145,$y);
@@ -445,11 +451,12 @@ $pdf->Ln();
 $y1=$y1+3+$acel;
 $y=$pdf->GetY()+$acel;
 $pdf->Setxy(75,$y1);
-if ((($_SESSION["profil"]->droit=='AD') or ($_SESSION["profil"]->droit_appli=='e')) and (count($qinon)!=0)){
+/*if ((($_SESSION["profil"]->droit=='AD') or ($_SESSION["profil"]->droit_appli=='e')) and (count($qinon)!=0)){
 	$pdf->PutLink('http://'.$_SERVER['SERVER_NAME'].'/doc_commune/770284/ru/Reglementppri.pdf', 'Plan de Prévention de Risque Naturel');
 }else{
 	$pdf->Write(3, '(approuvé le 16/7/2007)');
-}
+}*/
+$pdf->PutLink('http://'.$_SERVER['SERVER_NAME'].'/doc_commune/770284/ru/Reglementppri.pdf', 'Plan de Prévention de Risque Naturel');
 $pdf->Setxy(145,$y);
 $pdf->Write(3, 'Technologique');
 //5eme ligne
@@ -462,10 +469,10 @@ $pdf->Image($lht,10,$y,3,3,'','');
 $pdf->Setxy(15,$y);
 $pdf->Write(3,'Surplomb ligne haute tension');
 $pdf->Setxy(75,$y1);
-if ((($_SESSION["profil"]->droit=='AD') or ($_SESSION["profil"]->droit_appli=='e')) and (count($qinon)!=0)){
+/*if ((($_SESSION["profil"]->droit=='AD') or ($_SESSION["profil"]->droit_appli=='e')) and (count($qinon)!=0)){
 	$pdf->Write(3, '(approuvé le 16/7/2007)');
-}
-
+}*/
+$pdf->Write(3, '(approuvé le 16/7/2007)');
 if($archeo=="true"){$archeo="okcoche.png";}else{$archeo="deco.png";}
 $pdf->Image($archeo,140,$y,3,3,'','');
 $pdf->Setxy(145,$y);
@@ -626,9 +633,10 @@ $xma=$xm+($h*(400/326));
 $idpar = str_replace(",", "','",$obj_keys);
 $erreur=error_reporting ();
 	error_reporting (1);
-	$serv=$_SERVER["SERVER_NAME"];
-	$url="http://".$serv."/cgi-bin/mapserv?map=/home/sig/gis/intranet/capm/RU.map&map_imagetype=jpeg&insee=".$code_insee."&parce=('".$idpar."')&layer=alignement&layer=num_voie&layer=nom_voie&layer=parcelle&layer=batiment&minx=".$xm."&miny=".$ym."&maxx=".$xma."&maxy=".$yma."&mapsize=1240%201040";
-
+	//$serv=$_SERVER["SERVER_NAME"];
+	$serv="127.0.0.1";
+	$url="http://".$serv."/cgi-bin/mapserv?map=/home/sig/gismeaux/application/capm/RU.map&map_imagetype=jpeg&insee=".$code_insee."&parce=('".$idpar."')&layer=alignement&layer=num_voie&layer=nom_voie&layer=parcelle&layer=batiment&minx=".$xm."&miny=".$ym."&maxx=".$xma."&maxy=".$yma."&mapsize=1240%201040".$extra_url;
+     //echo $url;
         $contenu=file($url);
        		while (list($ligne,$cont)=each($contenu)){
 			$numligne[$ligne]=$cont;
@@ -637,7 +645,7 @@ $erreur=error_reporting ();
 	
 	$couche=explode("/",$texte);
 	$cou=explode(".",$couche[4]);
-	$imag='../tmp/'.$cou[0];
+	$imag='../../tmp/'.$cou[0];
 	error_reporting ($erreur);
 
 
@@ -651,7 +659,7 @@ $pdf->AddPage();
 //fixe la marge droite des textes qui suivent
   $pdf->SetrightMargin(5);
 $pdf->SetTextColor(0);
-$pdf->Image("../logo/".$codeinsee.".png",10,8,$lar,'20','','');
+$pdf->Image("../../logo/".$codeinsee.".png",10,8,$lar,'20','','');
 //on se positionne à 130mm du bord gauche et à 15 mm du bord haut
 $pdf->Setxy(130,10);
      $pdf->Write(5,$r1[0]['nom'].', le '.date("d").' '.moix(date("m")).' '.date("Y"));
