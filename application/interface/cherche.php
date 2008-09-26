@@ -43,7 +43,7 @@ $concat=$debut.$reste;
 print("<g id=\"recherche\" onclick=\"clear('controlrecherche');rechercheavance(evt)\"  onmouseover=\"switchColor(evt,'fill','red','','')\" onmouseout=\"switchColor(evt,'fill','url(#survol)','','')\" style=\"text-anchor:middle\">");
 if(substr($_SESSION['profil']->insee, -3)=='000')
 {
-$result = $DB->tab_result("SELECT identifian,commune.nom FROM cadastre.parcelle join admin_svg.commune on parcelle.code_insee=commune.idcommune WHERE (identifian LIKE '%$indice' OR identifian LIKE '%$concat') AND code_insee like '".substr($_SESSION['profil']->insee,0,3)."%' group by identifian,nom");
+$result = $DB->tab_result("SELECT identifian,commune.nom FROM cadastre.parcelle join admin_svg.commune on parcelle.code_insee=commune.idcommune WHERE (identifian LIKE '%$indice' OR identifian LIKE '%$concat') AND parcelle.code_insee like '".substr($_SESSION['profil']->insee,0,3)."%' group by identifian,nom");
 }
 else
 {
