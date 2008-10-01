@@ -32,33 +32,16 @@ sécurité de leurs systèmes et ou de leurs données et, plus généralement,
 Le fait que vous puissiez accéder à cet en-tête signifie que vous avez 
 pris connaissance de la licence CeCILL-C, et que vous en avez accepté les 
 termes.*/
-//if($_SERVER['SERVER_PORT']!=443)
-//{
-//ini_set('session.gc_maxlifetime', 3600);
-//session_start();
-/*ob_start('ob_gzhandler');
-ini_set('session.gc_maxlifetime', 3600);
-session_start();
-header('Cache-Control: public');
-header("Pragma:");*/
 define('GIS_ROOT', '..');
 include_once(GIS_ROOT . '/inc/common.php');
 gis_session_start();
 $extra_url = "&user=".$DB->db_user."&password=".$DB->db_passwd."&dbname=".$DB->db_name."&host=".$DB->db_host;
-//}else
-/*{
-$_SESSION['xini']= $_GET["xini"];
-$_SESSION['yini']= $_GET["yini"];
-$_SESSION['profil']->insee= $_GET["code_insee"];
-}*/
-
 $_SESSION['zoommm'] =$_GET['zoom'];
 $_SESSION['cx'] =round($_GET["x"]+($_GET["lar"]/2));
 $_SESSION['cy'] =round( $_GET["y"]+( $_GET["hau"]/2));
 $_SESSION['boitelarg'] =$_GET["lar"];
 $_SESSION['boitehaut'] =$_GET["hau"];
 $_SESSION['prace'] =$_GET["placid"];
-//include("../connexion/deb.php");
 $xm= $_GET["x"]+  $_GET["xini"];
 $xma=($_GET["x"]+ $_GET["lar"]) +  $_GET["xini"];
 $yma=  $_GET["yini"] -  $_GET["y"];
@@ -82,8 +65,8 @@ $application=$app[0]['libelle_appli'];
 	$erreur=error_reporting ();
 	error_reporting (1);
 
-$serv=$_SERVER["SERVER_NAME"];
-//$serv="127.0.0.1";
+//$serv=$_SERVER["SERVER_NAME"];
+$serv="127.0.0.1";
 	if(substr($_SESSION['profil']->insee, -3)=='000')
 	{
 
@@ -93,9 +76,9 @@ $serv=$_SERVER["SERVER_NAME"];
 	{
 	$url="http://".$serv."/cgi-bin/mapserv?map=".$fs_root."capm/".$application.".map&insee=".$_SESSION['profil']->insee."&layer=".$raster."&minx=".$xm."&miny=".$ym."&maxx=".$xma."&maxy=".$yma."&mapsize=1200%20840&parce=('')".$extra_url;
 	}
-	//echo $url;	
+	
 $contenu=file($url);
-//echo $contenu[0];
+
        		while (list($ligne,$cont)=each($contenu)){
 			$numligne[$ligne]=$cont;
 		}
@@ -140,7 +123,7 @@ $rast=str_replace("chr(95)","_",$rast);
 $ras=explode(".",$rast);
 	$rast=$ras[1];
 	$id=$ras[0];
-//$sql="select theme.schema,theme.tabl,col_theme.colonn,col_theme.valeur_mini,col_theme.valeur_maxi,col_theme.valeur_texte,sinul(col_theme.fill, style.fill) as fill,sinul(col_theme.stroke_rgb, style.stroke_rgb) as stroke_rgb,sinul(col_theme.symbole,style.symbole) as symbole,sinul(col_theme.opacity,style.opacity) as opacity,sinul(col_theme.font_familly,style.font_familly) as font_familly,sinul(col_theme.font_size,style.font_size) as font_size,appthe.mouseover,appthe.mouseout,appthe.click,appthe.idtheme,theme.partiel,sinul(col_theme.stroke_width,style.stroke_width) as stroke_width,appthe.pointer_events from admin_svg.appthe join admin_svg.theme on appthe.idtheme=theme.idtheme left outer join  admin_svg.col_theme on appthe.idappthe=col_theme.idappthe left outer join  admin_svg.style on appthe.idtheme=style.idtheme where appthe.idapplication=".$_SESSION['profil']->appli." and (col_theme.intitule_legende='".$rast."' or theme.libelle_them='".$rast."') and appthe.idappthe=".$id;
+
 $sql="select theme.schema,theme.tabl,col_theme.colonn,col_theme.valeur_mini,col_theme.valeur_maxi,col_theme.valeur_texte,sinul(col_theme.fill, style.fill) as fill,sinul(col_theme.stroke_rgb, style.stroke_rgb) as stroke_rgb,sinul(col_theme.symbole,style.symbole) as symbole,sinul(col_theme.opacity,style.opacity) as opacity,sinul(col_theme.font_familly,style.font_familly) as font_familly,sinul(col_theme.font_size,style.font_size) as font_size,appthe.mouseover,appthe.mouseout,appthe.click,appthe.idtheme,sinul(appthe.partiel,theme.partiel) as partiel,sinul(col_theme.stroke_width,style.stroke_width) as stroke_width,appthe.pointer_events from admin_svg.appthe join admin_svg.theme on appthe.idtheme=theme.idtheme left outer join  admin_svg.col_theme on appthe.idappthe=col_theme.idappthe left outer join  admin_svg.style on appthe.idtheme=style.idtheme where appthe.idapplication=".$_SESSION['profil']->appli." and (col_theme.intitule_legende='".$rast."' or theme.libelle_them='".$rast."') and appthe.idappthe=".$id;
 $cou=$DB->tab_result($sql);
 $rotation='false';
@@ -333,21 +316,11 @@ if($cou[0]['mouseover']!=''||$cou[0]['click']!='')
 				{
 				for ($e=0;$e<count($res);$e++)
 					{
-					if($res[$e]['ident']==$_GET['placid'])
-					{
-					$textq.="<a id='li_lien".$res[$e]['ident']."'><path id='".$res[$e]['ident']."' ";
-					if($res[$e]['ad']!="")
-					{
-					$textq.="n='".$res[$e]['ad']."' ";
-					}
-					if($res[$e]['relation']!="")
-					{
-					$textq.="rel='".$res[$e]['relation']."' ";
-					}
-					$textq.="fill-opacity='0.7' fill='rgb(150,254,150)' d='".$res[$e]['geom']."'/></a>\n";
-					}
-					else
-					{
+						if($res[$e]['ident']==$_GET['placid'])
+						{
+							$textq.="<path stroke='rgb(0,255,50)' stroke-width='1' fill='none' d='".$res[$e]['geom']."'/>\n";
+						}
+					
 					$textq.="<a id='li_lien".$res[$e]['ident']."'><path id='".$res[$e]['ident']."' ";
 					if($res[$e]['ad']!="")
 					{
@@ -358,8 +331,9 @@ if($cou[0]['mouseover']!=''||$cou[0]['click']!='')
 					$textq.="rel='".$res[$e]['relation']."' ";
 					}
 					$textq.="d='".$res[$e]['geom']."'/></a>\n";
+					
 					}
-					}
+					
 				}
 
 }	
@@ -392,11 +366,11 @@ else
 				{
 				for ($e=0;$e<count($res);$e++)
 					{
-					if($res[$e]['ident']==$_GET['placid'] && $res[$e]['ident']!='')
+					if($res[$e]['ident']==$_GET['placid'])
 					{
-					$textq.="<path id='".$res[$e]['ident']."' fill='rgb(150,254,150)' fill-opacity='0.7' d='".$res[$e]['geom']."'/>\n";
+					$textq.="<path stroke='rgb(0,255,50)' stroke-width='1' fill='none' d='".$res[$e]['geom']."'/>\n";
 					}
-					else if($res[$e]['ident']!='')
+					if($res[$e]['ident']!='')
 					{
 					$textq.="<path id='".$res[$e]['ident']."' d='".$res[$e]['geom']."'/>\n";
 					}
@@ -404,6 +378,8 @@ else
 					{
 					$textq.="<path d='".$res[$e]['geom']."'/>\n";
 					}
+					
+					
 					}
 				}
 }
