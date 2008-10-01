@@ -366,12 +366,13 @@ else
 				{
 				for ($e=0;$e<count($res);$e++)
 					{
+					if($res[$e]['ident']!='')
+					{
 					if($res[$e]['ident']==$_GET['placid'])
 					{
 					$textq.="<path stroke='rgb(0,255,50)' stroke-width='1' fill='none' d='".$res[$e]['geom']."'/>\n";
 					}
-					if($res[$e]['ident']!='')
-					{
+					
 					$textq.="<path id='".$res[$e]['ident']."' d='".$res[$e]['geom']."'/>\n";
 					}
 					else
