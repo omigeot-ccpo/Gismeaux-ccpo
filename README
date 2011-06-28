@@ -9,3 +9,5 @@ password <password>
 
 
 Avec <servername> étant github.com et <username>/<password> vos identifiants Github.
+
+(Note: ceci ne marche pas chez moi, si c'est le cas une autre solution est de rajouter le mot de passe dans l'URL du dépôt, donc https://user:password@github.com/...)
