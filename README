@@ -1,3 +1,11 @@
 Essai Git pour GISMEAUX
 
-Test
+Information : pour ne pas avoir à retaper le mot de passe à chaque 'push', il suffit de créer un fichier .netrc à la racine de l'utilisateur (/home/user ou /root selon le cas) et de mettre dedans les lignes suivantes.
+
+
+machine <servername>
+login <username>
+password <password>
+
+
+Avec <servername> étant github.com et <username>/<password> vos identifiants Github.
