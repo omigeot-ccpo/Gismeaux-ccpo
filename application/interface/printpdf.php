@@ -37,6 +37,22 @@ include_once(GIS_ROOT . '/inc/common.php');
 gis_session_start();
 error_reporting (1);
 $extra_url = "&user=".$DB->db_user."&password=".$DB->db_passwd."&dbname=".$DB->db_name."&host=".$DB->db_host;
+//$url_qrcode="https://".$_SERVER["HTTP_HOST"]."/interface/printpdf.php?format=".$_GET['format']."&legende=".$_GET['legende']."&titre=".$_GET['titre']."&raster=".$_GET['raster']."&x=".$_GET['x']."&y=".$_GET['y']."&lar=".$_GET['lar']."&hau=".$_GET['hau']."&zoom=".$_GET['zoom']."&xini=".$_GET['xini']."&yini=".$_GET['yini']."&parce=".$_GET['parce']."&echelle=".$_GET['echelle'];
+
+
+
+function generateQRCode($string='Nothing Here !', $size=30, $displayStringAlt=false)
+{
+ $sqSize = $size.'x'.$size;
+ $imgURL = 'http://chart.apis.google.com/chart?cht=qr&chs='.$sqSize.'&chl='.urlencode($string);
+
+ /*if ($displayStringAlt)
+   return '<img src="'.$imgURL.'" alt="'.$string.'" />';
+ else
+   return '<img src="'.$imgURL.'" alt="" />';*/
+   return $imgURL;
+}
+
 $xi=$_GET['x'];
 $orientation='P';
 $unit='mm';
@@ -225,7 +241,6 @@ $xma=($_GET['x']+$_GET['lar']) + $_GET['xini'];
 $yma= $_GET['yini'] - $_GET['y'];
 $ym= $_GET['yini'] - ($_GET['y']+$_GET['hau']);
 $mapsize="";
-
 $tableau=$_SESSION["cotation"];
 if(is_array($tableau))
   {
@@ -300,10 +315,11 @@ if(is_array($tableau))
 	
 	
 	$polygo=$x1." ".$y1.",".$x2." ".$y2;
-	$sql="insert into admin_svg.temp_cotation (the_geom,valeur,session_temp,type) values(GeometryFromtext('MULTILINESTRING((".$polygo."))',-1),'".$coor[7]."','".session_id()."','line')";
+	$sql="insert into admin_svg.temp_cotation (the_geom,valeur,session_temp,type) values(GeometryFromtext('MULTILINESTRING((".$polygo."))',$projection),'".$coor[7]."','".session_id()."','line')";
+	
 	$DB->exec($pgx,$sql);
-	$sql="insert into admin_svg.temp_cotation (the_geom,session_temp,type) values(GeometryFromtext('MULTILINESTRING((".$x1." ".$y1.",".$dx." ".$dy."),(".$x1." ".$y1.",".$dx1." ".$dy1."),(".$x2." ".$y2.",".$dx2." ".$dy2."),(".$x2." ".$y2.",".$dx3." ".$dy3."))',-1),'".session_id()."','fleche')";
-	$DB->exec($sql);
+	$sql="insert into admin_svg.temp_cotation (the_geom,session_temp,type) values(GeometryFromtext('MULTILINESTRING((".$x1." ".$y1.",".$dx." ".$dy."),(".$x1." ".$y1.",".$dx1." ".$dy1."),(".$x2." ".$y2.",".$dx2." ".$dy2."),(".$x2." ".$y2.",".$dx3." ".$dy3."))',$projection),'".session_id()."','fleche')";
+		$DB->exec($sql);
       }
   }
   {
@@ -377,9 +393,9 @@ if(is_array($tableau))
 	
 	
 	$polygo=$x1." ".$y1.",".$x2." ".$y2;
-	$sql="insert into admin_svg.temp_cotation (the_geom,valeur,session_temp,type) values(GeometryFromtext('MULTILINESTRING((".$polygo."))',-1),'".$coor[7]."','".session_id()."','line')";
+	$sql="insert into admin_svg.temp_cotation (the_geom,valeur,session_temp,type) values(GeometryFromtext('MULTILINESTRING((".$polygo."))',$projection),'".$coor[7]."','".session_id()."','line')";
 	$DB->exec($sql);
-	$sql="insert into admin_svg.temp_cotation (the_geom,session_temp,type) values(GeometryFromtext('MULTILINESTRING((".$x1." ".$y1.",".$dx." ".$dy."),(".$x1." ".$y1.",".$dx1." ".$dy1."),(".$x2." ".$y2.",".$dx2." ".$dy2."),(".$x2." ".$y2.",".$dx3." ".$dy3."))',-1),'".session_id()."','fleche')";
+	$sql="insert into admin_svg.temp_cotation (the_geom,session_temp,type) values(GeometryFromtext('MULTILINESTRING((".$x1." ".$y1.",".$dx." ".$dy."),(".$x1." ".$y1.",".$dx1." ".$dy1."),(".$x2." ".$y2.",".$dx2." ".$dy2."),(".$x2." ".$y2.",".$dx3." ".$dy3."))',$projection),'".session_id()."','fleche')";
 	$DB->exec($sql);
       }
   }
@@ -390,6 +406,8 @@ if($_GET['legende']==1 || $_GET['legende']==2)
     $angle=90;
     if($_GET['format']=='A4')
       {
+	$xqrcode=180;
+	$yqrcode=265; 
 	$px=20;
 	$py=280;
 	$rect=3;
@@ -417,6 +435,8 @@ if($_GET['legende']==1 || $_GET['legende']==2)
 	   }
     elseif($_GET['format']=='A3')
       {
+	$xqrcode=190*(29.7/21);
+	$yqrcode=275*(29.7/21);  
 	$posiximage=15*(29.7/21);
 	$posiyimage=233*(29.7/21);
 	$larimage=220*(29.7/21);
@@ -444,6 +464,8 @@ if($_GET['legende']==1 || $_GET['legende']==2)
       }
     elseif($_GET['format']=='A2')
       {
+	$xqrcode=190*2;
+	$yqrcode=275*2;   
 	$posiximage=15*2;
 	$posiyimage=233*2;
 	$larimage=220*2;
@@ -466,10 +488,12 @@ if($_GET['legende']==1 || $_GET['legende']==2)
 	$wtitre=265*2;
 	$htitre=10*2;
 	$sizetitre=30;
-	$ratioechelle=4;
+	$ratioechelle=2.5;
       }
     elseif($_GET['format']=='A1')
       {
+	$xqrcode=190*2*(29.7/21);
+	$yqrcode=275*2*(29.7/21);   
 	$posiximage=15*2*(29.7/21);
 	$posiyimage=233*2*(29.7/21);
 	$larimage=220*2*(29.7/21);
@@ -493,10 +517,12 @@ if($_GET['legende']==1 || $_GET['legende']==2)
 	$htitre=10*2*(29.7/21);
 	$sizetitre=35;
 	
-	$ratioechelle=2*(29.7/21);
+	$ratioechelle=2.5/(29.7/21);
       }
     else
       {
+	$xqrcode=190*4;
+	$yqrcode=275*4;   
 	$posiximage=15*4;
 	$posiyimage=233*4;
 	$larimage=220*4;
@@ -519,7 +545,7 @@ if($_GET['legende']==1 || $_GET['legende']==2)
 	$wtitre=265*4;
 	$htitre=10*4;
 	$sizetitre=40;
-	$ratioechelle=2;
+	$ratioechelle=2.5/2;
       }
   }
  else
@@ -528,6 +554,8 @@ if($_GET['legende']==1 || $_GET['legende']==2)
      $angle=0;
      if($_GET['format']=='A4')
        {
+	 $xqrcode=180;
+	 $yqrcode=265;
 	 $px=20;
 	 $py=200;
 	 $rect=3;
@@ -551,10 +579,12 @@ if($_GET['legende']==1 || $_GET['legende']==2)
 	 $larimage=175;
 	 $hauimage=146.77;
 	 $mapsize='&mapsize=1240%201040';
-	 $ratioechelle=2/0.8;
+	 $ratioechelle=2/(146.77/184.5);
        }
      elseif($_GET['format']=='A3')
        {
+	 $xqrcode=190*(29.7/21);
+	 $yqrcode=275*(29.7/21);  
 	 $px=20*(29.7/21);
 	 $py=200*(29.7/21);
 	 $rect=3;
@@ -579,7 +609,7 @@ if($_GET['legende']==1 || $_GET['legende']==2)
 	 $larimage=247.5;
 	 $hauimage=207.57;
 	 $mapsize='&mapsize=1753.7%201470.9';
-	 $ratioechelle=2*1.19;
+	 $ratioechelle=2/(207.57/(184.5*(29.7/21)));
        }
      
    }
@@ -605,14 +635,24 @@ if(substr($_SESSION['profil']->insee, -3)=='000')
      $code_insee=$insee;
    }
 //$_SESSION['appli'] = 2; // Attention, ceci semble nécessaire, la session n'était pas spécialement bien configurée :(
-$sql_app="select supp_chr_spec(libelle_appli) as libelle_appli from admin_svg.application where idapplication='".$_SESSION['profil']->appli."'";
+if($_GET['idappli']!="")
+{
+$idappli=$_GET['idappli'];
+}
+else
+{
+$idappli=$_SESSION["profil"]->appli;
+}
+$sql_app="select supp_chr_spec(libelle_appli) as libelle_appli from admin_svg.application where idapplication='".$idappli."'";
 $app=$DB->tab_result($sql_app);
 $application=$app[0]['libelle_appli'];
 //$application=str_replace(" ","_",$application);
 
-$url='http://'.$serv.'/cgi-bin/mapserv?map='.$fs_root.'/capm/'.$application.'.map&insee='.$code_insee.'&sess='.session_id().'&parce='.stripslashes($_GET['parce']).'&layer=cotation&layer='.$raster.$ech.$mapsize.$extra_url;
+//$url='http://'.$serv.'/cgi-bin/mapserv?map='.$fs_root.'/capm/'.$application.'.map&insee='.$code_insee.'&sess='.session_id().'&parce='.stripslashes($_GET['parce']).'&map_imagetype=jpeg&layer=cotation&layer='.$raster.$ech.$mapsize.$extra_url;
+$url='http://'.$serv.'/cgi-bin/mapserv?map='.$fs_root.'/capm/'.$application.'.map&insee='.$code_insee.'&sess='.session_id().'&parce='.stripslashes($_GET['parce']).'&map_imagetype=agg&layer=cotation&layer='.$raster.$ech.$mapsize.$extra_url;
+//echo $url;
 if ($_SESSION['profil']->getUserName() == 'Olivier Migeot')
-  $url ='http://'.$serv.'/cgi-bin/mapserv?map='.$fs_root.'/capm/'.$application.'.map&idparc=1260000Z0262&insee='.$code_insee.'&sess='.session_id().'&parce='.stripslashes($_GET['parce']).'&layer=cotation&layer='.$raster.$ech.$mapsize;
+  $url ='http://'.$serv.'/cgi-bin/mapserv?map='.$fs_root.'/capm/'.$application.'.map&idparc=1260000Z0262&map_imagetype=jpeg&insee='.$code_insee.'&sess='.session_id().'&parce='.stripslashes($_GET['parce']).'&layer=cotation&layer='.$raster.$ech.$mapsize;
 $contenu=file($url);
 while (list($ligne,$cont)=each($contenu)){
   $numligne[$ligne]=$cont;
@@ -636,7 +676,7 @@ $pdf->FPDF($orientation,$unit,$_GET['format']);
 //création page
 $pdf->AddFont('font1','','font1.php');
 $pdf->AddPage();
-$pdf->RotatedImage('../tmp/'.$tex[0].'.png',$posiximage,$posiyimage,$larimage,$hauimage,$angle);
+$pdf->RotatedImage('../tmp/'.$tex[0].'.jpg',$posiximage,$posiyimage,$larimage,$hauimage,$angle);
 $pdf->SetFont('font1','',$sizerosa);
 //echo $logo.",".$posixlogo.",".$posiylogo.",".$larlogo.",".$haulogo.",".$angle;
 $pdf->RotatedText($posixrosa,$posiyrosa,'a',$angle);
@@ -662,6 +702,10 @@ if ($print_basic_copyright)
   $pdf->SetFont('arial','',6);
   $pdf->RotatedText(5, 5, "Les photographies sont propriétées de l'IGN, les données cadastrales sont propriétées de la DGI. Reproduction interdite.",0);
 }
+//génération du qrcode;
+$url_qrcode="https://".$_SERVER["HTTP_HOST"]."/interface/qrprint.php?var=".$application."$".$_GET['x']."$".$_GET['y']."$".$_GET['lar']."$".$_GET['hau']."$".$_GET['zoom']."$".$_GET['format']."$".$_GET['legende']."$".$_GET['titre']."$".$_GET['echelle']."$".$_GET['parce']."$".$_GET['raster'];
+
+$pdf->Image(generateQRCode($url_qrcode,100) ,$xqrcode, $yqrcode, 30, 30, 'PNG'); 
 
 $pdf->SetDrawColor(0);
 $pdf->SetFont('arial','',10);
@@ -802,6 +846,12 @@ if($_GET['legende']==1 || $_GET['legende']==3)
 	  }
       }
   }
-$pdf->Output();
-die();
+//$pdf->Output();
+//die();
+$resultpdf = $pdf->Output('', 'S');
+$pdfname = 'impression.pdf';
+
+header('Content-disposition: inline; filename='.$pdfname);
+header('Content-type: application/pdf');
+die($resultpdf);
 ?> 
